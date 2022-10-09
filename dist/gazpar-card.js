@@ -87,7 +87,7 @@ class GazparCard extends LitElement {
               ${this.config.showIcon
                 ? html`
                   <div class="icon-block">
-                    <span class="gazpar-icon bigger" style="background: none, url(https://github.com/ssenart/lovelace-gazpar-card/dist/gazpar-icon.png) no-repeat; background-size: contain;"></span>
+                    <span class="gazpar-icon bigger" style="background: none, url(https://github.com/ssenart/lovelace-gazpar-card/blob/main/dist/gazpar-icon.png) no-repeat; background-size: contain;"></span>
                   </div>`
                 : html `` 
               }
