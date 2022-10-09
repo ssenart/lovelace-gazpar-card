@@ -171,7 +171,7 @@ export class GazparCardEditor extends LitElement {
   }
   
   renderGazparPicker(label, entity, configAttr) {
-    return this.renderPicker(label, entity, configAttr, "gazpar");
+    return this.renderPicker(label, entity, configAttr, "sensor.gazpar");
   }
 
   renderPicker(label, entity, configAttr, domain) {

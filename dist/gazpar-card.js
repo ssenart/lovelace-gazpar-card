@@ -92,20 +92,20 @@ class GazparCard extends LitElement {
                 : html `` 
               }
               <div class="cout-block">
-                <span class="cout">${this.toFloat(stateObj.state)}</span><span class="cout-unit">${attributes.unit_of_measurement}</span><br/>
-                <span class="conso">${this.toFloat(attributes.data[0].volume_m3)}</span><span class="conso-unit">m³</span> - 
-                <span class="conso">${attributes.data[0].time_period}</span>
+                <span class="cout">${this.toFloat(attributes.daily[0].energy_kwh)}</span><span class="cout-unit">${attributes.unit_of_measurement}</span><br/>
+                <span class="conso">${this.toFloat(attributes.daily[0].volume_m3)}</span><span class="conso-unit">m³</span> - 
+                <span class="conso">${attributes.daily[0].time_period}</span>
               </div>
               ${this.config.showCost 
                 ? html `
                 <div class="cout-block">
-                  <span class="cout" title="Coût journalier">${this.toFloat(stateObj.state * this.config.costPerKWh, 2)}</span><span class="cout-unit"> €</span>
+                  <span class="cout" title="Coût journalier">${this.toFloat(attributes.daily[0].energy_kwh * this.config.costPerKWh, 2)}</span><span class="cout-unit"> €</span>
                 </div>`
                 : html ``
                 }
             </div>
 
-            ${this.renderWeeklyHistory(attributes.data, attributes.unit_of_measurement, this.config)}
+            ${this.renderWeeklyHistory(attributes.daily, attributes.unit_of_measurement, this.config)}
 
             ${this.renderError(attributes.errorMessage, this.config)}
             ${this.renderVersion(attributes.versionUpdateAvailable, attributes.versionGit)}
