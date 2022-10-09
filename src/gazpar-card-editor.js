@@ -130,17 +130,17 @@ export class GazparCardEditor extends LitElement {
           ${this.renderGazparPicker("Entity", this._entity, "entity")}
           <!-- Switches -->
           <ul class="switches">
-            ${this.renderSwitchOption("Show icon", this._showIcon, "showIcon")}
             ${this.renderSwitchOption("Show title", this._showTitle, "showTitle")}
+            ${this.renderSwitchOption("Show icon", this._showIcon, "showIcon")}
+            ${this.renderSwitchOption("Show cost", this._showCost, "showCost")}          
 
             ${this.renderSwitchOption("Show history", this._showHistory, "showHistory")}
             ${this.renderSwitchOption("Show history header", this._showHistoryHeader, "showHistoryHeader")}
             ${this.renderSwitchOption("Show energy history", this._showEnergyHistory, "showEnergyHistory")}
             ${this.renderSwitchOption("Show volume history", this._showVolumeHistory, "showVolumeHistory")}
             ${this.renderSwitchOption("Show cost history", this._showCostHistory, "showCostHistory")}
-
             ${this.renderSwitchOption("Show unit", this._showUnit, "showUnit")}
-            ${this.renderSwitchOption("Show cost", this._showCost, "showCost")}
+            
             ${this.renderSwitchOption("Show error", this._showError, "showError")}
           </ul>
           <!-- -->
