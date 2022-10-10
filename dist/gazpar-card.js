@@ -4,6 +4,21 @@ const LitElement = Object.getPrototypeOf(
 const html = LitElement.prototype.html;
 const css = LitElement.prototype.css;
 
+const monthNumberByName = {
+  'Janvier': 1,
+  'Février': 2,
+  'Mars': 3,
+  'Avril': 4,
+  'Mai': 5,
+  'Juin': 6,
+  'Juillet': 7,
+  'Août': 8,
+  'Septembre': 9,
+  'Octobre': 10,
+  'Novembre': 11,
+  'Décembre': 12,
+}
+
 window.customCards = window.customCards || [];
 window.customCards.push({
   type: "gazpar-card",
@@ -104,8 +119,9 @@ class GazparCard extends LitElement {
                 : html ``
                 }
             </div>
-
+            
             ${this.renderWeeklyHistory(attributes.daily, attributes.unit_of_measurement, this.config)}
+            ${this.renderMonthlyHistory(attributes.monthly, attributes.unit_of_measurement, this.config)}
 
             ${this.renderError(attributes.errorMessage, this.config)}
             ${this.renderVersion(attributes.versionUpdateAvailable, attributes.versionGit)}
@@ -172,6 +188,15 @@ class GazparCard extends LitElement {
     return res;
   }
 
+  parseMonthPeriod(monthPeriodStr) {
+
+    var parts = monthPeriodStr.split(" ")
+
+    var res = new Date(parseInt(parts[1], 10), monthNumberByName[parts[0]] - 1, 1)
+
+    return res;
+  }
+
   formatDate(date) {
 
     return date.getDate() + "/" + (date.getMonth()+1) + "/" + date.getFullYear();
@@ -185,9 +210,17 @@ class GazparCard extends LitElement {
     return res;
   }
 
+  addMonths(date, months) {
+
+    var res = new Date(date);
+    res.setMonth(res.getMonth() + months);
+
+    return res;
+  }
+
   renderWeeklyHistory(data, unit_of_measurement, config) {
 
-    if (config.showHistory) {
+    if (config.showWeeklyHistory) {
       // Keep the last 7 days.
       var now = new Date()
       var filteredDates = data.reverse().filter(item => this.parseDate(item.time_period) >= this.addDays(now, -8))
@@ -203,15 +236,34 @@ class GazparCard extends LitElement {
 
       return html
       `
+        <hr size="1" color="grey"/>
         <div class="week-history">
           ${this.renderHistoryHeader(config)}
-          ${filteredDates.slice(filteredDates.length - config.nbJoursAffichage, filteredDates.length).map(item => this.renderDataColumnHistory(item, unit_of_measurement, config))}
+          ${filteredDates.slice(filteredDates.length - 7, filteredDates.length).map(item => this.renderWeeklyDataColumnHistory(item, unit_of_measurement, config))}
         </div>
       `
     }
   }
 
-  renderDataColumnHistory(item, unit_of_measurement, config) {
+  renderMonthlyHistory(data, unit_of_measurement, config) {
+
+    if (config.showMonthlyHistory) {
+      // Keep the last 12 months.
+      var now = new Date()
+      var filteredDates = data.reverse().filter(item => this.parseMonthPeriod(item.time_period) >= this.addMonths(now, -13))
+
+      return html
+      `
+        <hr size="1" color="grey"/>
+        <div class="week-history">
+          ${this.renderHistoryHeader(config)}
+          ${filteredDates.slice(filteredDates.length - 12, filteredDates.length).map(item => this.renderMonthlyDataColumnHistory(item, unit_of_measurement, config))}
+        </div>
+      `
+    }
+  }
+
+  renderWeeklyDataColumnHistory(item, unit_of_measurement, config) {
 
       var date = this.parseDate(item.time_period)
       
@@ -225,16 +277,25 @@ class GazparCard extends LitElement {
       `
   }
 
+  renderMonthlyDataColumnHistory(item, unit_of_measurement, config) {
+
+    var date = this.parseMonthPeriod(item.time_period)
+    
+    return html `
+    <div class="day">
+      <span class="dayname" title="${date.toLocaleDateString('fr-FR', {month: 'long', year: 'numeric'})}">${date.toLocaleDateString('fr-FR', {month: 'narrow'})}</span>
+      ${config.showEnergyHistory ? this.renderDataValue(item.energy_kwh, unit_of_measurement, 0) : ""}
+      ${config.showVolumeHistory ? this.renderDataValue(item.volume_m3, "m³", 0) : ""}
+      ${config.showCostHistory ? this.renderDataValue(item.energy_kwh * this.config.costPerKWh, "€", 0) : ""}
+    </div>
+    `
+}
+
   renderDataValue(value, unit, decimals)
   {
     if (value >= 0) {
       return html `
-        <br><span class="cons-val">${this.toFloat(value, decimals)} 
-        ${this.config.showUnit 
-          ? html `
-            ${unit}`
-          : html ``
-        }</span>
+        <br><span class="cons-val">${this.toFloat(value, decimals)}</span>
       `
     } else {
       return html `
@@ -264,9 +325,9 @@ class GazparCard extends LitElement {
        `
         <div class="day">
           ${this.renderRowHeader(true, "")}
-          ${this.renderRowHeader(this.config.showEnergyHistory, "Energy")}
-          ${this.renderRowHeader(this.config.showVolumeHistory, "Volume")}
-          ${this.renderRowHeader(this.config.showCostHistory, "Cost")}
+          ${this.renderRowHeader(this.config.showEnergyHistory, "kWh")}
+          ${this.renderRowHeader(this.config.showVolumeHistory, "m³")}
+          ${this.renderRowHeader(this.config.showCostHistory, "€")}
         </div>
         `
     }
@@ -289,21 +350,25 @@ class GazparCard extends LitElement {
     }
     
     const defaultConfig = {
-      showHistory: true,
-      showPeakOffPeak: true,
-      showIcon: false,
-      showUnit: false,
-      showDayPrice: false,
-      showDayPriceHCHP: false,
-      showDayHCHP: false,
-      showDayName: "long",
-      showError: true,
-      showCost: true,
-      showTitle: false,
-      showTitreLigne: false,
+
       titleName: "",
+
+      showTitle: false,
+      showIcon: false,
+      showCost: true,
+
+      showWeeklyHistory: true,
+      showMonthlyHistory: true,
+      showHistoryHeader: true,
+      showEnergyHistory: true,
+      showVolumeHistory: true,
+      showCostHistory: true,
+
       nbJoursAffichage: 7,
-      kWhPrice: undefined,
+      showDayName: "short",
+      costPerKWh: undefined,
+
+      showError: true,
     }
 
     this.config = {

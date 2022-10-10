@@ -45,10 +45,6 @@ export class GazparCardEditor extends LitElement {
     return this._config.showIcon !== false;
   }
   
-  get _showUnit() {
-    return this._config.showUnit !== false;
-  }
-  
   get _showCost() {
     return this._config.showCost !== false;
   }
@@ -61,8 +57,12 @@ export class GazparCardEditor extends LitElement {
     return this._config.showError !== false;
   }
 
-  get _showHistory() {
-    return this._config.showHistory !== false;
+  get _showWeeklyHistory() {
+    return this._config.showWeeklyHistory !== false;
+  }
+
+  get _showMonthlyHistory() {
+    return this._config.showMonthlyHistory !== false;
   }
 
   get _showHistoryHeader() {
@@ -101,7 +101,7 @@ export class GazparCardEditor extends LitElement {
     return this._config.titleName || "";
   }
 
-  get _showCostPerKWh() {
+  get _costPerKWh() {
     return this._config.costPerKWh;
   }
 
@@ -134,12 +134,12 @@ export class GazparCardEditor extends LitElement {
             ${this.renderSwitchOption("Show icon", this._showIcon, "showIcon")}
             ${this.renderSwitchOption("Show cost", this._showCost, "showCost")}          
 
-            ${this.renderSwitchOption("Show history", this._showHistory, "showHistory")}
+            ${this.renderSwitchOption("Show weekly history", this._showWeeklyHistory, "showWeeklyHistory")}
+            ${this.renderSwitchOption("Show monthly history", this._showMonthlyHistory, "showMonthlyHistory")}
             ${this.renderSwitchOption("Show history header", this._showHistoryHeader, "showHistoryHeader")}
             ${this.renderSwitchOption("Show energy history", this._showEnergyHistory, "showEnergyHistory")}
             ${this.renderSwitchOption("Show volume history", this._showVolumeHistory, "showVolumeHistory")}
             ${this.renderSwitchOption("Show cost history", this._showCostHistory, "showCostHistory")}
-            ${this.renderSwitchOption("Show unit", this._showUnit, "showUnit")}
             
             ${this.renderSwitchOption("Show error", this._showError, "showError")}
           </ul>
@@ -161,7 +161,7 @@ export class GazparCardEditor extends LitElement {
           ></paper-input>
           <paper-input
           label="Tarif du gaz par kWh:"
-          .value="${this._showCostPerKWh}"
+          .value="${this._costPerKWh}"
           .configValue="${"costPerKWh"}"
           @value-changed="${this._valueChanged}"
         ></paper-input>
