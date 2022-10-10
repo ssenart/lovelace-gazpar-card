@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 [#1](https://github.com/ssenart/lovelace-gazpar-card/issues/1): [Feature] Provide monthly history (in addition to weekly history already available).
 
+[#2](https://github.com/ssenart/lovelace-gazpar-card/issues/2): [Feature] Provide trend ratio of the consumption.
+
 ## [1.0.0] - 2022-10-09
 
 ### Added

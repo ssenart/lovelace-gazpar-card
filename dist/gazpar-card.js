@@ -93,6 +93,9 @@ class GazparCard extends LitElement {
 
       const attributes = stateObj.attributes;
 
+      this.computeConsumptionTrendRatio(attributes.daily, 1)
+      this.computeConsumptionTrendRatio(attributes.monthly, 12)
+
       return html`
         <ha-card id="card">
           ${this.addEventListener('click', event => { this._showDetails(this.config.entity); })}
@@ -120,7 +123,7 @@ class GazparCard extends LitElement {
                 }
             </div>
             
-            ${this.renderWeeklyHistory(attributes.daily, attributes.unit_of_measurement, this.config)}
+            ${this.renderDailyHistory(attributes.daily, attributes.unit_of_measurement, this.config)}
             ${this.renderMonthlyHistory(attributes.monthly, attributes.unit_of_measurement, this.config)}
 
             ${this.renderError(attributes.errorMessage, this.config)}
@@ -129,6 +132,24 @@ class GazparCard extends LitElement {
         </ha-card>`
     }
   }
+
+  computeConsumptionTrendRatio(data, shift)
+  {
+    for (var i = 0; i < data.length-shift; ++i)
+    {
+      if (data[i].energy_kwh >= 0 && data[i+shift].energy_kwh >= 0)
+      {
+        var ratio = 100 * (data[i].energy_kwh - data[i+shift].energy_kwh) / data[i].energy_kwh
+
+        data[i].ratio = ratio
+      }
+      else
+      {
+        data[i].ratio = null
+      }
+    }
+  }
+
   _showDetails(myEntity) {
     const event = new Event('hass-more-info', {
       bubbles: true,
@@ -218,9 +239,9 @@ class GazparCard extends LitElement {
     return res;
   }
 
-  renderWeeklyHistory(data, unit_of_measurement, config) {
+  renderDailyHistory(data, unit_of_measurement, config) {
 
-    if (config.showWeeklyHistory) {
+    if (config.showDailyHistory) {
       // Keep the last 7 days.
       var now = new Date()
       var filteredDates = data.reverse().filter(item => this.parseDate(item.time_period) >= this.addDays(now, -8))
@@ -239,7 +260,7 @@ class GazparCard extends LitElement {
         <hr size="1" color="grey"/>
         <div class="week-history">
           ${this.renderHistoryHeader(config)}
-          ${filteredDates.slice(filteredDates.length - 7, filteredDates.length).map(item => this.renderWeeklyDataColumnHistory(item, unit_of_measurement, config))}
+          ${filteredDates.slice(filteredDates.length - 7, filteredDates.length).map(item => this.renderDailyDataColumnHistory(item, unit_of_measurement, config))}
         </div>
       `
     }
@@ -263,7 +284,7 @@ class GazparCard extends LitElement {
     }
   }
 
-  renderWeeklyDataColumnHistory(item, unit_of_measurement, config) {
+  renderDailyDataColumnHistory(item, unit_of_measurement, config) {
 
       var date = this.parseDate(item.time_period)
       
@@ -273,6 +294,7 @@ class GazparCard extends LitElement {
         ${config.showEnergyHistory ? this.renderDataValue(item.energy_kwh, unit_of_measurement, 0) : ""}
         ${config.showVolumeHistory ? this.renderDataValue(item.volume_m3, "m³", 0) : ""}
         ${config.showCostHistory ? this.renderDataValue(item.energy_kwh * this.config.costPerKWh, "€", 2) : ""}
+        ${config.showTrendRatioHistory ? this.renderRatioValue(item.ratio, "%", 0) : ""}
       </div>
       `
   }
@@ -287,6 +309,7 @@ class GazparCard extends LitElement {
       ${config.showEnergyHistory ? this.renderDataValue(item.energy_kwh, unit_of_measurement, 0) : ""}
       ${config.showVolumeHistory ? this.renderDataValue(item.volume_m3, "m³", 0) : ""}
       ${config.showCostHistory ? this.renderDataValue(item.energy_kwh * this.config.costPerKWh, "€", 0) : ""}
+      ${config.showTrendRatioHistory ? this.renderRatioValue(item.ratio, "%", 0) : ""}
     </div>
     `
 }
@@ -302,7 +325,26 @@ class GazparCard extends LitElement {
         ${this.renderNoData()}
       `
     }
+  }
 
+  renderRatioValue(value, unit, decimals)
+  {
+    if (value != null)
+    {
+      return html `
+      <br>
+      <span class="ha-icon">
+        <ha-icon icon="mdi:arrow-right" style="display: inline-block; transform: rotate(${(value < 0) ? '45' : ((value == 0) ? "0" : "-45")}deg)">
+      </ha-icon>
+      </span>
+      <div class="tooltip">
+        <nobr>${(value > 0) ? '+': ''}${Math.round(value)}<span class="unit">%</span></nobr>
+      </div>`
+    } else {
+      return html `
+        ${this.renderNoData()}
+      `
+    }
   }
 
   renderRowHeader(show, header) {
@@ -328,6 +370,7 @@ class GazparCard extends LitElement {
           ${this.renderRowHeader(this.config.showEnergyHistory, "kWh")}
           ${this.renderRowHeader(this.config.showVolumeHistory, "m³")}
           ${this.renderRowHeader(this.config.showCostHistory, "€")}
+          ${this.renderRowHeader(this.config.showTrendRatioHistory, "%")}
         </div>
         `
     }
@@ -357,12 +400,13 @@ class GazparCard extends LitElement {
       showIcon: false,
       showCost: true,
 
-      showWeeklyHistory: true,
+      showDailyHistory: true,
       showMonthlyHistory: true,
       showHistoryHeader: true,
       showEnergyHistory: true,
       showVolumeHistory: true,
       showCostHistory: true,
+      showTrendRatioHistory: true,
 
       nbJoursAffichage: 7,
       showDayName: "short",

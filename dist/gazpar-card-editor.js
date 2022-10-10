@@ -57,8 +57,8 @@ export class GazparCardEditor extends LitElement {
     return this._config.showError !== false;
   }
 
-  get _showWeeklyHistory() {
-    return this._config.showWeeklyHistory !== false;
+  get _showDailyHistory() {
+    return this._config.showDailyHistory !== false;
   }
 
   get _showMonthlyHistory() {
@@ -75,6 +75,10 @@ export class GazparCardEditor extends LitElement {
 
   get _showCostHistory() {
     return this._config.showCostHistory !== false;
+  }
+
+  get _showTrendRatioHistory() {
+    return this._config.showTrendRatioHistory !== false;
   }
 
   get _title() {
@@ -134,12 +138,13 @@ export class GazparCardEditor extends LitElement {
             ${this.renderSwitchOption("Show icon", this._showIcon, "showIcon")}
             ${this.renderSwitchOption("Show cost", this._showCost, "showCost")}          
 
-            ${this.renderSwitchOption("Show weekly history", this._showWeeklyHistory, "showWeeklyHistory")}
+            ${this.renderSwitchOption("Show daily history", this._showDailyHistory, "showDailyHistory")}
             ${this.renderSwitchOption("Show monthly history", this._showMonthlyHistory, "showMonthlyHistory")}
             ${this.renderSwitchOption("Show history header", this._showHistoryHeader, "showHistoryHeader")}
             ${this.renderSwitchOption("Show energy history", this._showEnergyHistory, "showEnergyHistory")}
             ${this.renderSwitchOption("Show volume history", this._showVolumeHistory, "showVolumeHistory")}
             ${this.renderSwitchOption("Show cost history", this._showCostHistory, "showCostHistory")}
+            ${this.renderSwitchOption("Show trend ratio history", this._showTrendRatioHistory, "showTrendRatioHistory")}
             
             ${this.renderSwitchOption("Show error", this._showError, "showError")}
           </ul>
