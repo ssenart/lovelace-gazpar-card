@@ -6,9 +6,15 @@ This card has been inspired from the great [Linky Card](https://github.com/sanih
 
 I reuse the same layout.
 
-![Gazpar Card](images/gazpar-card.jpg)
+![Gazpar Card](images/gazpar-card.png)
 
-It requires the HA integration [Gazpar](https://github.com/ssenart/home-assistant-gazpar).
+It requires the HA integration [Gazpar](https://github.com/ssenart/home-assistant-gazpar) at least from version 1.2.0.
+
+Trend ratio (% in the table) must be interpreted differently depending on the frequency:
+
+- Daily trend ratio is between two consecutive days.
+
+- Monthly trend ratio is between two months with a year apart (for example, we compare Feb21 with Feb22).
 
 ## Installation
 
@@ -34,4 +40,7 @@ Follow the steps described below to add GrDF Gazpar integration with [HACS](http
 
 ## Configuration
 
-![Gazpar Card Configuration](images/gazpar-card-editor.jpg)
+In the configuration panel, play with the toggles and see how it affects the card layout.
+
+![Gazpar Card Configuration](images/gazpar-card-editor.png)
+
