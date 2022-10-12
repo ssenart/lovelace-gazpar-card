@@ -69,6 +69,10 @@ export class GazparCardEditor extends LitElement {
     return this._config.showHistoryHeader !== false;
   }
 
+  get _showEnergyHistory() {
+    return this._config.showEnergyHistory !== false;
+  }
+
   get _showVolumeHistory() {
     return this._config.showVolumeHistory !== false;
   }
@@ -109,6 +113,14 @@ export class GazparCardEditor extends LitElement {
     return this._config.costPerKWh;
   }
 
+  get _showMonthlyEnergyHistoryChart() {
+    return this._config.showMonthlyEnergyHistoryChart !== false;
+  }
+
+  get _showMonthlyCostHistoryChart() {
+    return this._config.showMonthlyCostHistoryChart !== false;
+  }
+
   firstUpdated() {
     HELPERS.then(help => {
       if (help.importMoreInfoControl) {
@@ -145,27 +157,15 @@ export class GazparCardEditor extends LitElement {
             ${this.renderSwitchOption("Show volume history", this._showVolumeHistory, "showVolumeHistory")}
             ${this.renderSwitchOption("Show cost history", this._showCostHistory, "showCostHistory")}
             ${this.renderSwitchOption("Show trend ratio history", this._showTrendRatioHistory, "showTrendRatioHistory")}
+
+            ${this.renderSwitchOption("Show monthly energy history chart", this._showMonthlyEnergyHistoryChart, "showMonthlyEnergyHistoryChart")}
+            ${this.renderSwitchOption("Show monthly cost history chart", this._showMonthlyCostHistoryChart, "showMonthlyCostHistoryChart")}
             
             ${this.renderSwitchOption("Show error", this._showError, "showError")}
           </ul>
           <!-- -->
           <paper-input
-            label="nombre de jours"
-            type="number"
-            min="1"
-            max="12"
-            value=${this._nbJoursAffichage}
-            .configValue="${"nbJoursAffichage"}"
-            @value-changed="${this._valueChanged}"
-          ></paper-input><br>
-          <paper-input
-            label="Nom du jour de la semaine( valeur possible : long, short, narrow )"
-            .value="${this._showDayName}"
-            .configValue="${"showDayName"}"
-            @value-changed="${this._valueChanged}"
-          ></paper-input>
-          <paper-input
-          label="Tarif du gaz par kWh:"
+          label="Gas cost per kWh:"
           .value="${this._costPerKWh}"
           .configValue="${"costPerKWh"}"
           @value-changed="${this._valueChanged}"

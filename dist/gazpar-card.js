@@ -1,3 +1,5 @@
+import "https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"
+
 const LitElement = Object.getPrototypeOf(
   customElements.get("ha-panel-lovelace")
 );
@@ -27,6 +29,7 @@ window.customCards.push({
   preview: true,
   documentationURL: "https://github.com/ssenart/home-assistant-gazpar-card",
 });
+
 const fireEvent = (node, type, detail, options) => {
   options = options || {};
   detail = detail === null || detail === undefined ? {} : detail;
@@ -57,6 +60,7 @@ function hasConfigOrEntityChanged(element, changedProps) {
 }
 
 class GazparCard extends LitElement {
+
   static get properties() {
     return {
       config: {},
@@ -67,6 +71,139 @@ class GazparCard extends LitElement {
   static async getConfigElement() {
     await import("./gazpar-card-editor.js");
     return document.createElement("gazpar-card-editor");
+  }
+
+  updated(changedProperties) {
+
+    const stateObj = this.hass.states[this.config.entity];
+
+    if (stateObj)
+    {
+      const attributes = stateObj.attributes;
+
+      
+      this.updateMonthlyEnergyChart(attributes.monthly, this.config)
+      this.updateMonthlyCostChart(attributes.monthly, this.config)
+    }
+  }
+
+  updateMonthlyEnergyChart(data) {
+
+    if (this.config.showMonthlyEnergyHistoryChart) {
+
+      const ctx = this.renderRoot.querySelector('#monthlyEnergyHistoryChart').getContext('2d');
+
+      this.monthlyEnergyHistoryChart = new Chart(ctx, {
+          type: 'bar',
+          data: {
+              labels: [],
+              datasets: [
+                {
+                  label: 'kWh (last year)',
+                  data: [],
+                  backgroundColor: [
+                    'grey',
+                  ],
+                },
+                {
+                  label: 'kWh (current year)',
+                  data: [],
+                  backgroundColor: [
+                      'orange',
+                  ],
+                }
+              ]
+          },
+          options: {
+              scales: {
+                  yAxes: [{
+                      ticks: {
+                          beginAtZero:true
+                      }
+                  }]
+              }
+          }
+      });
+
+      this.updateMonthlyChartLabels(this.monthlyEnergyHistoryChart, data)
+      this.updateMonthlyEnergyChartData(this.monthlyEnergyHistoryChart, data, 0)
+      this.updateMonthlyEnergyChartData(this.monthlyEnergyHistoryChart, data, 1)
+
+      this.monthlyEnergyHistoryChart.update()
+    }
+  }
+
+  updateMonthlyCostChart(data) {
+
+    if (this.config.showMonthlyCostHistoryChart) {
+
+      const ctx = this.renderRoot.querySelector('#monthlyCostHistoryChart').getContext('2d');
+
+      this.monthlyCostHistoryChart = new Chart(ctx, {
+          type: 'bar',
+          data: {
+              labels: [],
+              datasets: [
+                {
+                  label: '€ (last year)',
+                  data: [],
+                  backgroundColor: [
+                    'grey',
+                  ],              
+                },
+                {
+                  label: '€ (current year)',
+                  data: [],
+                  backgroundColor: [
+                      'DarkTurquoise',
+                  ],
+                }
+              ]
+          },
+          options: {
+              scales: {
+                  yAxes: [{
+                      ticks: {
+                          beginAtZero:true
+                      }
+                  }]
+              }
+          }
+      });
+
+      this.updateMonthlyChartLabels(this.monthlyCostHistoryChart, data)
+      this.updateMonthlyCostChartData(this.monthlyCostHistoryChart, data, 0)
+      this.updateMonthlyCostChartData(this.monthlyCostHistoryChart, data, 1)
+
+      this.monthlyCostHistoryChart.update()
+    }
+  }
+
+  updateMonthlyChartLabels(chart, data)
+  {  
+    var lastYear = data.slice(0, 12).reverse()
+
+    var labels = []
+    for(var i in lastYear)
+    {
+      var date = this.parseMonthPeriod(lastYear[i].time_period)
+
+      var label = date.toLocaleDateString('fr-FR', {month: 'short'})
+
+      labels.push(label)
+    }
+
+    chart.data.labels = labels
+  }
+
+  updateMonthlyEnergyChartData(chart, data, index)
+  {
+    chart.data.datasets[index].data = data.slice((1 - index) * 12, (2 - index) * 12).reverse().map(item => item.energy_kwh)
+  }
+
+  updateMonthlyCostChartData(chart, data, index)
+  {
+    chart.data.datasets[index].data = data.slice((1 - index) * 12, (2 - index) * 12).reverse().map(item => this.toFloat(item.energy_kwh * this.config.costPerKWh, 0))
   }
 
   render() {
@@ -93,7 +230,7 @@ class GazparCard extends LitElement {
 
       const attributes = stateObj.attributes;
 
-      this.computeConsumptionTrendRatio(attributes.daily, 1)
+      this.computeConsumptionTrendRatio(attributes.daily, 7)
       this.computeConsumptionTrendRatio(attributes.monthly, 12)
 
       return html`
@@ -105,7 +242,7 @@ class GazparCard extends LitElement {
               ${this.config.showIcon
                 ? html`
                   <div class="icon-block">
-                    <span class="gazpar-icon bigger" style="background: none, url(/local/community/lovelace-gazpar-card/gazpar-icon.png) no-repeat; background-size: contain;"></span>
+                    <span class="gazpar-icon bigger" style="background: none, url(/local/lovelace-gazpar-card/dist/gazpar-icon.png) no-repeat; background-size: contain;"></span>
                   </div>`
                 : html `` 
               }
@@ -124,7 +261,9 @@ class GazparCard extends LitElement {
             </div>
             
             ${this.renderDailyHistory(attributes.daily, attributes.unit_of_measurement, this.config)}
-            ${this.renderMonthlyHistory(attributes.monthly, attributes.unit_of_measurement, this.config)}
+            ${this.renderMonthlyHistoryTable(attributes.monthly, attributes.unit_of_measurement, this.config)}
+            ${this.renderMonthlyEnergyHistoryChart(attributes.monthly, attributes.unit_of_measurement, this.config)}
+            ${this.renderMonthlyCostHistoryChart(attributes.monthly, attributes.unit_of_measurement, this.config)}
 
             ${this.renderError(attributes.errorMessage, this.config)}
             ${this.renderVersion(attributes.versionUpdateAvailable, attributes.versionGit)}
@@ -162,6 +301,7 @@ class GazparCard extends LitElement {
     this.dispatchEvent(event);
     return event;
   }
+
   renderTitle(config) {
     if (this.config.showTitle === true) {
       return html
@@ -173,6 +313,7 @@ class GazparCard extends LitElement {
           </div>` 
        }
   }
+
   renderError(errorMsg, config) {
     if (this.config.showError === true) {
        if ( errorMsg != "" ){
@@ -186,6 +327,7 @@ class GazparCard extends LitElement {
        }
     }
   }
+
   renderVersion(versionUpdateAvailable, versionGit) {
     if ( versionUpdateAvailable === true ){
           return html
@@ -266,20 +408,52 @@ class GazparCard extends LitElement {
     }
   }
 
-  renderMonthlyHistory(data, unit_of_measurement, config) {
+  renderMonthlyHistoryTable(data, unit_of_measurement, config) {
 
     if (config.showMonthlyHistory) {
-      // Keep the last 12 months.
-      var now = new Date()
-      var filteredDates = data.reverse().filter(item => this.parseMonthPeriod(item.time_period) >= this.addMonths(now, -13))
-
       return html
       `
         <hr size="1" color="grey"/>
         <div class="week-history">
           ${this.renderHistoryHeader(config)}
-          ${filteredDates.slice(filteredDates.length - 12, filteredDates.length).map(item => this.renderMonthlyDataColumnHistory(item, unit_of_measurement, config))}
+          ${data.slice(0, 12).reverse().map(item => this.renderMonthlyDataColumnHistory(item, unit_of_measurement, config))}
         </div>
+      `
+    }
+  }
+
+  renderMonthlyEnergyHistoryChart() {
+
+    if (this.config.showMonthlyEnergyHistoryChart)
+    {
+      return html
+      `
+        <hr size="1" color="grey"/>
+        <div class="chart-container">
+          <canvas id="monthlyEnergyHistoryChart"></canvas>
+        </div>
+      `
+    } else {
+      return html
+      `
+      `
+    }
+  }
+
+  renderMonthlyCostHistoryChart() {
+
+    if (this.config.showMonthlyCostHistoryChart)
+    {
+      return html
+      `
+        <hr size="1" color="grey"/>
+        <div class="chart-container">
+          <canvas id="monthlyCostHistoryChart"></canvas>
+        </div>
+      `
+    } else {
+      return html
+      `
       `
     }
   }
@@ -290,7 +464,7 @@ class GazparCard extends LitElement {
       
       return html `
       <div class="day">
-        <span class="dayname" title="${date.toLocaleDateString('fr-FR')}">${date.toLocaleDateString('fr-FR', {weekday: config.showDayName})}</span>
+        <span class="dayname" title="${date.toLocaleDateString('fr-FR')}">${date.toLocaleDateString('fr-FR', {weekday: 'short'})}</span>
         ${config.showEnergyHistory ? this.renderDataValue(item.energy_kwh, unit_of_measurement, 0) : ""}
         ${config.showVolumeHistory ? this.renderDataValue(item.volume_m3, "m³", 0) : ""}
         ${config.showCostHistory ? this.renderDataValue(item.energy_kwh * this.config.costPerKWh, "€", 2) : ""}
@@ -312,7 +486,7 @@ class GazparCard extends LitElement {
       ${config.showTrendRatioHistory ? this.renderRatioValue(item.ratio, "%", 0) : ""}
     </div>
     `
-}
+  }
 
   renderDataValue(value, unit, decimals)
   {
@@ -334,7 +508,7 @@ class GazparCard extends LitElement {
       return html `
       <br>
       <span class="ha-icon">
-        <ha-icon icon="mdi:arrow-right" style="display: inline-block; transform: rotate(${(value < 0) ? '45' : ((value == 0) ? "0" : "-45")}deg)">
+        <ha-icon icon="mdi:arrow-right" style="color: ${value > 0 ? "red":"green"}; display: inline-block; transform: rotate(${value < 0?'45': (value == 0? "0" : "-45")}deg)">
       </ha-icon>
       </span>
       <div class="tooltip">
@@ -379,7 +553,7 @@ class GazparCard extends LitElement {
   renderNoData(){
     return html
     `
-      <br><span class="cons-val" title="Donnée indisponible"><ha-icon id="icon" icon="mdi:alert-outline"></ha-icon></span>
+      <br><span class="cons-val" title="Donnée indisponible"><ha-icon id="icon" icon="mdi:alert-outline" style="color:orange"></ha-icon></span>
     `
   }
 
@@ -407,10 +581,11 @@ class GazparCard extends LitElement {
       showVolumeHistory: true,
       showCostHistory: true,
       showTrendRatioHistory: true,
-
-      nbJoursAffichage: 7,
-      showDayName: "short",
+      
       costPerKWh: undefined,
+
+      showMonthlyEnergyHistoryChart: true,
+      showMonthlyCostHistoryChart: true,
 
       showError: true,
     }

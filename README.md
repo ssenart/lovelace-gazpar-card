@@ -12,7 +12,7 @@ It requires the HA integration [Gazpar](https://github.com/ssenart/home-assistan
 
 Trend ratio (% in the table) must be interpreted differently depending on the frequency:
 
-- Daily trend ratio is between two consecutive days.
+- Daily trend ratio is between two days with a week apart (for example, we compare two consecutive Sunday).
 
 - Monthly trend ratio is between two months with a year apart (for example, we compare Feb21 with Feb22).
 

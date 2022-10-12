@@ -1,0 +1,39 @@
+{
+    "name": "lovelace-gazpar-card",
+    "version": "1.1.0",
+    "description": "GrDF Gazpar meter card for Home Assistant Lovelace UI",
+    "keywords": [
+      "home-assistant",
+      "homeassistant",
+      "hass",
+      "automation",
+      "lovelace",
+      "custom-cards",
+      "Gazpar",
+      "GrDF",
+      "Gas",
+      "Meter",
+      "Consumption-data"
+    ],
+    "module": "dist/gazpar-card.js",
+    "repository": "git@github.com:ssenart/lovelace-gazpar-card.git",
+    "author": "Senart Stephane",
+    "license": "MIT",
+    "dependencies": {
+      "lit": "^2.0.2",
+      "chart.js": "^3.9.1"
+    },
+    "devDependencies": {
+      "eslint": "^5.16.0",
+      "acorn": "^8.4.1",
+      "rollup": "^2.33.1",
+      "rollup-plugin-node-resolve": "^5.2.0",
+      "rollup-plugin-serve": "^1.1.0"
+    },
+    "scripts": {
+      "start": "rollup -c rollup.config.dev.js --watch",
+      "build": "npm run lint && npm run rollup",
+      "lint": "eslint src/* --ext .js",
+      "rollup": "rollup -c"
+    }
+  }
