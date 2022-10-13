@@ -33,12 +33,16 @@ export class GazparCardEditor extends LitElement {
     return { hass: {}, _config: {} };
   }
 
-  get _entity() {
-    return this._config.entity || "";
+  get _title() {
+    return this._config.title || "GrDF data";
   }
 
-  get _name() {
-    return this._config.name || "";
+  get _entity() {
+    return this._config.entity || "sensor.gazpar";
+  }
+
+  get _costPerKWh() {
+    return this._config.costPerKWh || 0.0;
   }
 
   get _showIcon() {
@@ -85,34 +89,6 @@ export class GazparCardEditor extends LitElement {
     return this._config.showTrendRatioHistory !== false;
   }
 
-  get _title() {
-    return this._config.showTitle !== false;
-  }
-  
-  get _current() {
-    return this._config.current !== false;
-  }
-
-  get _details() {
-    return this._config.details !== false;
-  }
-
-  get _nbJoursAffichage() {
-    return this._config.nbJoursAffichage || 7;
-  }
-
-  get _showDayName() {
-    return this._config.showDayName;
-  }
-  
-  get _titleName() {
-    return this._config.titleName || "";
-  }
-
-  get _costPerKWh() {
-    return this._config.costPerKWh;
-  }
-
   get _showMonthlyEnergyHistoryChart() {
     return this._config.showMonthlyEnergyHistoryChart !== false;
   }
@@ -137,13 +113,40 @@ export class GazparCardEditor extends LitElement {
     return html`
       <div class="card-config">
         <div>
+
+          ${this.renderGazparPicker("Entity", this._entity, "entity")}
+
+          <ha-entity-picker
+            label="Entity"
+            .hass="${this.hass}"
+            .value="${this._entity}"
+            .configValue="${"entity"}"
+            .includeDomains="sensor"
+            @change="${this._valueChanged}"
+            allow-custom-entity
+          ></ha-entity-picker>
+
           <paper-input
-            label="Titre"
-            .value="${this._titleName}"
-            .configValue="${"titleName"}"
+            label="Entity"
+            .value="${this._entity}"
+            .configValue="${"entity"}"
             @value-changed="${this._valueChanged}"
           ></paper-input>
-          ${this.renderGazparPicker("Entity", this._entity, "entity")}
+
+          <paper-input
+            label="Title"
+            .value="${this._title}"
+            .configValue="${"title"}"
+            @value-changed="${this._valueChanged}"
+          ></paper-input>
+
+          <paper-input
+            label="Gas cost (€/kWh):"
+            .value="${this._costPerKWh}"
+            .configValue="${"costPerKWh"}"
+            @value-changed="${this._valueChanged}"
+          ></paper-input>
+
           <!-- Switches -->
           <ul class="switches">
             ${this.renderSwitchOption("Show title", this._showTitle, "showTitle")}
@@ -163,20 +166,14 @@ export class GazparCardEditor extends LitElement {
             
             ${this.renderSwitchOption("Show error", this._showError, "showError")}
           </ul>
-          <!-- -->
-          <paper-input
-          label="Gas cost per kWh:"
-          .value="${this._costPerKWh}"
-          .configValue="${"costPerKWh"}"
-          @value-changed="${this._valueChanged}"
-        ></paper-input>
+
         </div>
       </div>
     `;
   }
   
   renderGazparPicker(label, entity, configAttr) {
-    return this.renderPicker(label, entity, configAttr, "sensor.gazpar");
+    return this.renderPicker(label, entity, configAttr, "sensor");
   }
 
   renderPicker(label, entity, configAttr, domain) {
@@ -192,6 +189,7 @@ export class GazparCardEditor extends LitElement {
               ></ha-entity-picker>
             `
   }
+
   renderSwitchOption(label, state, configAttr) {
     return html`
       <li class="switch">
@@ -204,6 +202,7 @@ export class GazparCardEditor extends LitElement {
           </li>
     `
   }
+
   _valueChanged(ev) {
     if (!this._config || !this.hass) {
       return;

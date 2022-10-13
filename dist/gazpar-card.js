@@ -308,7 +308,7 @@ class GazparCard extends LitElement {
         `
           <div class="card">
           <div class="main-title">
-          <span>${this.config.titleName}</span>
+          <span>${this.config.title}</span>
           </div>
           </div>` 
        }
@@ -562,16 +562,18 @@ class GazparCard extends LitElement {
       throw new Error('You need to define an entity');
     }
 
-    if (config.kWhPrice && isNaN(config.kWhPrice)) {
-      throw new Error('kWhPrice should be a number')
+    if (config.costPerKWh && isNaN(config.costPerKWh)) {
+      throw new Error('costPerKWh should be a number')
     }
     
     const defaultConfig = {
 
-      titleName: "",
+      title: "GrDF data",
+      entity: "sensor.gazpar",
+      costPerKWh: 0.0,
 
-      showTitle: false,
-      showIcon: false,
+      showTitle: true,
+      showIcon: true,
       showCost: true,
 
       showDailyHistory: true,
@@ -582,8 +584,6 @@ class GazparCard extends LitElement {
       showCostHistory: true,
       showTrendRatioHistory: true,
       
-      costPerKWh: undefined,
-
       showMonthlyEnergyHistoryChart: true,
       showMonthlyCostHistoryChart: true,
 

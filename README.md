@@ -44,3 +44,31 @@ In the configuration panel, play with the toggles and see how it affects the car
 
 ![Gazpar Card Configuration](images/gazpar-card-editor.png)
 
+Alternatively, you can configure your card manually with the following code:
+
+```yaml
+type: custom:gazpar-card
+
+entity: sensor.gazpar
+title: 'Données GrDF'
+costPerKWh: '0.06072'
+
+showTitle: true
+showIcon: true
+showCost: true
+
+showDailyHistory: true
+showMonthlyHistory: true
+showHistoryHeader: true
+showEnergyHistory: true
+showVolumeHistory: true
+showCostHistory: true
+showTrendRatioHistory: true
+
+showMonthlyCostHistoryChart: true
+showMonthlyEnergyHistoryChart: true
+
+showError: true
+``` 
+
+
