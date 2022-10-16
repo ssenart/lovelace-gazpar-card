@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.3.0] - 2022-10-16
 
 ### Added
-[#5](https://github.com/ssenart/lovelace-gazpar-card/issues/5): [Feature] Display yearly data as history bar chart.
+[#5](https://github.com/ssenart/lovelace-gazpar-card/issues/5): [Feature] Display yearly data as history bar chart. It required at least Gazpar Integration version 1.3.0.
 
 ## [1.2.1] - 2022-10-13
 
