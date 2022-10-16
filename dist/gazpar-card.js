@@ -84,6 +84,9 @@ class GazparCard extends LitElement {
       
       this.updateMonthlyEnergyChart(attributes.monthly, this.config)
       this.updateMonthlyCostChart(attributes.monthly, this.config)
+
+      this.updateYearlyEnergyChart(attributes.yearly, this.config)
+      this.updateYearlyCostChart(attributes.yearly, this.config)
     }
   }
 
@@ -113,21 +116,15 @@ class GazparCard extends LitElement {
                   ],
                 }
               ]
-          },
-          options: {
-              scales: {
-                  yAxes: [{
-                      ticks: {
-                          beginAtZero:true
-                      }
-                  }]
-              }
           }
       });
 
-      this.updateMonthlyChartLabels(this.monthlyEnergyHistoryChart, data)
-      this.updateMonthlyEnergyChartData(this.monthlyEnergyHistoryChart, data, 0)
-      this.updateMonthlyEnergyChartData(this.monthlyEnergyHistoryChart, data, 1)
+      if (data != null && data.length > 0)
+      {
+        this.updateMonthlyChartLabels(this.monthlyEnergyHistoryChart, data)
+        this.updateMonthlyEnergyChartData(this.monthlyEnergyHistoryChart, data, 0)
+        this.updateMonthlyEnergyChartData(this.monthlyEnergyHistoryChart, data, 1)
+      }
 
       this.monthlyEnergyHistoryChart.update()
     }
@@ -159,21 +156,15 @@ class GazparCard extends LitElement {
                   ],
                 }
               ]
-          },
-          options: {
-              scales: {
-                  yAxes: [{
-                      ticks: {
-                          beginAtZero:true
-                      }
-                  }]
-              }
           }
       });
 
+      if (data != null && data.length > 0)
+      {
       this.updateMonthlyChartLabels(this.monthlyCostHistoryChart, data)
       this.updateMonthlyCostChartData(this.monthlyCostHistoryChart, data, 0)
       this.updateMonthlyCostChartData(this.monthlyCostHistoryChart, data, 1)
+      }
 
       this.monthlyCostHistoryChart.update()
     }
@@ -204,6 +195,85 @@ class GazparCard extends LitElement {
   updateMonthlyCostChartData(chart, data, index)
   {
     chart.data.datasets[index].data = data.slice((1 - index) * 12, (2 - index) * 12).reverse().map(item => this.toFloat(item.energy_kwh * this.config.costPerKWh, 0))
+  }
+
+  updateYearlyEnergyChart(data) {
+
+    if (this.config.showYearlyEnergyHistoryChart) {
+
+      const ctx = this.renderRoot.querySelector('#yearlyEnergyHistoryChart').getContext('2d');
+
+      this.yearlyEnergyHistoryChart = new Chart(ctx, {
+          type: 'bar',
+          data: {
+              labels: [],
+              datasets: [
+                {
+                  label: 'kWh (per year)',
+                  data: [],
+                  backgroundColor: [
+                    'orange',
+                  ],
+                }
+              ]
+          }
+      });
+
+      if (data != null && data.length > 0)
+      {
+        this.updateYearlyChartLabels(this.yearlyEnergyHistoryChart, data)
+        this.updateYearlyEnergyChartData(this.yearlyEnergyHistoryChart, data)
+      }
+
+      this.yearlyEnergyHistoryChart.update()
+    }
+  }
+
+  updateYearlyCostChart(data) {
+
+    if (this.config.showYearlyCostHistoryChart) {
+
+      const ctx = this.renderRoot.querySelector('#yearlyCostHistoryChart').getContext('2d');
+
+      this.yearlyCostHistoryChart = new Chart(ctx, {
+          type: 'bar',
+          data: {
+              labels: [],
+              datasets: [
+                {
+                  label: '€ (per year)',
+                  data: [],
+                  backgroundColor: [
+                    'DarkTurquoise',
+                  ],
+                }
+              ]
+          }
+      });
+
+      if (data != null && data.length > 0)
+      {
+        this.updateYearlyChartLabels(this.yearlyCostHistoryChart, data)
+        this.updateYearlyCostChartData(this.yearlyCostHistoryChart, data)
+      }
+
+      this.yearlyEnergyHistoryChart.update()
+    }
+  }
+
+  updateYearlyChartLabels(chart, data)
+  {  
+    chart.data.labels = data.slice(0, 10).reverse().map(item => item.time_period)
+  }
+
+  updateYearlyEnergyChartData(chart, data)
+  {
+    chart.data.datasets[0].data = data.slice(0,10).reverse().map(item => item.energy_kwh)
+  }
+
+  updateYearlyCostChartData(chart, data)
+  {
+    chart.data.datasets[0].data = data.slice(0,10).reverse().map(item => this.toFloat(item.energy_kwh * this.config.costPerKWh, 0))
   }
 
   render() {
@@ -247,14 +317,14 @@ class GazparCard extends LitElement {
                 : html `` 
               }
               <div class="cout-block">
-                <span class="cout">${this.toFloat(attributes.daily[0].energy_kwh)}</span><span class="cout-unit">${attributes.unit_of_measurement}</span><br/>
-                <span class="conso">${this.toFloat(attributes.daily[0].volume_m3)}</span><span class="conso-unit">m³</span> - 
-                <span class="conso">${attributes.daily[0].time_period}</span>
+                <span class="cout">${attributes.daily != null && attributes.daily.length > 0 ? this.toFloat(attributes.daily[0].energy_kwh):"N/A"}</span><span class="cout-unit">${attributes.unit_of_measurement}</span><br/>
+                <span class="conso">${attributes.daily != null && attributes.daily.length > 0 ? this.toFloat(attributes.daily[0].volume_m3):"N/A"}</span><span class="conso-unit">m³</span> - 
+                <span class="conso">${attributes.daily != null && attributes.daily.length > 0 ? attributes.daily[0].time_period:"N/A"}</span>
               </div>
               ${this.config.showCost 
                 ? html `
                 <div class="cout-block">
-                  <span class="cout" title="Coût journalier">${this.toFloat(attributes.daily[0].energy_kwh * this.config.costPerKWh, 2)}</span><span class="cout-unit"> €</span>
+                  <span class="cout" title="Coût journalier">${attributes.daily != null && attributes.daily.length > 0 ? this.toFloat(attributes.daily[0].energy_kwh * this.config.costPerKWh, 2):"N/A"}</span><span class="cout-unit"> €</span>
                 </div>`
                 : html ``
                 }
@@ -262,10 +332,14 @@ class GazparCard extends LitElement {
             
             ${this.renderDailyHistory(attributes.daily, attributes.unit_of_measurement, this.config)}
             ${this.renderMonthlyHistoryTable(attributes.monthly, attributes.unit_of_measurement, this.config)}
+
             ${this.renderMonthlyEnergyHistoryChart(attributes.monthly, attributes.unit_of_measurement, this.config)}
             ${this.renderMonthlyCostHistoryChart(attributes.monthly, attributes.unit_of_measurement, this.config)}
 
-            ${this.renderError(attributes.errorMessage, this.config)}
+            ${this.renderYearlyEnergyHistoryChart(attributes.yearly, attributes.unit_of_measurement, this.config)}
+            ${this.renderYearlyCostHistoryChart(attributes.yearly, attributes.unit_of_measurement, this.config)}
+
+            ${this.renderError(attributes.errorMessages)}
             ${this.renderVersion(attributes.versionUpdateAvailable, attributes.versionGit)}
           </div>
         </ha-card>`
@@ -274,17 +348,20 @@ class GazparCard extends LitElement {
 
   computeConsumptionTrendRatio(data, shift)
   {
-    for (var i = 0; i < data.length-shift; ++i)
+    if (data != null)
     {
-      if (data[i].energy_kwh >= 0 && data[i+shift].energy_kwh >= 0)
+      for (var i = 0; i < data.length-shift; ++i)
       {
-        var ratio = 100 * (data[i].energy_kwh - data[i+shift].energy_kwh) / data[i].energy_kwh
+        if (data[i].energy_kwh >= 0 && data[i+shift].energy_kwh >= 0)
+        {
+          var ratio = 100 * (data[i].energy_kwh - data[i+shift].energy_kwh) / data[i].energy_kwh
 
-        data[i].ratio = ratio
-      }
-      else
-      {
-        data[i].ratio = null
+          data[i].ratio = ratio
+        }
+        else
+        {
+          data[i].ratio = null
+        }
       }
     }
   }
@@ -314,14 +391,14 @@ class GazparCard extends LitElement {
        }
   }
 
-  renderError(errorMsg, config) {
+  renderError(errorMsg) {
     if (this.config.showError === true) {
-       if ( errorMsg != "" ){
+       if (errorMsg.length > 0){
           return html
             `
               <div class="error-msg" style="color: red">
                 <ha-icon id="icon" icon="mdi:alert-outline"></ha-icon>
-                ${errorMsg}
+                ${errorMsg.join("<br>")}
               </div>
             `
        }
@@ -383,7 +460,7 @@ class GazparCard extends LitElement {
 
   renderDailyHistory(data, unit_of_measurement, config) {
 
-    if (config.showDailyHistory) {
+    if (config.showDailyHistory && data != null && data.length > 0) {
       // Keep the last 7 days.
       var now = new Date()
       var filteredDates = data.reverse().filter(item => this.parseDate(item.time_period) >= this.addDays(now, -8))
@@ -410,7 +487,7 @@ class GazparCard extends LitElement {
 
   renderMonthlyHistoryTable(data, unit_of_measurement, config) {
 
-    if (config.showMonthlyHistory) {
+    if (config.showMonthlyHistory && data != null && data.length > 0) {
       return html
       `
         <hr size="1" color="grey"/>
@@ -449,6 +526,42 @@ class GazparCard extends LitElement {
         <hr size="1" color="grey"/>
         <div class="chart-container">
           <canvas id="monthlyCostHistoryChart"></canvas>
+        </div>
+      `
+    } else {
+      return html
+      `
+      `
+    }
+  }
+
+  renderYearlyEnergyHistoryChart() {
+
+    if (this.config.showYearlyEnergyHistoryChart)
+    {
+      return html
+      `
+        <hr size="1" color="grey"/>
+        <div class="chart-container">
+          <canvas id="yearlyEnergyHistoryChart"></canvas>
+        </div>
+      `
+    } else {
+      return html
+      `
+      `
+    }
+  }
+
+  renderYearlyCostHistoryChart() {
+
+    if (this.config.showYearlyCostHistoryChart)
+    {
+      return html
+      `
+        <hr size="1" color="grey"/>
+        <div class="chart-container">
+          <canvas id="yearlyCostHistoryChart"></canvas>
         </div>
       `
     } else {
@@ -586,6 +699,9 @@ class GazparCard extends LitElement {
       
       showMonthlyEnergyHistoryChart: true,
       showMonthlyCostHistoryChart: true,
+
+      showYearlyEnergyHistoryChart: true,
+      showYearlyCostHistoryChart: true,
 
       showError: true,
     }

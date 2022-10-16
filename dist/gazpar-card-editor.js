@@ -97,6 +97,14 @@ export class GazparCardEditor extends LitElement {
     return this._config.showMonthlyCostHistoryChart !== false;
   }
 
+  get _showYearlyEnergyHistoryChart() {
+    return this._config.showYearlyEnergyHistoryChart !== false;
+  }
+
+  get _showYearlyCostHistoryChart() {
+    return this._config.showYearlyCostHistoryChart !== false;
+  }
+
   firstUpdated() {
     HELPERS.then(help => {
       if (help.importMoreInfoControl) {
@@ -164,6 +172,9 @@ export class GazparCardEditor extends LitElement {
             ${this.renderSwitchOption("Show monthly energy history chart", this._showMonthlyEnergyHistoryChart, "showMonthlyEnergyHistoryChart")}
             ${this.renderSwitchOption("Show monthly cost history chart", this._showMonthlyCostHistoryChart, "showMonthlyCostHistoryChart")}
             
+            ${this.renderSwitchOption("Show yearly energy history chart", this._showYearlyEnergyHistoryChart, "showYearlyEnergyHistoryChart")}
+            ${this.renderSwitchOption("Show yearly cost history chart", this._showYearlyCostHistoryChart, "showYearlyCostHistoryChart")}
+
             ${this.renderSwitchOption("Show error", this._showError, "showError")}
           </ul>
 
