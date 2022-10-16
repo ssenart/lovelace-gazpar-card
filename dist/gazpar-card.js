@@ -194,7 +194,7 @@ class GazparCard extends LitElement {
 
   updateMonthlyCostChartData(chart, data, index)
   {
-    chart.data.datasets[index].data = data.slice((1 - index) * 12, (2 - index) * 12).reverse().map(item => this.toFloat(item.energy_kwh * this.config.costPerKWh, 0))
+    chart.data.datasets[index].data = data.slice((1 - index) * 12, (2 - index) * 12).reverse().map(item => this.toFloat(item.energy_kwh * this.config.pricePerKWh, 0))
   }
 
   updateYearlyEnergyChart(data) {
@@ -273,7 +273,7 @@ class GazparCard extends LitElement {
 
   updateYearlyCostChartData(chart, data)
   {
-    chart.data.datasets[0].data = data.slice(0,10).reverse().map(item => this.toFloat(item.energy_kwh * this.config.costPerKWh, 0))
+    chart.data.datasets[0].data = data.slice(0,10).reverse().map(item => this.toFloat(item.energy_kwh * this.config.pricePerKWh, 0))
   }
 
   render() {
@@ -324,7 +324,7 @@ class GazparCard extends LitElement {
               ${this.config.showCost 
                 ? html `
                 <div class="cout-block">
-                  <span class="cout" title="Coût journalier">${attributes.daily != null && attributes.daily.length > 0 ? this.toFloat(attributes.daily[0].energy_kwh * this.config.costPerKWh, 2):"N/A"}</span><span class="cout-unit"> €</span>
+                  <span class="cout" title="Coût journalier">${attributes.daily != null && attributes.daily.length > 0 ? this.toFloat(attributes.daily[0].energy_kwh * this.config.pricePerKWh, 2):"N/A"}</span><span class="cout-unit"> €</span>
                 </div>`
                 : html ``
                 }
@@ -580,7 +580,7 @@ class GazparCard extends LitElement {
         <span class="dayname" title="${date.toLocaleDateString('fr-FR')}">${date.toLocaleDateString('fr-FR', {weekday: 'short'})}</span>
         ${config.showEnergyHistory ? this.renderDataValue(item.energy_kwh, unit_of_measurement, 0) : ""}
         ${config.showVolumeHistory ? this.renderDataValue(item.volume_m3, "m³", 0) : ""}
-        ${config.showCostHistory ? this.renderDataValue(item.energy_kwh * this.config.costPerKWh, "€", 2) : ""}
+        ${config.showCostHistory ? this.renderDataValue(item.energy_kwh * this.config.pricePerKWh, "€", 2) : ""}
         ${config.showTrendRatioHistory ? this.renderRatioValue(item.ratio, "%", 0) : ""}
       </div>
       `
@@ -595,7 +595,7 @@ class GazparCard extends LitElement {
       <span class="dayname" title="${date.toLocaleDateString('fr-FR', {month: 'long', year: 'numeric'})}">${date.toLocaleDateString('fr-FR', {month: 'narrow'})}</span>
       ${config.showEnergyHistory ? this.renderDataValue(item.energy_kwh, unit_of_measurement, 0) : ""}
       ${config.showVolumeHistory ? this.renderDataValue(item.volume_m3, "m³", 0) : ""}
-      ${config.showCostHistory ? this.renderDataValue(item.energy_kwh * this.config.costPerKWh, "€", 0) : ""}
+      ${config.showCostHistory ? this.renderDataValue(item.energy_kwh * this.config.pricePerKWh, "€", 0) : ""}
       ${config.showTrendRatioHistory ? this.renderRatioValue(item.ratio, "%", 0) : ""}
     </div>
     `
@@ -675,15 +675,15 @@ class GazparCard extends LitElement {
       throw new Error('You need to define an entity');
     }
 
-    if (config.costPerKWh && isNaN(config.costPerKWh)) {
-      throw new Error('costPerKWh should be a number')
+    if (config.pricePerKWh && isNaN(config.pricePerKWh)) {
+      throw new Error('pricePerKWh should be a number')
     }
     
     const defaultConfig = {
 
       title: "GrDF data",
       entity: "sensor.gazpar",
-      costPerKWh: 0.0,
+      pricePerKWh: 0.0,
 
       showTitle: true,
       showIcon: true,

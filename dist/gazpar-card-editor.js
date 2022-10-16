@@ -41,8 +41,8 @@ export class GazparCardEditor extends LitElement {
     return this._config.entity || "sensor.gazpar";
   }
 
-  get _costPerKWh() {
-    return this._config.costPerKWh || 0.0;
+  get _pricePerKWh() {
+    return this._config.pricePerKWh || 0.0;
   }
 
   get _showIcon() {
@@ -149,9 +149,9 @@ export class GazparCardEditor extends LitElement {
           ></paper-input>
 
           <paper-input
-            label="Gas cost (€/kWh):"
-            .value="${this._costPerKWh}"
-            .configValue="${"costPerKWh"}"
+            label="Gas price (€/kWh):"
+            .value="${this._pricePerKWh}"
+            .configValue="${"pricePerKWh"}"
             @value-changed="${this._valueChanged}"
           ></paper-input>
 
