@@ -1,5 +1,7 @@
 import "https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"
 
+const minimumRequiredGazparIntegrationVersion="1.3.0"
+
 const LitElement = Object.getPrototypeOf(
   customElements.get("ha-panel-lovelace")
 );
@@ -299,6 +301,21 @@ class GazparCard extends LitElement {
     } else {
 
       const attributes = stateObj.attributes;
+
+      if (attributes.version == null || attributes.version < minimumRequiredGazparIntegrationVersion)
+      {
+        return html`
+          <ha-card>
+            <div class="card">
+              <div id="states">
+                <div class="name">
+                  ${this.renderError([`The minimum required version of Gazpar Integration is ${minimumRequiredGazparIntegrationVersion}. Your current Gazpar Integration version is ${attributes.version}. Please update your Gazpar Integration version at least to version ${minimumRequiredGazparIntegrationVersion}.`])}
+                </div>
+              </div>
+            </div>
+          </ha-card> 
+        `
+      }
 
       this.computeConsumptionTrendRatio(attributes.daily, 7)
       this.computeConsumptionTrendRatio(attributes.monthly, 12)
