@@ -8,7 +8,7 @@ I reuse the same layout.
 
 ![Gazpar Card](images/gazpar-card.png)
 
-It requires the HA integration [Gazpar](https://github.com/ssenart/home-assistant-gazpar) at least from version 1.2.0.
+It requires the HA integration [Gazpar](https://github.com/ssenart/home-assistant-gazpar) at least from version 1.3.0.
 
 Trend ratio (% in the table) must be interpreted differently depending on the frequency:
 
@@ -51,7 +51,7 @@ type: custom:gazpar-card
 
 entity: sensor.gazpar
 title: 'Données GrDF'
-costPerKWh: '0.06072'
+pricePerKWh: '0.06072'
 
 showTitle: true
 showIcon: true
@@ -67,6 +67,9 @@ showTrendRatioHistory: true
 
 showMonthlyCostHistoryChart: true
 showMonthlyEnergyHistoryChart: true
+
+showYearlyEnergyHistoryChart: true
+showYearlyCostHistoryChart: true
 
 showError: true
 ``` 
