@@ -23,6 +23,21 @@ const monthNumberByName = {
   'Décembre': 12,
 }
 
+const monthNameByNumber = {
+  1: 'Janvier',
+  2: 'Février',
+  3: 'Mars',
+  4: 'Avril',
+  5: 'Mai',
+  6: 'Juin',
+  7: 'Juillet',
+  8: 'Août',
+  9: 'Septembre',
+  10: 'Octobre',
+  11: 'Novembre',
+  12: 'Décembre',
+}
+
 window.customCards = window.customCards || [];
 window.customCards.push({
   type: "gazpar-card",
@@ -82,7 +97,6 @@ class GazparCard extends LitElement {
     if (stateObj)
     {
       const attributes = stateObj.attributes;
-
       
       this.updateMonthlyEnergyChart(attributes.monthly, this.config)
       this.updateMonthlyCostChart(attributes.monthly, this.config)
@@ -317,6 +331,20 @@ class GazparCard extends LitElement {
         `
       }
 
+      // ****************************************************
+      // for (var i = 0; i < attributes.daily.length; ++i)
+      // {
+      //   attributes.daily[i].energy_kwh = 0;
+      // }
+
+      // attributes.daily = attributes.daily.splice(0, 9)
+      // attributes.monthly = attributes.monthly.splice(0, 14)
+      // ****************************************************
+
+
+      attributes.daily = this.rightPaddingDailyArray(attributes.daily, 14 - attributes.daily.length)
+      attributes.monthly = this.rightPaddingMonthlyArray(attributes.monthly, 24 - attributes.monthly.length)
+
       this.computeConsumptionTrendRatio(attributes.daily, 7)
       this.computeConsumptionTrendRatio(attributes.monthly, 12)
 
@@ -363,13 +391,39 @@ class GazparCard extends LitElement {
     }
   }
 
+  rightPaddingDailyArray(data, size) {
+
+    var time_period = this.parseDate(data[data.length-1].time_period)
+
+    for (var i = 0; i < size; ++i)
+    {
+      time_period = this.addDays(time_period, -1)
+      data.push({ time_period: this.formatDate(time_period), volume_m3: null, energy_kwh: null })
+    }
+
+    return data
+  }
+
+  rightPaddingMonthlyArray(data, size) {
+
+    var time_period = this.parseMonthPeriod(data[data.length-1].time_period)
+
+    for (var i = 0; i < size; ++i)
+    {
+      time_period = this.addMonths(time_period, -1)
+      data.push({ time_period: this.formatMonth(time_period), volume_m3: null, energy_kwh: null })
+    }
+
+    return data
+  }
+
   computeConsumptionTrendRatio(data, shift)
   {
     if (data != null)
     {
       for (var i = 0; i < data.length-shift; ++i)
       {
-        if (data[i].energy_kwh >= 0 && data[i+shift].energy_kwh >= 0)
+        if (data[i].energy_kwh != null && data[i].energy_kwh > 0 && data[i+shift].energy_kwh != null && data[i+shift].energy_kwh >= 0)
         {
           var ratio = 100 * (data[i].energy_kwh - data[i+shift].energy_kwh) / data[i].energy_kwh
 
@@ -459,6 +513,11 @@ class GazparCard extends LitElement {
     return date.getDate() + "/" + (date.getMonth()+1) + "/" + date.getFullYear();
   }
 
+  formatMonth(date)
+  {
+    return monthNameByNumber[date.getMonth() + 1] + " " + date.getFullYear();
+  }
+
   addDays(date, days) {
 
     var res = new Date(date);
@@ -486,7 +545,7 @@ class GazparCard extends LitElement {
       var missingDate = this.addDays(this.parseDate(filteredDates[filteredDates.length - 1].time_period), 1)
       while (filteredDates.length < 7)
       {
-        filteredDates.push({time_period: this.formatDate(missingDate), energy_kwh: -1, volume_m3: -1})
+        filteredDates.push({time_period: this.formatDate(missingDate), volume_m3: null, energy_kwh: null })
 
         missingDate = this.addDays(missingDate, 1)
       }
@@ -595,10 +654,10 @@ class GazparCard extends LitElement {
       return html `
       <div class="day">
         <span class="dayname" title="${date.toLocaleDateString('fr-FR')}">${date.toLocaleDateString('fr-FR', {weekday: 'short'})}</span>
-        ${config.showEnergyHistory ? this.renderDataValue(item.energy_kwh, unit_of_measurement, 0) : ""}
-        ${config.showVolumeHistory ? this.renderDataValue(item.volume_m3, "m³", 0) : ""}
-        ${config.showCostHistory ? this.renderDataValue(item.energy_kwh * this.config.pricePerKWh, "€", 2) : ""}
-        ${config.showTrendRatioHistory ? this.renderRatioValue(item.ratio, "%", 0) : ""}
+        ${config.showEnergyHistory ? this.renderDataValue(item.energy_kwh,  0) : ""}
+        ${config.showVolumeHistory ? this.renderDataValue(item.volume_m3, 0) : ""}
+        ${config.showCostHistory ? this.renderDataValue(item.energy_kwh != null ? item.energy_kwh * this.config.pricePerKWh:null, 2) : ""}
+        ${config.showTrendRatioHistory ? this.renderRatioValue(item.ratio, 0) : ""}
       </div>
       `
   }
@@ -610,17 +669,17 @@ class GazparCard extends LitElement {
     return html `
     <div class="day">
       <span class="dayname" title="${date.toLocaleDateString('fr-FR', {month: 'long', year: 'numeric'})}">${date.toLocaleDateString('fr-FR', {month: 'narrow'})}</span>
-      ${config.showEnergyHistory ? this.renderDataValue(item.energy_kwh, unit_of_measurement, 0) : ""}
-      ${config.showVolumeHistory ? this.renderDataValue(item.volume_m3, "m³", 0) : ""}
-      ${config.showCostHistory ? this.renderDataValue(item.energy_kwh * this.config.pricePerKWh, "€", 0) : ""}
-      ${config.showTrendRatioHistory ? this.renderRatioValue(item.ratio, "%", 0) : ""}
+      ${config.showEnergyHistory ? this.renderDataValue(item.energy_kwh, 0) : ""}
+      ${config.showVolumeHistory ? this.renderDataValue(item.volume_m3, 0) : ""}
+      ${config.showCostHistory ? this.renderDataValue(item.energy_kwh != null ? item.energy_kwh * this.config.pricePerKWh:null, 0) : ""}
+      ${config.showTrendRatioHistory ? this.renderRatioValue(item.ratio, 0) : ""}
     </div>
     `
   }
 
-  renderDataValue(value, unit, decimals)
+  renderDataValue(value, decimals)
   {
-    if (value >= 0) {
+    if (value != null && value >= 0) {
       return html `
         <br><span class="cons-val">${this.toFloat(value, decimals)}</span>
       `
