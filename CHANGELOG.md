@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.2] - 2022-10-20
+
+### Fixed
+[#12](https://github.com/ssenart/lovelace-gazpar-card/issues/12): [Bug] Fix the way how trend ratio is computed.
+[#11](https://github.com/ssenart/lovelace-gazpar-card/issues/11): [Bug] Trend ratio displays "No data icon" if previous period and current period value is zero.
+
 ## [1.3.1] - 2022-10-18
 
 ### Fixed
