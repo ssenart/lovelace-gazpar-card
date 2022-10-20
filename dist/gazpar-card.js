@@ -423,11 +423,22 @@ class GazparCard extends LitElement {
     {
       for (var i = 0; i < data.length-shift; ++i)
       {
-        if (data[i].energy_kwh != null && data[i].energy_kwh > 0 && data[i+shift].energy_kwh != null && data[i+shift].energy_kwh >= 0)
+        var currentPeriodEnergy = data[i].energy_kwh
+        var previousPeriodEnergy = data[i+shift].energy_kwh
+
+        if (currentPeriodEnergy != null && currentPeriodEnergy >= 0 && previousPeriodEnergy != null && previousPeriodEnergy > 0)
         {
-          var ratio = 100 * (data[i].energy_kwh - data[i+shift].energy_kwh) / data[i].energy_kwh
+          var ratio = 100 * (currentPeriodEnergy - previousPeriodEnergy) / previousPeriodEnergy
 
           data[i].ratio = ratio
+        }
+        else if (currentPeriodEnergy != null && currentPeriodEnergy == 0 && previousPeriodEnergy != null && previousPeriodEnergy == 0)
+        {
+          data[i].ratio = 0
+        }
+        else if (currentPeriodEnergy != null && currentPeriodEnergy > 0 && previousPeriodEnergy != null && previousPeriodEnergy == 0)
+        {
+          data[i].ratio = 1
         }
         else
         {
