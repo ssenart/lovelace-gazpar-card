@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.3] - 2022-10-21
+
+### Fixed
+[#13](https://github.com/ssenart/lovelace-gazpar-card/issues/13): [Bug] Fix overflow on monthly history table when using mobile.
+
 ## [1.3.2] - 2022-10-20
 
 ### Fixed

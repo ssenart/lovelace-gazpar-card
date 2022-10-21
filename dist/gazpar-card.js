@@ -565,7 +565,7 @@ class GazparCard extends LitElement {
       `
         <hr size="1" color="grey"/>
         <div class="week-history">
-          ${this.renderHistoryHeader(config)}
+          ${this.renderHistoryHeader(config, "normal-value")}
           ${filteredDates.slice(filteredDates.length - 7, filteredDates.length).map(item => this.renderDailyDataColumnHistory(item, unit_of_measurement, config))}
         </div>
       `
@@ -579,7 +579,7 @@ class GazparCard extends LitElement {
       `
         <hr size="1" color="grey"/>
         <div class="week-history">
-          ${this.renderHistoryHeader(config)}
+          ${this.renderHistoryHeader(config, "small-value")}
           ${data.slice(0, 12).reverse().map(item => this.renderMonthlyDataColumnHistory(item, unit_of_measurement, config))}
         </div>
       `
@@ -665,10 +665,10 @@ class GazparCard extends LitElement {
       return html `
       <div class="day">
         <span class="dayname" title="${date.toLocaleDateString('fr-FR')}">${date.toLocaleDateString('fr-FR', {weekday: 'short'})}</span>
-        ${config.showEnergyHistory ? this.renderDataValue(item.energy_kwh,  0) : ""}
-        ${config.showVolumeHistory ? this.renderDataValue(item.volume_m3, 0) : ""}
-        ${config.showCostHistory ? this.renderDataValue(item.energy_kwh != null ? item.energy_kwh * this.config.pricePerKWh:null, 2) : ""}
-        ${config.showTrendRatioHistory ? this.renderRatioValue(item.ratio, 0) : ""}
+        ${config.showEnergyHistory ? this.renderDataValue(item.energy_kwh,  0, "normal-value") : ""}
+        ${config.showVolumeHistory ? this.renderDataValue(item.volume_m3, 0, "normal-value") : ""}
+        ${config.showCostHistory ? this.renderDataValue(item.energy_kwh != null ? item.energy_kwh * this.config.pricePerKWh:null, 2, "normal-value") : ""}
+        ${config.showTrendRatioHistory ? this.renderRatioValue(item.ratio, "normal-value") : ""}
       </div>
       `
   }
@@ -680,28 +680,28 @@ class GazparCard extends LitElement {
     return html `
     <div class="day">
       <span class="dayname" title="${date.toLocaleDateString('fr-FR', {month: 'long', year: 'numeric'})}">${date.toLocaleDateString('fr-FR', {month: 'narrow'})}</span>
-      ${config.showEnergyHistory ? this.renderDataValue(item.energy_kwh, 0) : ""}
-      ${config.showVolumeHistory ? this.renderDataValue(item.volume_m3, 0) : ""}
-      ${config.showCostHistory ? this.renderDataValue(item.energy_kwh != null ? item.energy_kwh * this.config.pricePerKWh:null, 0) : ""}
-      ${config.showTrendRatioHistory ? this.renderRatioValue(item.ratio, 0) : ""}
+      ${config.showEnergyHistory ? this.renderDataValue(item.energy_kwh, 0, "small-value") : ""}
+      ${config.showVolumeHistory ? this.renderDataValue(item.volume_m3, 0, "small-value") : ""}
+      ${config.showCostHistory ? this.renderDataValue(item.energy_kwh != null ? item.energy_kwh * this.config.pricePerKWh:null, 0, "small-value") : ""}
+      ${config.showTrendRatioHistory ? this.renderRatioValue(item.ratio, "small-value") : ""}
     </div>
     `
   }
 
-  renderDataValue(value, decimals)
+  renderDataValue(value, decimals, cssname)
   {
     if (value != null && value >= 0) {
       return html `
-        <br><span class="cons-val">${this.toFloat(value, decimals)}</span>
+        <br><span class="${cssname}">${this.toFloat(value, decimals)}</span>
       `
     } else {
       return html `
-        ${this.renderNoData()}
+        ${this.renderNoData(cssname)}
       `
     }
   }
 
-  renderRatioValue(value, unit, decimals)
+  renderRatioValue(value, cssname)
   {
     if (value != null)
     {
@@ -711,21 +711,21 @@ class GazparCard extends LitElement {
         <ha-icon icon="mdi:arrow-right" style="color: ${value > 0 ? "red":"green"}; display: inline-block; transform: rotate(${value < 0?'45': (value == 0? "0" : "-45")}deg)">
       </ha-icon>
       </span>
-      <div class="tooltip">
+      <div class="${cssname}">
         <nobr>${(value > 0) ? '+': ''}${Math.round(value)}<span class="unit">%</span></nobr>
       </div>`
     } else {
       return html `
-        ${this.renderNoData()}
+        ${this.renderNoData(cssname)}
       `
     }
   }
 
-  renderRowHeader(show, header) {
+  renderRowHeader(show, header, cssname) {
 
     if (show) {
        return html
-       `${header}<br>
+       `<span class="${cssname}">${header}</span><br>
        `
       }
     else{
@@ -735,25 +735,25 @@ class GazparCard extends LitElement {
     }
   }
 
-  renderHistoryHeader(config) {
+  renderHistoryHeader(config, cssname) {
     if (this.config.showHistoryHeader) {
        return html
        `
         <div class="day">
-          ${this.renderRowHeader(true, "")}
-          ${this.renderRowHeader(this.config.showEnergyHistory, "kWh")}
-          ${this.renderRowHeader(this.config.showVolumeHistory, "m³")}
-          ${this.renderRowHeader(this.config.showCostHistory, "€")}
-          ${this.renderRowHeader(this.config.showTrendRatioHistory, "%")}
+          ${this.renderRowHeader(true, "", cssname)}
+          ${this.renderRowHeader(this.config.showEnergyHistory, "kWh", cssname)}
+          ${this.renderRowHeader(this.config.showVolumeHistory, "m³", cssname)}
+          ${this.renderRowHeader(this.config.showCostHistory, "€", cssname)}
+          ${this.renderRowHeader(this.config.showTrendRatioHistory, "%", cssname)}
         </div>
         `
     }
   }
 
-  renderNoData(){
+  renderNoData(cssname){
     return html
     `
-      <br><span class="cons-val" title="Donnée indisponible"><ha-icon id="icon" icon="mdi:alert-outline" style="color:orange"></ha-icon></span>
+      <br><span class="${cssname}" title="Donnée indisponible"><ha-icon id="icon" icon="mdi:alert-outline" style="color:orange"></ha-icon></span>
     `
   }
 
@@ -910,6 +910,14 @@ class GazparCard extends LitElement {
     
       .cons-val {
         //font-weight: bold;
+      }
+
+      .normal-value {
+        font-size: 1em;
+      }
+
+      .small-value {
+        font-size: 0.8em;
       }
       
       .previous-month {
