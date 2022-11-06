@@ -331,17 +331,11 @@ class GazparCard extends LitElement {
         `
       }
 
-      // ****************************************************
-      // for (var i = 0; i < attributes.daily.length; ++i)
-      // {
-      //   attributes.daily[i].energy_kwh = 0;
-      // }
+      // Sort data descending by time_period.
+      attributes.daily = this.sortDescDailyData(attributes.daily)
+      attributes.monthly = this.sortDescMonthlyData(attributes.monthly)
 
-      // attributes.daily = attributes.daily.splice(0, 9)
-      // attributes.monthly = attributes.monthly.splice(0, 14)
-      // ****************************************************
-
-
+      // Add "empty" to have a full array (of 14 days or 24 months).
       attributes.daily = this.rightPaddingDailyArray(attributes.daily, 14 - attributes.daily.length)
       attributes.monthly = this.rightPaddingMonthlyArray(attributes.monthly, 24 - attributes.monthly.length)
 
@@ -389,6 +383,16 @@ class GazparCard extends LitElement {
           </div>
         </ha-card>`
     }
+  }
+
+  sortDescDailyData(dailyData)
+  {
+    return dailyData.sort((x, y) => this.parseDate(x.time_period) > this.parseDate(x.time_period))
+  }
+
+  sortDescMonthlyData(monthlyData)
+  {
+    return monthlyData.sort((x, y) => this.parseDate(x.time_period) > this.parseDate(x.time_period))
   }
 
   rightPaddingDailyArray(data, size) {
@@ -550,7 +554,7 @@ class GazparCard extends LitElement {
     if (config.showDailyHistory && data != null && data.length > 0) {
       // Keep the last 7 days.
       var now = new Date()
-      var filteredDates = data.reverse().filter(item => this.parseDate(item.time_period) >= this.addDays(now, -8))
+      var filteredDates = data.slice().reverse().filter(item => this.parseDate(item.time_period) >= this.addDays(now, -8))
 
       // Fill with last days of unavailable data.
       var missingDate = this.addDays(this.parseDate(filteredDates[filteredDates.length - 1].time_period), 1)
