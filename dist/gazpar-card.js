@@ -1,5 +1,7 @@
 import "https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"
 
+const version="1.3.5"
+
 const minimumRequiredGazparIntegrationVersion="1.3.0"
 
 const LitElement = Object.getPrototypeOf(
@@ -97,12 +99,16 @@ class GazparCard extends LitElement {
     if (stateObj)
     {
       const attributes = stateObj.attributes;
-      
-      this.updateMonthlyEnergyChart(attributes.monthly, this.config)
-      this.updateMonthlyCostChart(attributes.monthly, this.config)
 
-      this.updateYearlyEnergyChart(attributes.yearly, this.config)
-      this.updateYearlyCostChart(attributes.yearly, this.config)
+      // Shallow copy of monthly and yearly data.
+      var monthly = Array.from(attributes.monthly);
+      var yearly = Array.from(attributes.yearly);
+      
+      this.updateMonthlyEnergyChart(monthly, this.config)
+      this.updateMonthlyCostChart(monthly, this.config)
+
+      this.updateYearlyEnergyChart(yearly, this.config)
+      this.updateYearlyCostChart(yearly, this.config)
     }
   }
 
@@ -110,7 +116,11 @@ class GazparCard extends LitElement {
 
     if (this.config.showMonthlyEnergyHistoryChart) {
 
-      const ctx = this.renderRoot.querySelector('#monthlyEnergyHistoryChart').getContext('2d');
+      const ctx = this.renderRoot.getElementById('monthlyEnergyHistoryChart').getContext('2d');
+
+      if (this.monthlyEnergyHistoryChart != null) {
+        this.monthlyEnergyHistoryChart.destroy();
+      }
 
       this.monthlyEnergyHistoryChart = new Chart(ctx, {
           type: 'bar',
@@ -150,7 +160,11 @@ class GazparCard extends LitElement {
 
     if (this.config.showMonthlyCostHistoryChart) {
 
-      const ctx = this.renderRoot.querySelector('#monthlyCostHistoryChart').getContext('2d');
+      const ctx = this.renderRoot.getElementById('monthlyCostHistoryChart').getContext('2d');
+
+      if (this.monthlyCostHistoryChart != null) {
+        this.monthlyCostHistoryChart.destroy();
+      }
 
       this.monthlyCostHistoryChart = new Chart(ctx, {
           type: 'bar',
@@ -177,9 +191,9 @@ class GazparCard extends LitElement {
 
       if (data != null && data.length > 0)
       {
-      this.updateMonthlyChartLabels(this.monthlyCostHistoryChart, data)
-      this.updateMonthlyCostChartData(this.monthlyCostHistoryChart, data, 0)
-      this.updateMonthlyCostChartData(this.monthlyCostHistoryChart, data, 1)
+        this.updateMonthlyChartLabels(this.monthlyCostHistoryChart, data)
+        this.updateMonthlyCostChartData(this.monthlyCostHistoryChart, data, 0)
+        this.updateMonthlyCostChartData(this.monthlyCostHistoryChart, data, 1)
       }
 
       this.monthlyCostHistoryChart.update()
@@ -217,7 +231,11 @@ class GazparCard extends LitElement {
 
     if (this.config.showYearlyEnergyHistoryChart) {
 
-      const ctx = this.renderRoot.querySelector('#yearlyEnergyHistoryChart').getContext('2d');
+      const ctx = this.renderRoot.getElementById('yearlyEnergyHistoryChart').getContext('2d');
+
+      if (this.yearlyEnergyHistoryChart != null) {
+        this.yearlyEnergyHistoryChart.destroy();
+      }
 
       this.yearlyEnergyHistoryChart = new Chart(ctx, {
           type: 'bar',
@@ -249,7 +267,11 @@ class GazparCard extends LitElement {
 
     if (this.config.showYearlyCostHistoryChart) {
 
-      const ctx = this.renderRoot.querySelector('#yearlyCostHistoryChart').getContext('2d');
+      const ctx = this.renderRoot.getElementById('yearlyCostHistoryChart').getContext('2d');
+
+      if (this.yearlyCostHistoryChart != null) {
+        this.yearlyCostHistoryChart.destroy();
+      }
 
       this.yearlyCostHistoryChart = new Chart(ctx, {
           type: 'bar',
@@ -331,16 +353,22 @@ class GazparCard extends LitElement {
         `
       }
 
+      // Shallow copy of daily, weekly, monthly and yearly data.
+      var daily = Array.from(attributes.daily);
+      var weekly = Array.from(attributes.weekly);
+      var monthly = Array.from(attributes.monthly);
+      var yearly = Array.from(attributes.yearly);
+
       // Sort data descending by time_period.
-      attributes.daily = this.sortDescDailyData(attributes.daily)
-      attributes.monthly = this.sortDescMonthlyData(attributes.monthly)
+      daily = this.sortDescDailyData(daily)
+      monthly = this.sortDescMonthlyData(monthly)
 
       // Add "empty" to have a full array (of 14 days or 24 months).
-      attributes.daily = this.rightPaddingDailyArray(attributes.daily, 14 - attributes.daily.length)
-      attributes.monthly = this.rightPaddingMonthlyArray(attributes.monthly, 24 - attributes.monthly.length)
+      daily = this.rightPaddingDailyArray(daily, 14 - daily.length)
+      monthly = this.rightPaddingMonthlyArray(monthly, 24 - monthly.length)
 
-      this.computeConsumptionTrendRatio(attributes.daily, 7)
-      this.computeConsumptionTrendRatio(attributes.monthly, 12)
+      this.computeConsumptionTrendRatio(daily, 7)
+      this.computeConsumptionTrendRatio(monthly, 12)
 
       return html`
         <ha-card id="card">
@@ -356,30 +384,30 @@ class GazparCard extends LitElement {
                 : html `` 
               }
               <div class="cout-block">
-                <span class="cout">${attributes.daily != null && attributes.daily.length > 0 ? this.toFloat(attributes.daily[0].energy_kwh):"N/A"}</span><span class="cout-unit">${attributes.unit_of_measurement}</span><br/>
-                <span class="conso">${attributes.daily != null && attributes.daily.length > 0 ? this.toFloat(attributes.daily[0].volume_m3):"N/A"}</span><span class="conso-unit">m³</span> - 
-                <span class="conso">${attributes.daily != null && attributes.daily.length > 0 ? attributes.daily[0].time_period:"N/A"}</span>
+                <span class="cout">${daily != null && daily.length > 0 ? this.toFloat(daily[0].energy_kwh):"N/A"}</span><span class="cout-unit">${attributes.unit_of_measurement}</span><br/>
+                <span class="conso">${daily != null && daily.length > 0 ? this.toFloat(daily[0].volume_m3):"N/A"}</span><span class="conso-unit">m³</span> - 
+                <span class="conso">${daily != null && daily.length > 0 ? daily[0].time_period:"N/A"}</span>
               </div>
               ${this.config.showCost 
                 ? html `
                 <div class="cout-block">
-                  <span class="cout" title="Coût journalier">${attributes.daily != null && attributes.daily.length > 0 ? this.toFloat(attributes.daily[0].energy_kwh * this.config.pricePerKWh, 2):"N/A"}</span><span class="cout-unit"> €</span>
+                  <span class="cout" title="Coût journalier">${daily != null && daily.length > 0 ? this.toFloat(daily[0].energy_kwh * this.config.pricePerKWh, 2):"N/A"}</span><span class="cout-unit"> €</span>
                 </div>`
                 : html ``
                 }
             </div>
             
-            ${this.renderDailyHistory(attributes.daily, attributes.unit_of_measurement, this.config)}
-            ${this.renderMonthlyHistoryTable(attributes.monthly, attributes.unit_of_measurement, this.config)}
+            ${this.renderDailyHistory(daily, attributes.unit_of_measurement, this.config)}
+            ${this.renderMonthlyHistoryTable(monthly, attributes.unit_of_measurement, this.config)}
 
-            ${this.renderMonthlyEnergyHistoryChart(attributes.monthly, attributes.unit_of_measurement, this.config)}
-            ${this.renderMonthlyCostHistoryChart(attributes.monthly, attributes.unit_of_measurement, this.config)}
+            ${this.renderMonthlyEnergyHistoryChart(monthly, attributes.unit_of_measurement, this.config)}
+            ${this.renderMonthlyCostHistoryChart(monthly, attributes.unit_of_measurement, this.config)}
 
-            ${this.renderYearlyEnergyHistoryChart(attributes.yearly, attributes.unit_of_measurement, this.config)}
-            ${this.renderYearlyCostHistoryChart(attributes.yearly, attributes.unit_of_measurement, this.config)}
+            ${this.renderYearlyEnergyHistoryChart(yearly, attributes.unit_of_measurement, this.config)}
+            ${this.renderYearlyCostHistoryChart(yearly, attributes.unit_of_measurement, this.config)}
 
             ${this.renderError(attributes.errorMessages)}
-            ${this.renderVersion(attributes.versionUpdateAvailable, attributes.versionGit)}
+            ${this.renderVersion()}
           </div>
         </ha-card>`
     }
@@ -387,12 +415,12 @@ class GazparCard extends LitElement {
 
   sortDescDailyData(dailyData)
   {
-    return dailyData.sort((x, y) => this.parseDate(x.time_period) > this.parseDate(x.time_period))
+    return dailyData.sort((x, y) => this.parseDate(y.time_period) - this.parseDate(x.time_period))
   }
 
   sortDescMonthlyData(monthlyData)
   {
-    return monthlyData.sort((x, y) => this.parseDate(x.time_period) > this.parseDate(x.time_period))
+    return monthlyData.sort((x, y) => this.parseDate(y.time_period) - this.parseDate(x.time_period))
   }
 
   rightPaddingDailyArray(data, size) {
@@ -482,6 +510,7 @@ class GazparCard extends LitElement {
        if (errorMsg.length > 0){
           return html
             `
+              <hr size="1" color="grey"/>
               <div class="error-msg" style="color: red">
                 <ha-icon id="icon" icon="mdi:alert-outline"></ha-icon>
                 ${errorMsg.join("<br>")}
@@ -491,18 +520,15 @@ class GazparCard extends LitElement {
     }
   }
 
-  renderVersion(versionUpdateAvailable, versionGit) {
-    if ( versionUpdateAvailable === true ){
-          return html
-            `
-              <div class="information-msg" style="color: red">
-                <ha-icon id="icon" icon="mdi:alert-outline"></ha-icon>
-                Nouvelle version disponible ${versionGit}
-              </div>
-            `
-    }
-    else{
-       return html ``
+  renderVersion() {
+    if (this.config.showVersion === true) {
+      return html
+        `
+          <hr size="1" color="grey"/>
+          <div class="small-value" style="color: grey; text-align: right;">
+            Gazpar Card Version ${version}
+          </div>
+        `
     }
   }
 
@@ -795,6 +821,7 @@ class GazparCard extends LitElement {
       showYearlyCostHistoryChart: true,
 
       showError: true,
+      showVersion: true
     }
 
     this.config = {

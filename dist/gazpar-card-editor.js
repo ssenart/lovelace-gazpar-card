@@ -61,6 +61,10 @@ export class GazparCardEditor extends LitElement {
     return this._config.showError !== false;
   }
 
+  get _showVersion() {
+    return this._config.showVersion !== false;
+  }
+
   get _showDailyHistory() {
     return this._config.showDailyHistory !== false;
   }
@@ -176,6 +180,7 @@ export class GazparCardEditor extends LitElement {
             ${this.renderSwitchOption("Show yearly cost history chart", this._showYearlyCostHistoryChart, "showYearlyCostHistoryChart")}
 
             ${this.renderSwitchOption("Show error", this._showError, "showError")}
+            ${this.renderSwitchOption("Show version", this._showVersion, "showVersion")}
           </ul>
 
         </div>
