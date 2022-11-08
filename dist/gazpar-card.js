@@ -1,13 +1,16 @@
 import "https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"
 
-const version="1.3.5"
+const version="1.3.6"
 
 const minimumRequiredGazparIntegrationVersion="1.3.0"
 
+//------------------------------------------------------
 const LitElement = Object.getPrototypeOf(
   customElements.get("ha-panel-lovelace")
 );
+
 const html = LitElement.prototype.html;
+
 const css = LitElement.prototype.css;
 
 const monthNumberByName = {
@@ -40,6 +43,7 @@ const monthNameByNumber = {
   12: 'Décembre',
 }
 
+//------------------------------------------------------
 window.customCards = window.customCards || [];
 window.customCards.push({
   type: "gazpar-card",
@@ -49,6 +53,7 @@ window.customCards.push({
   documentationURL: "https://github.com/ssenart/home-assistant-gazpar-card",
 });
 
+//------------------------------------------------------
 const fireEvent = (node, type, detail, options) => {
   options = options || {};
   detail = detail === null || detail === undefined ? {} : detail;
@@ -62,6 +67,7 @@ const fireEvent = (node, type, detail, options) => {
   return event;
 };
 
+//------------------------------------------------------
 function hasConfigOrEntityChanged(element, changedProps) {
   if (changedProps.has("config")) {
     return true;
@@ -78,8 +84,10 @@ function hasConfigOrEntityChanged(element, changedProps) {
   return true;
 }
 
+//------------------------------------------------------
 class GazparCard extends LitElement {
 
+  //----------------------------------
   static get properties() {
     return {
       config: {},
@@ -87,11 +95,13 @@ class GazparCard extends LitElement {
     };
   }
 
+  //----------------------------------
   static async getConfigElement() {
     await import("./gazpar-card-editor.js");
     return document.createElement("gazpar-card-editor");
   }
 
+  //----------------------------------
   updated(changedProperties) {
 
     const stateObj = this.hass.states[this.config.entity];
@@ -103,6 +113,12 @@ class GazparCard extends LitElement {
       // Shallow copy of monthly and yearly data.
       var monthly = Array.from(attributes.monthly);
       var yearly = Array.from(attributes.yearly);
+
+      // Sort data descending by time_period.
+      monthly = this.sortDescMonthlyData(monthly)
+
+      // Add "empty" to have a full array (of 24 months).
+      monthly = this.rightPaddingMonthlyArray(monthly, 24 - monthly.length)
       
       this.updateMonthlyEnergyChart(monthly, this.config)
       this.updateMonthlyCostChart(monthly, this.config)
@@ -112,6 +128,7 @@ class GazparCard extends LitElement {
     }
   }
 
+  //----------------------------------
   updateMonthlyEnergyChart(data) {
 
     if (this.config.showMonthlyEnergyHistoryChart) {
@@ -156,6 +173,7 @@ class GazparCard extends LitElement {
     }
   }
 
+  //----------------------------------
   updateMonthlyCostChart(data) {
 
     if (this.config.showMonthlyCostHistoryChart) {
@@ -200,6 +218,7 @@ class GazparCard extends LitElement {
     }
   }
 
+  //----------------------------------
   updateMonthlyChartLabels(chart, data)
   {  
     var lastYear = data.slice(0, 12).reverse()
@@ -217,16 +236,19 @@ class GazparCard extends LitElement {
     chart.data.labels = labels
   }
 
+  //----------------------------------
   updateMonthlyEnergyChartData(chart, data, index)
   {
     chart.data.datasets[index].data = data.slice((1 - index) * 12, (2 - index) * 12).reverse().map(item => item.energy_kwh)
   }
 
+  //----------------------------------
   updateMonthlyCostChartData(chart, data, index)
   {
     chart.data.datasets[index].data = data.slice((1 - index) * 12, (2 - index) * 12).reverse().map(item => this.toFloat(item.energy_kwh * this.config.pricePerKWh, 0))
   }
 
+  //----------------------------------
   updateYearlyEnergyChart(data) {
 
     if (this.config.showYearlyEnergyHistoryChart) {
@@ -263,6 +285,7 @@ class GazparCard extends LitElement {
     }
   }
 
+  //----------------------------------
   updateYearlyCostChart(data) {
 
     if (this.config.showYearlyCostHistoryChart) {
@@ -299,21 +322,25 @@ class GazparCard extends LitElement {
     }
   }
 
+  //----------------------------------
   updateYearlyChartLabels(chart, data)
   {  
     chart.data.labels = data.slice(0, 10).reverse().map(item => item.time_period)
   }
 
+  //----------------------------------
   updateYearlyEnergyChartData(chart, data)
   {
     chart.data.datasets[0].data = data.slice(0,10).reverse().map(item => item.energy_kwh)
   }
 
+  //----------------------------------
   updateYearlyCostChartData(chart, data)
   {
     chart.data.datasets[0].data = data.slice(0,10).reverse().map(item => this.toFloat(item.energy_kwh * this.config.pricePerKWh, 0))
   }
 
+  //----------------------------------
   render() {
     if (!this.config || !this.hass) {
       return html``;
@@ -352,6 +379,16 @@ class GazparCard extends LitElement {
           </ha-card> 
         `
       }
+
+      // ****************************************************
+      // for (var i = 0; i < attributes.daily.length; ++i)
+      // {
+      //   attributes.daily[i].energy_kwh = 0;
+      // }
+
+      // attributes.daily = attributes.daily.splice(0, 9)
+      // attributes.monthly = attributes.monthly.splice(0, 14)
+      // ****************************************************
 
       // Shallow copy of daily, weekly, monthly and yearly data.
       var daily = Array.from(attributes.daily);
@@ -413,16 +450,19 @@ class GazparCard extends LitElement {
     }
   }
 
+  //----------------------------------
   sortDescDailyData(dailyData)
   {
     return dailyData.sort((x, y) => this.parseDate(y.time_period) - this.parseDate(x.time_period))
   }
 
+  //----------------------------------
   sortDescMonthlyData(monthlyData)
   {
-    return monthlyData.sort((x, y) => this.parseDate(y.time_period) - this.parseDate(x.time_period))
+    return monthlyData.sort((x, y) => this.parseMonthPeriod(y.time_period) - this.parseMonthPeriod(x.time_period))
   }
 
+  //----------------------------------
   rightPaddingDailyArray(data, size) {
 
     var time_period = this.parseDate(data[data.length-1].time_period)
@@ -436,6 +476,7 @@ class GazparCard extends LitElement {
     return data
   }
 
+  //----------------------------------
   rightPaddingMonthlyArray(data, size) {
 
     var time_period = this.parseMonthPeriod(data[data.length-1].time_period)
@@ -449,6 +490,7 @@ class GazparCard extends LitElement {
     return data
   }
 
+  //----------------------------------
   computeConsumptionTrendRatio(data, shift)
   {
     if (data != null)
@@ -480,6 +522,7 @@ class GazparCard extends LitElement {
     }
   }
 
+  //----------------------------------
   _showDetails(myEntity) {
     const event = new Event('hass-more-info', {
       bubbles: true,
@@ -493,6 +536,7 @@ class GazparCard extends LitElement {
     return event;
   }
 
+  //----------------------------------
   renderTitle(config) {
     if (this.config.showTitle === true) {
       return html
@@ -505,6 +549,7 @@ class GazparCard extends LitElement {
        }
   }
 
+  //----------------------------------
   renderError(errorMsg) {
     if (this.config.showError === true) {
        if (errorMsg.length > 0){
@@ -520,6 +565,7 @@ class GazparCard extends LitElement {
     }
   }
 
+  //----------------------------------
   renderVersion() {
     if (this.config.showVersion === true) {
       return html
@@ -532,6 +578,7 @@ class GazparCard extends LitElement {
     }
   }
 
+  //----------------------------------
   parseDate(dateStr) {
 
     var parts = dateStr.split("/")
@@ -540,6 +587,7 @@ class GazparCard extends LitElement {
     return res;
   }
 
+  //----------------------------------
   parseMonthPeriod(monthPeriodStr) {
 
     var parts = monthPeriodStr.split(" ")
@@ -549,16 +597,19 @@ class GazparCard extends LitElement {
     return res;
   }
 
+  //----------------------------------
   formatDate(date) {
 
     return date.getDate() + "/" + (date.getMonth()+1) + "/" + date.getFullYear();
   }
 
+  //----------------------------------
   formatMonth(date)
   {
     return monthNameByNumber[date.getMonth() + 1] + " " + date.getFullYear();
   }
 
+  //----------------------------------
   addDays(date, days) {
 
     var res = new Date(date);
@@ -567,6 +618,7 @@ class GazparCard extends LitElement {
     return res;
   }
 
+  //----------------------------------
   addMonths(date, months) {
 
     var res = new Date(date);
@@ -575,6 +627,7 @@ class GazparCard extends LitElement {
     return res;
   }
 
+  //----------------------------------
   renderDailyHistory(data, unit_of_measurement, config) {
 
     if (config.showDailyHistory && data != null && data.length > 0) {
@@ -602,6 +655,7 @@ class GazparCard extends LitElement {
     }
   }
 
+  //----------------------------------
   renderMonthlyHistoryTable(data, unit_of_measurement, config) {
 
     if (config.showMonthlyHistory && data != null && data.length > 0) {
@@ -616,6 +670,7 @@ class GazparCard extends LitElement {
     }
   }
 
+  //----------------------------------
   renderMonthlyEnergyHistoryChart() {
 
     if (this.config.showMonthlyEnergyHistoryChart)
@@ -634,6 +689,7 @@ class GazparCard extends LitElement {
     }
   }
 
+  //----------------------------------
   renderMonthlyCostHistoryChart() {
 
     if (this.config.showMonthlyCostHistoryChart)
@@ -652,6 +708,7 @@ class GazparCard extends LitElement {
     }
   }
 
+  //----------------------------------
   renderYearlyEnergyHistoryChart() {
 
     if (this.config.showYearlyEnergyHistoryChart)
@@ -670,6 +727,7 @@ class GazparCard extends LitElement {
     }
   }
 
+  //----------------------------------
   renderYearlyCostHistoryChart() {
 
     if (this.config.showYearlyCostHistoryChart)
@@ -688,6 +746,7 @@ class GazparCard extends LitElement {
     }
   }
 
+  //----------------------------------
   renderDailyDataColumnHistory(item, unit_of_measurement, config) {
 
       var date = this.parseDate(item.time_period)
@@ -703,6 +762,7 @@ class GazparCard extends LitElement {
       `
   }
 
+  //----------------------------------
   renderMonthlyDataColumnHistory(item, unit_of_measurement, config) {
 
     var date = this.parseMonthPeriod(item.time_period)
@@ -718,6 +778,7 @@ class GazparCard extends LitElement {
     `
   }
 
+  //----------------------------------
   renderDataValue(value, decimals, cssname)
   {
     if (value != null && value >= 0) {
@@ -731,6 +792,7 @@ class GazparCard extends LitElement {
     }
   }
 
+  //----------------------------------
   renderRatioValue(value, cssname)
   {
     if (value != null)
@@ -751,6 +813,7 @@ class GazparCard extends LitElement {
     }
   }
 
+  //----------------------------------
   renderRowHeader(show, header, cssname) {
 
     if (show) {
@@ -765,6 +828,7 @@ class GazparCard extends LitElement {
     }
   }
 
+  //----------------------------------
   renderHistoryHeader(config, cssname) {
     if (this.config.showHistoryHeader) {
        return html
@@ -780,6 +844,7 @@ class GazparCard extends LitElement {
     }
   }
 
+  //----------------------------------
   renderNoData(cssname){
     return html
     `
@@ -787,6 +852,7 @@ class GazparCard extends LitElement {
     `
   }
 
+  //----------------------------------
   setConfig(config) {
     if (!config.entity) {
       throw new Error('You need to define an entity');
@@ -830,18 +896,22 @@ class GazparCard extends LitElement {
     };
   }
 
+  //----------------------------------
   shouldUpdate(changedProps) {
     return hasConfigOrEntityChanged(this, changedProps);
   }
 
+  //----------------------------------
   getCardSize() {
     return 3;
   }
  
+  //----------------------------------
   toFloat(value, decimals = 1) {
     return Number.parseFloat(value).toFixed(decimals);
   }
   
+  //----------------------------------
   static get styles() {
     return css`
       .card {
