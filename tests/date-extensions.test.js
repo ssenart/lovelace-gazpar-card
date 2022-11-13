@@ -18,5 +18,12 @@ describe("date extensions", () => {
         expect((new Date(2022, 10, 1)).formatMonthPeriod()).toEqual("Novembre 2022");
     });
 
+    test("addDays", () => {
+        expect((new Date(2022, 10, 18)).addDays(4)).toEqual(new Date(2022, 10, 22));
+    });
+
+    test("addMonths", () => {
+        expect((new Date(2022, 10, 18)).addMonths(4)).toEqual(new Date(2023, 2, 18));
+    });
+
 });
-  

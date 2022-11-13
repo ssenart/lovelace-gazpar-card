@@ -1,5 +1,7 @@
 // See : https://www.digital-web.com/articles/javascript_date_object_with_user_methods/
 // and : https://gist.github.com/shergin/602556
+// and : https://gist.github.com/tborychowski/83a50500a30a41a7a95f
+// and : https://gist.github.com/wildhart/e9a662056baac81d387a80083a4df9d9
 
 //----------------------------------
 Date.MonthsByLocale = new Map([
@@ -38,18 +40,18 @@ Date.prototype.formatMonthPeriod = function(locale = 'fr')
 }
 
 //----------------------------------
-Date.prototype.addDays = function(date, days) {
+Date.prototype.addDays = function(days) {
 
-  var res = new Date(date);
+  var res = new Date(this);
   res.setDate(res.getDate() + days);
 
   return res;
 }
 
 //----------------------------------
-Date.prototype.addMonths = function(date, months) {
+Date.prototype.addMonths = function(months) {
 
-  var res = new Date(date);
+  var res = new Date(this);
   res.setMonth(res.getMonth() + months);
 
   return res;

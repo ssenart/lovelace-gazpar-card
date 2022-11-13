@@ -16,20 +16,6 @@ window.customCards.push({
 });
 
 //------------------------------------------------------
-const fireEvent = (node, type, detail, options) => {
-  options = options || {};
-  detail = detail === null || detail === undefined ? {} : detail;
-  const event = new Event(type, {
-    bubbles: options.bubbles === undefined ? true : options.bubbles,
-    cancelable: Boolean(options.cancelable),
-    composed: options.composed === undefined ? true : options.composed,
-  });
-  event.detail = detail;
-  node.dispatchEvent(event);
-  return event;
-};
-
-//------------------------------------------------------
 function hasConfigOrEntityChanged(element, changedProps) {
   if (changedProps.has("config")) {
     return true;
@@ -431,7 +417,7 @@ export class GazparCard extends LitElement {
 
     for (var i = 0; i < size; ++i)
     {
-      time_period = this.addDays(time_period, -1)
+      time_period = time_period.addDays(-1)
       data.push({ time_period: time_period.formatDate(), volume_m3: null, energy_kwh: null })
     }
 
@@ -445,7 +431,7 @@ export class GazparCard extends LitElement {
 
     for (var i = 0; i < size; ++i)
     {
-      time_period = this.addMonths(time_period, -1)
+      time_period = time_period.addMonths(-1)
       data.push({ time_period: time_period.formatMonthPeriod(), volume_m3: null, energy_kwh: null })
     }
 
@@ -541,38 +527,20 @@ export class GazparCard extends LitElement {
   }
 
   //----------------------------------
-  addDays(date, days) {
-
-    var res = new Date(date);
-    res.setDate(res.getDate() + days);
-
-    return res;
-  }
-
-  //----------------------------------
-  addMonths(date, months) {
-
-    var res = new Date(date);
-    res.setMonth(res.getMonth() + months);
-
-    return res;
-  }
-
-  //----------------------------------
   renderDailyHistory(data, unit_of_measurement, config) {
 
     if (config.showDailyHistory && data != null && data.length > 0) {
       // Keep the last 7 days.
       var now = new Date()
-      var filteredDates = data.slice().reverse().filter(item => Date.parseDate(item.time_period) >= this.addDays(now, -8))
+      var filteredDates = data.slice().reverse().filter(item => Date.parseDate(item.time_period) >= now.addDays(-8))
 
       // Fill with last days of unavailable data.
-      var missingDate = this.addDays(Date.parseDate(filteredDates[filteredDates.length - 1].time_period), 1)
+      var missingDate = Date.parseDate(filteredDates[filteredDates.length - 1].time_period).addDays(1)
       while (filteredDates.length < 7)
       {
         filteredDates.push({time_period: missingDate.formatDate(), volume_m3: null, energy_kwh: null })
 
-        missingDate = this.addDays(missingDate, 1)
+        missingDate = missingDate.addDays(1)
       }
 
       return html
