@@ -1,0 +1,479 @@
+{
+    "attribution": "Data provided by GrDF",
+    "version": "1.3.0",
+    "username": "toto.titi@tata.com",
+    "pce": "123456789101112",
+    "unit_of_measurement": "kWh",
+    "friendly_name": "Gazpar",
+    "icon": "mdi:fire",
+    "device_class": "energy",
+    "state_class": "total_increasing",
+    "errorMessages": [],
+    "hourly": [],
+    "daily": [
+      {
+        "time_period": "03/11/2022",
+        "start_index_m3": 15753.0,
+        "end_index_m3": 15755.0,
+        "volume_m3": 2.0,
+        "energy_kwh": 17.0,
+        "converter_factor_kwh/m3": 11.27,
+        "temperature_degC": 11.43,
+        "type": "Mesur\u00e9",
+        "timestamp": "2022-11-06T09:41:35.629196"
+      },
+      {
+        "time_period": "02/11/2022",
+        "start_index_m3": 15752.0,
+        "end_index_m3": 15753.0,
+        "volume_m3": 2.0,
+        "energy_kwh": 17.0,
+        "converter_factor_kwh/m3": 11.16,
+        "temperature_degC": 12.41,
+        "type": "Mesur\u00e9",
+        "timestamp": "2022-11-06T09:41:35.629196"
+      },
+      {
+        "time_period": "01/11/2022",
+        "start_index_m3": 15750.0,
+        "end_index_m3": 15752.0,
+        "volume_m3": 2.0,
+        "energy_kwh": 20.0,
+        "converter_factor_kwh/m3": 11.16,
+        "temperature_degC": 13.81,
+        "type": "Mesur\u00e9",
+        "timestamp": "2022-11-06T09:41:35.629196"
+      },
+      {
+        "time_period": "31/10/2022",
+        "start_index_m3": 15748.0,
+        "end_index_m3": 15750.0,
+        "volume_m3": 2.0,
+        "energy_kwh": 23.0,
+        "converter_factor_kwh/m3": 11.16,
+        "temperature_degC": 16.3,
+        "type": "Mesur\u00e9",
+        "timestamp": "2022-11-06T09:41:35.629196"
+      },
+      {
+        "time_period": "30/10/2022",
+        "start_index_m3": 15746.0,
+        "end_index_m3": 15748.0,
+        "volume_m3": 2.0,
+        "energy_kwh": 18.0,
+        "converter_factor_kwh/m3": 11.16,
+        "temperature_degC": 15.29,
+        "type": "Mesur\u00e9",
+        "timestamp": "2022-11-06T09:41:35.629196"
+      },
+      {
+        "time_period": "29/10/2022",
+        "start_index_m3": 15745.0,
+        "end_index_m3": 15746.0,
+        "volume_m3": 2.0,
+        "energy_kwh": 19.0,
+        "converter_factor_kwh/m3": 11.16,
+        "temperature_degC": 18.14,
+        "type": "Mesur\u00e9",
+        "timestamp": "2022-11-06T09:41:35.629196"
+      },
+      {
+        "time_period": "28/10/2022",
+        "start_index_m3": 15744.0,
+        "end_index_m3": 15745.0,
+        "volume_m3": 0.0,
+        "energy_kwh": 4.0,
+        "converter_factor_kwh/m3": 11.16,
+        "temperature_degC": 18.36,
+        "type": "Mesur\u00e9",
+        "timestamp": "2022-11-06T09:41:35.629196"
+      },
+      {
+        "time_period": "27/10/2022",
+        "start_index_m3": 15744.0,
+        "end_index_m3": 15744.0,
+        "volume_m3": 0.0,
+        "energy_kwh": 3.0,
+        "converter_factor_kwh/m3": 11.16,
+        "temperature_degC": 18.02,
+        "type": "Mesur\u00e9",
+        "timestamp": "2022-11-06T09:41:35.629196"
+      },
+      {
+        "time_period": "26/10/2022",
+        "start_index_m3": 15742.0,
+        "end_index_m3": 15744.0,
+        "volume_m3": 2.0,
+        "energy_kwh": 22.0,
+        "converter_factor_kwh/m3": 11.16,
+        "temperature_degC": 16.77,
+        "type": "Mesur\u00e9",
+        "timestamp": "2022-11-06T09:41:35.629196"
+      },
+      {
+        "time_period": "25/10/2022",
+        "start_index_m3": 15741.0,
+        "end_index_m3": 15742.0,
+        "volume_m3": 1.0,
+        "energy_kwh": 16.0,
+        "converter_factor_kwh/m3": 11.16,
+        "temperature_degC": 16.06,
+        "type": "Mesur\u00e9",
+        "timestamp": "2022-11-06T09:41:35.629196"
+      },
+      {
+        "time_period": "24/10/2022",
+        "start_index_m3": 15739.0,
+        "end_index_m3": 15741.0,
+        "volume_m3": 1.0,
+        "energy_kwh": 13.0,
+        "converter_factor_kwh/m3": 11.16,
+        "temperature_degC": 15.7,
+        "type": "Mesur\u00e9",
+        "timestamp": "2022-11-06T09:41:35.629196"
+      },
+      {
+        "time_period": "23/10/2022",
+        "start_index_m3": 15738.0,
+        "end_index_m3": 15739.0,
+        "volume_m3": 2.0,
+        "energy_kwh": 19.0,
+        "converter_factor_kwh/m3": 11.16,
+        "temperature_degC": 18.25,
+        "type": "Mesur\u00e9",
+        "timestamp": "2022-11-06T09:41:35.629196"
+      },
+      {
+        "time_period": "22/10/2022",
+        "start_index_m3": 15736.0,
+        "end_index_m3": 15738.0,
+        "volume_m3": 1.0,
+        "energy_kwh": 16.0,
+        "converter_factor_kwh/m3": 11.16,
+        "temperature_degC": 16.83,
+        "type": "Mesur\u00e9",
+        "timestamp": "2022-11-06T09:41:35.629196"
+      },
+      {
+        "time_period": "21/10/2022",
+        "start_index_m3": 15735.0,
+        "end_index_m3": 15736.0,
+        "volume_m3": 1.0,
+        "energy_kwh": 13.0,
+        "converter_factor_kwh/m3": 11.16,
+        "temperature_degC": 16.38,
+        "type": "Mesur\u00e9",
+        "timestamp": "2022-11-06T09:41:35.629196"
+      }
+    ],
+    "weekly": [
+      {
+        "time_period": "Du 31/10/2022 au 06/11/2022",
+        "volume_m3": 8.0,
+        "energy_kwh": 77.0,
+        "timestamp": "2022-11-06T09:41:37.023667"
+      },
+      {
+        "time_period": "Du 24/10/2022 au 30/10/2022",
+        "volume_m3": 8.0,
+        "energy_kwh": 95.0,
+        "timestamp": "2022-11-06T09:41:37.023667"
+      },
+      {
+        "time_period": "Du 17/10/2022 au 23/10/2022",
+        "volume_m3": 10.0,
+        "energy_kwh": 115.0,
+        "timestamp": "2022-11-06T09:41:37.023667"
+      },
+      {
+        "time_period": "Du 10/10/2022 au 16/10/2022",
+        "volume_m3": 11.0,
+        "energy_kwh": 115.0,
+        "timestamp": "2022-11-06T09:41:37.023667"
+      },
+      {
+        "time_period": "Du 03/10/2022 au 09/10/2022",
+        "volume_m3": 12.0,
+        "energy_kwh": 118.0,
+        "timestamp": "2022-11-06T09:41:37.023667"
+      },
+      {
+        "time_period": "Du 26/09/2022 au 02/10/2022",
+        "volume_m3": 11.0,
+        "energy_kwh": 132.0,
+        "timestamp": "2022-11-06T09:41:37.023667"
+      },
+      {
+        "time_period": "Du 19/09/2022 au 25/09/2022",
+        "volume_m3": 7.0,
+        "energy_kwh": 93.0,
+        "timestamp": "2022-11-06T09:41:37.023667"
+      },
+      {
+        "time_period": "Du 12/09/2022 au 18/09/2022",
+        "volume_m3": 8.0,
+        "energy_kwh": 93.0,
+        "timestamp": "2022-11-06T09:41:37.023667"
+      },
+      {
+        "time_period": "Du 05/09/2022 au 11/09/2022",
+        "volume_m3": 7.0,
+        "energy_kwh": 82.0,
+        "timestamp": "2022-11-06T09:41:37.023667"
+      },
+      {
+        "time_period": "Du 29/08/2022 au 04/09/2022",
+        "volume_m3": 7.0,
+        "energy_kwh": 74.0,
+        "timestamp": "2022-11-06T09:41:37.023667"
+      },
+      {
+        "time_period": "Du 22/08/2022 au 28/08/2022",
+        "volume_m3": 7.0,
+        "energy_kwh": 76.0,
+        "timestamp": "2022-11-06T09:41:37.023667"
+      },
+      {
+        "time_period": "Du 15/08/2022 au 21/08/2022",
+        "volume_m3": 8.0,
+        "energy_kwh": 75.0,
+        "timestamp": "2022-11-06T09:41:37.023667"
+      },
+      {
+        "time_period": "Du 08/08/2022 au 14/08/2022",
+        "volume_m3": 3.0,
+        "energy_kwh": 32.0,
+        "timestamp": "2022-11-06T09:41:37.023667"
+      },
+      {
+        "time_period": "Du 01/08/2022 au 07/08/2022",
+        "volume_m3": 0.0,
+        "energy_kwh": 0.0,
+        "timestamp": "2022-11-06T09:41:37.023667"
+      },
+      {
+        "time_period": "Du 25/07/2022 au 31/07/2022",
+        "volume_m3": 0.0,
+        "energy_kwh": 0.0,
+        "timestamp": "2022-11-06T09:41:37.023667"
+      },
+      {
+        "time_period": "Du 18/07/2022 au 24/07/2022",
+        "volume_m3": 6.0,
+        "energy_kwh": 60.0,
+        "timestamp": "2022-11-06T09:41:37.023667"
+      },
+      {
+        "time_period": "Du 11/07/2022 au 17/07/2022",
+        "volume_m3": 7.0,
+        "energy_kwh": 66.0,
+        "timestamp": "2022-11-06T09:41:37.023667"
+      },
+      {
+        "time_period": "Du 04/07/2022 au 10/07/2022",
+        "volume_m3": 7.0,
+        "energy_kwh": 83.0,
+        "timestamp": "2022-11-06T09:41:37.023667"
+      },
+      {
+        "time_period": "Du 27/06/2022 au 03/07/2022",
+        "volume_m3": 8.0,
+        "energy_kwh": 80.0,
+        "timestamp": "2022-11-06T09:41:37.023667"
+      },
+      {
+        "time_period": "Du 20/06/2022 au 26/06/2022",
+        "volume_m3": 8.0,
+        "energy_kwh": 92.0,
+        "timestamp": "2022-11-06T09:41:37.023667"
+      },
+      {
+        "time_period": "Du 13/06/2022 au 19/06/2022",
+        "volume_m3": 8.0,
+        "energy_kwh": 91.0,
+        "timestamp": "2022-11-06T09:41:37.023667"
+      },
+      {
+        "time_period": "Du 06/06/2022 au 12/06/2022",
+        "volume_m3": 10.0,
+        "energy_kwh": 113.0,
+        "timestamp": "2022-11-06T09:41:37.023667"
+      },
+      {
+        "time_period": "Du 30/05/2022 au 05/06/2022",
+        "volume_m3": 10.0,
+        "energy_kwh": 114.0,
+        "timestamp": "2022-11-06T09:41:37.023667"
+      },
+      {
+        "time_period": "Du 23/05/2022 au 29/05/2022",
+        "volume_m3": 12.0,
+        "energy_kwh": 121.0,
+        "timestamp": "2022-11-06T09:41:37.023667"
+      }
+    ],
+    "monthly": [
+      {
+        "time_period": "Novembre 2022 ",
+        "volume_m3": 6.0,
+        "energy_kwh": 54.0,
+        "timestamp": "2022-11-06T09:41:39.434714"
+      },
+      {
+        "time_period": "Octobre 2022 ",
+        "volume_m3": 46.0,
+        "energy_kwh": 498.0,
+        "timestamp": "2022-11-06T09:41:39.434714"
+      },
+      {
+        "time_period": "Septembre 2022 ",
+        "volume_m3": 34.0,
+        "energy_kwh": 409.0,
+        "timestamp": "2022-11-06T09:41:39.434714"
+      },
+      {
+        "time_period": "Ao\u00fbt 2022 ",
+        "volume_m3": 21.0,
+        "energy_kwh": 216.0,
+        "timestamp": "2022-11-06T09:41:39.434714"
+      },
+      {
+        "time_period": "Juillet 2022 ",
+        "volume_m3": 23.0,
+        "energy_kwh": 246.0,
+        "timestamp": "2022-11-06T09:41:39.434714"
+      },
+      {
+        "time_period": "Juin 2022 ",
+        "volume_m3": 39.0,
+        "energy_kwh": 421.0,
+        "timestamp": "2022-11-06T09:41:39.434714"
+      },
+      {
+        "time_period": "Mai 2022 ",
+        "volume_m3": 49.0,
+        "energy_kwh": 537.0,
+        "timestamp": "2022-11-06T09:41:39.434714"
+      },
+      {
+        "time_period": "Avril 2022 ",
+        "volume_m3": 132.0,
+        "energy_kwh": 1434.0,
+        "timestamp": "2022-11-06T09:41:39.434714"
+      },
+      {
+        "time_period": "Mars 2022 ",
+        "volume_m3": 189.0,
+        "energy_kwh": 2088.0,
+        "timestamp": "2022-11-06T09:41:39.434714"
+      },
+      {
+        "time_period": "F\u00e9vrier 2022 ",
+        "volume_m3": 209.0,
+        "energy_kwh": 2333.0,
+        "timestamp": "2022-11-06T09:41:39.434714"
+      },
+      {
+        "time_period": "Janvier 2022 ",
+        "volume_m3": 360.0,
+        "energy_kwh": 4053.0,
+        "timestamp": "2022-11-06T09:41:39.434714"
+      },
+      {
+        "time_period": "D\u00e9cembre 2021 ",
+        "volume_m3": 283.0,
+        "energy_kwh": 3124.0,
+        "timestamp": "2022-11-06T09:41:39.434714"
+      },
+      {
+        "time_period": "Novembre 2021 ",
+        "volume_m3": 291.0,
+        "energy_kwh": 3233.0,
+        "timestamp": "2022-11-06T09:41:39.434714"
+      },
+      {
+        "time_period": "Octobre 2021 ",
+        "volume_m3": 114.0,
+        "energy_kwh": 1226.0,
+        "timestamp": "2022-11-06T09:41:39.434714"
+      },
+      {
+        "time_period": "Septembre 2021 ",
+        "volume_m3": 43.0,
+        "energy_kwh": 463.0,
+        "timestamp": "2022-11-06T09:41:39.434714"
+      },
+      {
+        "time_period": "Ao\u00fbt 2021 ",
+        "volume_m3": 17.0,
+        "energy_kwh": 168.0,
+        "timestamp": "2022-11-06T09:41:39.434714"
+      },
+      {
+        "time_period": "Juillet 2021 ",
+        "volume_m3": 39.0,
+        "energy_kwh": 453.0,
+        "timestamp": "2022-11-06T09:41:39.434714"
+      },
+      {
+        "time_period": "Juin 2021 ",
+        "volume_m3": 46.0,
+        "energy_kwh": 481.0,
+        "timestamp": "2022-11-06T09:41:39.434714"
+      },
+      {
+        "time_period": "Mai 2021 ",
+        "volume_m3": 105.0,
+        "energy_kwh": 1156.0,
+        "timestamp": "2022-11-06T09:41:39.434714"
+      },
+      {
+        "time_period": "Avril 2021 ",
+        "volume_m3": 162.0,
+        "energy_kwh": 1771.0,
+        "timestamp": "2022-11-06T09:41:39.434714"
+      },
+      {
+        "time_period": "Mars 2021 ",
+        "volume_m3": 263.0,
+        "energy_kwh": 2938.0,
+        "timestamp": "2022-11-06T09:41:39.434714"
+      },
+      {
+        "time_period": "F\u00e9vrier 2021 ",
+        "volume_m3": 316.0,
+        "energy_kwh": 3549.0,
+        "timestamp": "2022-11-06T09:41:39.434714"
+      },
+      {
+        "time_period": "Janvier 2021 ",
+        "volume_m3": 420.0,
+        "energy_kwh": 4586.0,
+        "timestamp": "2022-11-06T09:41:39.434714"
+      },
+      {
+        "time_period": "D\u00e9cembre 2020 ",
+        "volume_m3": 345.0,
+        "energy_kwh": 3808.0,
+        "timestamp": "2022-11-06T09:41:39.434714"
+      }
+    ],
+    "yearly": [
+      {
+        "time_period": "2022",
+        "energy_kwh": 12289.0,
+        "count": 11
+      },
+      {
+        "time_period": "2021",
+        "energy_kwh": 23148.0,
+        "count": 12
+      },
+      {
+        "time_period": "2020",
+        "energy_kwh": 21160.0,
+        "count": 12
+      }
+    ]
+  }
+  

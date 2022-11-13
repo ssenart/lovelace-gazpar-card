@@ -52,27 +52,30 @@ export class GazparCard extends LitElement {
   //----------------------------------
   updated(changedProperties) {
 
-    const stateObj = this.hass.states[this.config.entity];
-
-    if (stateObj)
+    if (this.hass && this.config)
     {
-      const attributes = stateObj.attributes;
+      const stateObj = this.hass?.states[this.config.entity];
 
-      // Shallow copy of monthly and yearly data.
-      var monthly = Array.from(attributes.monthly);
-      var yearly = Array.from(attributes.yearly);
+      if (stateObj)
+      {
+        const attributes = stateObj.attributes;
 
-      // Sort data descending by time_period.
-      monthly = this.sortDescMonthlyData(monthly)
+        // Shallow copy of monthly and yearly data.
+        var monthly = Array.from(attributes.monthly);
+        var yearly = Array.from(attributes.yearly);
 
-      // Add "empty" to have a full array (of 24 months).
-      monthly = this.rightPaddingMonthlyArray(monthly, 24 - monthly.length)
-      
-      this.updateMonthlyEnergyChart(monthly, this.config)
-      this.updateMonthlyCostChart(monthly, this.config)
+        // Sort data descending by time_period.
+        monthly = this.sortDescMonthlyData(monthly)
 
-      this.updateYearlyEnergyChart(yearly, this.config)
-      this.updateYearlyCostChart(yearly, this.config)
+        // Add "empty" to have a full array (of 24 months).
+        monthly = this.rightPaddingMonthlyArray(monthly, 24 - monthly.length)
+        
+        this.updateMonthlyEnergyChart(monthly, this.config)
+        this.updateMonthlyCostChart(monthly, this.config)
+
+        this.updateYearlyEnergyChart(yearly, this.config)
+        this.updateYearlyCostChart(yearly, this.config)
+      }
     }
   }
 
@@ -266,7 +269,7 @@ export class GazparCard extends LitElement {
         this.updateYearlyCostChartData(this.yearlyCostHistoryChart, data)
       }
 
-      this.yearlyEnergyHistoryChart.update()
+      this.yearlyCostHistoryChart.update()
     }
   }
 
@@ -290,8 +293,12 @@ export class GazparCard extends LitElement {
 
   //----------------------------------
   render() {
-    if (!this.config || !this.hass) {
-      return html``;
+    if (!this.hass) {
+      return html`Please define a hass attribute to the GazparCard component`;
+    }
+
+    if (!this.config) {
+      return html`Please define a config attribute to the GazparCard component`;
     }
 
     const stateObj = this.hass.states[this.config.entity];
@@ -534,13 +541,14 @@ export class GazparCard extends LitElement {
       var now = new Date()
       var filteredDates = data.slice().reverse().filter(item => Date.parseDate(item.time_period) >= now.addDays(-8))
 
-      // Fill with last days of unavailable data.
-      var missingDate = Date.parseDate(filteredDates[filteredDates.length - 1].time_period).addDays(1)
-      while (filteredDates.length < 7)
-      {
-        filteredDates.push({time_period: missingDate.formatDate(), volume_m3: null, energy_kwh: null })
+      if (filteredDates.length > 0) {
+        // Fill with last days of unavailable data.
+        var missingDate = Date.parseDate(filteredDates[filteredDates.length - 1].time_period).addDays(1)
+        while (filteredDates.length < 7) {
+          filteredDates.push({time_period: missingDate.formatDate(), volume_m3: null, energy_kwh: null })
 
-        missingDate = missingDate.addDays(1)
+          missingDate = missingDate.addDays(1)
+        }
       }
 
       return html

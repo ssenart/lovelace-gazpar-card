@@ -1,0 +1,18 @@
+{
+    "type": "custom:gazpar-card",
+    "entity": "sensor.gazpar",
+    "title": "Données GrDF",
+    "pricePerKWh": 0.06072,
+    "showTitle": true,
+    "showYearlyEnergyHistoryChart": true,
+    "showYearlyCostHistoryChart": true,
+    "showHistoryHeader": true,
+    "showIcon": true,
+    "showMonthlyEnergyHistoryChart": true,
+    "showDailyHistory": true,
+    "showMonthlyCostHistoryChart": true,
+    "showTrendRatioHistory": true,
+    "showError": true,
+    "showVersion": true,
+    "showCostHistory": true
+}

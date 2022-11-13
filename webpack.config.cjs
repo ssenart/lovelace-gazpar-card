@@ -1,5 +1,6 @@
 const path = require('path');
 const webpack = require('webpack');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
   entry: path.resolve(__dirname, './src/index.js'),
@@ -24,6 +25,10 @@ module.exports = {
     new webpack.DefinePlugin({
       VERSION: JSON.stringify(require("./package.json").version),
       COMPATIBLE_INTEGRATION_VERSION: JSON.stringify(require("./package.json").compatibleIntegrationVersion),
+    }),
+    new HtmlWebpackPlugin({
+      template: 'src/index.html',
+      inject: false
     })
   ],
   performance: {

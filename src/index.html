@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script type="module" src="gazpar-card.js"></script>
+    <script type="module">
+        import attributes from '../tests/attributes.json' assert { type: 'json' };
+        import config from '../tests/config.json' assert { type: 'json' };
+        console.log(attributes);
+        console.log(config);
+        
+        var card = document.getElementById(10);
+        card.hass = {"states" : { "sensor.gazpar": { "attributes" : attributes } } };
+        card.config = config;
+
+        console.log(card.hass.states[card.config.entity])
+    </script>
+    <style>
+      body {
+        font-family: 'Open Sans', sans-serif;
+        font-size: 1.5em;
+        padding-left: 0.5em;
+      }
+    </style>
+  </head>
+  <body>
+    <gazpar-card id="10"></gazpar-card>
+  </body>
+</html>
