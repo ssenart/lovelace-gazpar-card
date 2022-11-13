@@ -3,36 +3,7 @@ import 'chart.js/dist/chart.min.js'
 import { LitElement, html, css } from 'lit';
 
 import GazparIcon from '../images/gazpar-icon.png'
-
-const monthNumberByName = {
-  'Janvier': 1,
-  'Février': 2,
-  'Mars': 3,
-  'Avril': 4,
-  'Mai': 5,
-  'Juin': 6,
-  'Juillet': 7,
-  'Août': 8,
-  'Septembre': 9,
-  'Octobre': 10,
-  'Novembre': 11,
-  'Décembre': 12,
-}
-
-const monthNameByNumber = {
-  1: 'Janvier',
-  2: 'Février',
-  3: 'Mars',
-  4: 'Avril',
-  5: 'Mai',
-  6: 'Juin',
-  7: 'Juillet',
-  8: 'Août',
-  9: 'Septembre',
-  10: 'Octobre',
-  11: 'Novembre',
-  12: 'Décembre',
-}
+import '../src/date-extensions.js';
 
 //------------------------------------------------------
 window.customCards = window.customCards || [];
@@ -217,7 +188,7 @@ export class GazparCard extends LitElement {
     var labels = []
     for(var i in lastYear)
     {
-      var date = GazparCard.parseMonthPeriod(lastYear[i].time_period)
+      var date = Date.parseMonthPeriod(lastYear[i].time_period)
 
       var label = date.toLocaleDateString('fr-FR', {month: 'short'})
 
@@ -444,24 +415,24 @@ export class GazparCard extends LitElement {
   //----------------------------------
   sortDescDailyData(dailyData)
   {
-    return dailyData.sort((x, y) => GazparCard.parseDate(y.time_period) - GazparCard.parseDate(x.time_period))
+    return dailyData.sort((x, y) => Date.parseDate(y.time_period) - Date.parseDate(x.time_period))
   }
 
   //----------------------------------
   sortDescMonthlyData(monthlyData)
   {
-    return monthlyData.sort((x, y) => GazparCard.parseMonthPeriod(y.time_period) - GazparCard.parseMonthPeriod(x.time_period))
+    return monthlyData.sort((x, y) => Date.parseMonthPeriod(y.time_period) - Date.parseMonthPeriod(x.time_period))
   }
 
   //----------------------------------
   rightPaddingDailyArray(data, size) {
 
-    var time_period = GazparCard.parseDate(data[data.length-1].time_period)
+    var time_period = Date.parseDate(data[data.length-1].time_period)
 
     for (var i = 0; i < size; ++i)
     {
       time_period = this.addDays(time_period, -1)
-      data.push({ time_period: GazparCard.formatDate(time_period), volume_m3: null, energy_kwh: null })
+      data.push({ time_period: time_period.formatDate(), volume_m3: null, energy_kwh: null })
     }
 
     return data
@@ -470,12 +441,12 @@ export class GazparCard extends LitElement {
   //----------------------------------
   rightPaddingMonthlyArray(data, size) {
 
-    var time_period = GazparCard.parseMonthPeriod(data[data.length-1].time_period)
+    var time_period = Date.parseMonthPeriod(data[data.length-1].time_period)
 
     for (var i = 0; i < size; ++i)
     {
       time_period = this.addMonths(time_period, -1)
-      data.push({ time_period: GazparCard.formatMonth(time_period), volume_m3: null, energy_kwh: null })
+      data.push({ time_period: time_period.formatMonthPeriod(), volume_m3: null, energy_kwh: null })
     }
 
     return data
@@ -570,37 +541,6 @@ export class GazparCard extends LitElement {
   }
 
   //----------------------------------
-  static parseDate(dateStr) {
-
-    var parts = dateStr.split("/")
-    var res = new Date(parseInt(parts[2], 10), parseInt(parts[1], 10) - 1, parseInt(parts[0], 10))
-
-    return res;
-  }
-
-  //----------------------------------
-  static parseMonthPeriod(monthPeriodStr) {
-
-    var parts = monthPeriodStr.split(" ")
-
-    var res = new Date(parseInt(parts[1], 10), monthNumberByName[parts[0]] - 1, 1)
-
-    return res;
-  }
-
-  //----------------------------------
-  static formatDate(date) {
-
-    return date.getDate() + "/" + (date.getMonth()+1) + "/" + date.getFullYear();
-  }
-
-  //----------------------------------
-  static formatMonth(date)
-  {
-    return monthNameByNumber[date.getMonth() + 1] + " " + date.getFullYear();
-  }
-
-  //----------------------------------
   addDays(date, days) {
 
     var res = new Date(date);
@@ -624,13 +564,13 @@ export class GazparCard extends LitElement {
     if (config.showDailyHistory && data != null && data.length > 0) {
       // Keep the last 7 days.
       var now = new Date()
-      var filteredDates = data.slice().reverse().filter(item => GazparCard.parseDate(item.time_period) >= this.addDays(now, -8))
+      var filteredDates = data.slice().reverse().filter(item => Date.parseDate(item.time_period) >= this.addDays(now, -8))
 
       // Fill with last days of unavailable data.
-      var missingDate = this.addDays(GazparCard.parseDate(filteredDates[filteredDates.length - 1].time_period), 1)
+      var missingDate = this.addDays(Date.parseDate(filteredDates[filteredDates.length - 1].time_period), 1)
       while (filteredDates.length < 7)
       {
-        filteredDates.push({time_period: GazparCard.formatDate(missingDate), volume_m3: null, energy_kwh: null })
+        filteredDates.push({time_period: missingDate.formatDate(), volume_m3: null, energy_kwh: null })
 
         missingDate = this.addDays(missingDate, 1)
       }
@@ -740,7 +680,7 @@ export class GazparCard extends LitElement {
   //----------------------------------
   renderDailyDataColumnHistory(item, unit_of_measurement, config) {
 
-      var date = GazparCard.parseDate(item.time_period)
+      var date = Date.parseDate(item.time_period)
       
       return html `
       <div class="day">
@@ -756,7 +696,7 @@ export class GazparCard extends LitElement {
   //----------------------------------
   renderMonthlyDataColumnHistory(item, unit_of_measurement, config) {
 
-    var date = GazparCard.parseMonthPeriod(item.time_period)
+    var date = Date.parseMonthPeriod(item.time_period)
     
     return html `
     <div class="day">
