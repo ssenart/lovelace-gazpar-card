@@ -1,0 +1,1073 @@
+import 'chart.js/dist/chart.min.js'
+
+import { LitElement, html, css } from 'lit';
+
+import GazparIcon from '../images/gazpar-icon.png'
+
+const monthNumberByName = {
+  'Janvier': 1,
+  'Février': 2,
+  'Mars': 3,
+  'Avril': 4,
+  'Mai': 5,
+  'Juin': 6,
+  'Juillet': 7,
+  'Août': 8,
+  'Septembre': 9,
+  'Octobre': 10,
+  'Novembre': 11,
+  'Décembre': 12,
+}
+
+const monthNameByNumber = {
+  1: 'Janvier',
+  2: 'Février',
+  3: 'Mars',
+  4: 'Avril',
+  5: 'Mai',
+  6: 'Juin',
+  7: 'Juillet',
+  8: 'Août',
+  9: 'Septembre',
+  10: 'Octobre',
+  11: 'Novembre',
+  12: 'Décembre',
+}
+
+//------------------------------------------------------
+window.customCards = window.customCards || [];
+window.customCards.push({
+  type: "gazpar-card",
+  name: "Gazpar card",
+  description: "Gazpar lovelace card for Home Assistant. It works with integration home-assistant-gazpar.",
+  preview: true,
+  documentationURL: "https://github.com/ssenart/home-assistant-gazpar-card",
+});
+
+//------------------------------------------------------
+const fireEvent = (node, type, detail, options) => {
+  options = options || {};
+  detail = detail === null || detail === undefined ? {} : detail;
+  const event = new Event(type, {
+    bubbles: options.bubbles === undefined ? true : options.bubbles,
+    cancelable: Boolean(options.cancelable),
+    composed: options.composed === undefined ? true : options.composed,
+  });
+  event.detail = detail;
+  node.dispatchEvent(event);
+  return event;
+};
+
+//------------------------------------------------------
+function hasConfigOrEntityChanged(element, changedProps) {
+  if (changedProps.has("config")) {
+    return true;
+  }
+
+  const oldHass = changedProps.get("hass");
+  if (oldHass) {
+    return (
+      oldHass.states[element.config.entity] !==
+        element.hass.states[element.config.entity]
+    );
+  }
+
+  return true;
+}
+
+//------------------------------------------------------
+export class GazparCard extends LitElement {
+
+  //----------------------------------
+  static get properties() {
+    return {
+      config: {},
+      hass: {}
+    };
+  }
+
+  //----------------------------------
+  static async getConfigElement() {
+    await import("./gazpar-card-editor.js");
+    return document.createElement("gazpar-card-editor");
+  }
+
+  //----------------------------------
+  updated(changedProperties) {
+
+    const stateObj = this.hass.states[this.config.entity];
+
+    if (stateObj)
+    {
+      const attributes = stateObj.attributes;
+
+      // Shallow copy of monthly and yearly data.
+      var monthly = Array.from(attributes.monthly);
+      var yearly = Array.from(attributes.yearly);
+
+      // Sort data descending by time_period.
+      monthly = this.sortDescMonthlyData(monthly)
+
+      // Add "empty" to have a full array (of 24 months).
+      monthly = this.rightPaddingMonthlyArray(monthly, 24 - monthly.length)
+      
+      this.updateMonthlyEnergyChart(monthly, this.config)
+      this.updateMonthlyCostChart(monthly, this.config)
+
+      this.updateYearlyEnergyChart(yearly, this.config)
+      this.updateYearlyCostChart(yearly, this.config)
+    }
+  }
+
+  //----------------------------------
+  updateMonthlyEnergyChart(data) {
+
+    if (this.config.showMonthlyEnergyHistoryChart) {
+
+      const ctx = this.renderRoot.getElementById('monthlyEnergyHistoryChart').getContext('2d');
+
+      if (this.monthlyEnergyHistoryChart != null) {
+        this.monthlyEnergyHistoryChart.destroy();
+      }
+
+      this.monthlyEnergyHistoryChart = new Chart(ctx, {
+          type: 'bar',
+          data: {
+              labels: [],
+              datasets: [
+                {
+                  label: 'kWh (last year)',
+                  data: [],
+                  backgroundColor: [
+                    'grey',
+                  ],
+                },
+                {
+                  label: 'kWh (current year)',
+                  data: [],
+                  backgroundColor: [
+                      'orange',
+                  ],
+                }
+              ]
+          }
+      });
+
+      if (data != null && data.length > 0)
+      {
+        this.updateMonthlyChartLabels(this.monthlyEnergyHistoryChart, data)
+        this.updateMonthlyEnergyChartData(this.monthlyEnergyHistoryChart, data, 0)
+        this.updateMonthlyEnergyChartData(this.monthlyEnergyHistoryChart, data, 1)
+      }
+
+      this.monthlyEnergyHistoryChart.update()
+    }
+  }
+
+  //----------------------------------
+  updateMonthlyCostChart(data) {
+
+    if (this.config.showMonthlyCostHistoryChart) {
+
+      const ctx = this.renderRoot.getElementById('monthlyCostHistoryChart').getContext('2d');
+
+      if (this.monthlyCostHistoryChart != null) {
+        this.monthlyCostHistoryChart.destroy();
+      }
+
+      this.monthlyCostHistoryChart = new Chart(ctx, {
+          type: 'bar',
+          data: {
+              labels: [],
+              datasets: [
+                {
+                  label: '€ (last year)',
+                  data: [],
+                  backgroundColor: [
+                    'grey',
+                  ],              
+                },
+                {
+                  label: '€ (current year)',
+                  data: [],
+                  backgroundColor: [
+                      'DarkTurquoise',
+                  ],
+                }
+              ]
+          }
+      });
+
+      if (data != null && data.length > 0)
+      {
+        this.updateMonthlyChartLabels(this.monthlyCostHistoryChart, data)
+        this.updateMonthlyCostChartData(this.monthlyCostHistoryChart, data, 0)
+        this.updateMonthlyCostChartData(this.monthlyCostHistoryChart, data, 1)
+      }
+
+      this.monthlyCostHistoryChart.update()
+    }
+  }
+
+  //----------------------------------
+  updateMonthlyChartLabels(chart, data)
+  {  
+    var lastYear = data.slice(0, 12).reverse()
+
+    var labels = []
+    for(var i in lastYear)
+    {
+      var date = GazparCard.parseMonthPeriod(lastYear[i].time_period)
+
+      var label = date.toLocaleDateString('fr-FR', {month: 'short'})
+
+      labels.push(label)
+    }
+
+    chart.data.labels = labels
+  }
+
+  //----------------------------------
+  updateMonthlyEnergyChartData(chart, data, index)
+  {
+    chart.data.datasets[index].data = data.slice((1 - index) * 12, (2 - index) * 12).reverse().map(item => item.energy_kwh)
+  }
+
+  //----------------------------------
+  updateMonthlyCostChartData(chart, data, index)
+  {
+    chart.data.datasets[index].data = data.slice((1 - index) * 12, (2 - index) * 12).reverse().map(item => this.toFloat(item.energy_kwh * this.config.pricePerKWh, 0))
+  }
+
+  //----------------------------------
+  updateYearlyEnergyChart(data) {
+
+    if (this.config.showYearlyEnergyHistoryChart) {
+
+      const ctx = this.renderRoot.getElementById('yearlyEnergyHistoryChart').getContext('2d');
+
+      if (this.yearlyEnergyHistoryChart != null) {
+        this.yearlyEnergyHistoryChart.destroy();
+      }
+
+      this.yearlyEnergyHistoryChart = new Chart(ctx, {
+          type: 'bar',
+          data: {
+              labels: [],
+              datasets: [
+                {
+                  label: 'kWh (per year)',
+                  data: [],
+                  backgroundColor: [
+                    'orange',
+                  ],
+                }
+              ]
+          }
+      });
+
+      if (data != null && data.length > 0)
+      {
+        this.updateYearlyChartLabels(this.yearlyEnergyHistoryChart, data)
+        this.updateYearlyEnergyChartData(this.yearlyEnergyHistoryChart, data)
+      }
+
+      this.yearlyEnergyHistoryChart.update()
+    }
+  }
+
+  //----------------------------------
+  updateYearlyCostChart(data) {
+
+    if (this.config.showYearlyCostHistoryChart) {
+
+      const ctx = this.renderRoot.getElementById('yearlyCostHistoryChart').getContext('2d');
+
+      if (this.yearlyCostHistoryChart != null) {
+        this.yearlyCostHistoryChart.destroy();
+      }
+
+      this.yearlyCostHistoryChart = new Chart(ctx, {
+          type: 'bar',
+          data: {
+              labels: [],
+              datasets: [
+                {
+                  label: '€ (per year)',
+                  data: [],
+                  backgroundColor: [
+                    'DarkTurquoise',
+                  ],
+                }
+              ]
+          }
+      });
+
+      if (data != null && data.length > 0)
+      {
+        this.updateYearlyChartLabels(this.yearlyCostHistoryChart, data)
+        this.updateYearlyCostChartData(this.yearlyCostHistoryChart, data)
+      }
+
+      this.yearlyEnergyHistoryChart.update()
+    }
+  }
+
+  //----------------------------------
+  updateYearlyChartLabels(chart, data)
+  {  
+    chart.data.labels = data.slice(0, 10).reverse().map(item => item.time_period)
+  }
+
+  //----------------------------------
+  updateYearlyEnergyChartData(chart, data)
+  {
+    chart.data.datasets[0].data = data.slice(0,10).reverse().map(item => item.energy_kwh)
+  }
+
+  //----------------------------------
+  updateYearlyCostChartData(chart, data)
+  {
+    chart.data.datasets[0].data = data.slice(0,10).reverse().map(item => this.toFloat(item.energy_kwh * this.config.pricePerKWh, 0))
+  }
+
+  //----------------------------------
+  render() {
+    if (!this.config || !this.hass) {
+      return html``;
+    }
+
+    const stateObj = this.hass.states[this.config.entity];
+
+    if (!stateObj) {
+      return html`
+        <ha-card>
+          <div class="card">
+            <div id="states">
+              <div class="name">
+                <ha-icon id="icon" icon="mdi:flash" data-state="unavailable" data-domain="connection" style="color: var(--state-icon-unavailable-color)"></ha-icon>
+                <span style="margin-right:2em">Gazpar: unavailable data for ${this.config.entity}</span>
+              </div>
+            </div>
+          </div>
+        </ha-card> 
+      `
+    } else {
+
+      const attributes = stateObj.attributes;
+
+      if (attributes.version == null || attributes.version < COMPATIBLE_INTEGRATION_VERSION)
+      {
+        return html`
+          <ha-card>
+            <div class="card">
+              <div id="states">
+                <div class="name">
+                  ${this.renderError([`The minimum required version of Gazpar Integration is ${COMPATIBLE_INTEGRATION_VERSION}. Your current Gazpar Integration version is ${attributes.version}. Please update your Gazpar Integration version at least to version ${COMPATIBLE_INTEGRATION_VERSION}.`])}
+                </div>
+              </div>
+            </div>
+          </ha-card> 
+        `
+      }
+
+      // ****************************************************
+      // for (var i = 0; i < attributes.daily.length; ++i)
+      // {
+      //   attributes.daily[i].energy_kwh = 0;
+      // }
+
+      // attributes.daily = attributes.daily.splice(0, 9)
+      // attributes.monthly = attributes.monthly.splice(0, 14)
+      // ****************************************************
+
+      // Shallow copy of daily, weekly, monthly and yearly data.
+      var daily = Array.from(attributes.daily);
+      var weekly = Array.from(attributes.weekly);
+      var monthly = Array.from(attributes.monthly);
+      var yearly = Array.from(attributes.yearly);
+
+      // Sort data descending by time_period.
+      daily = this.sortDescDailyData(daily)
+      monthly = this.sortDescMonthlyData(monthly)
+
+      // Add "empty" to have a full array (of 14 days or 24 months).
+      daily = this.rightPaddingDailyArray(daily, 14 - daily.length)
+      monthly = this.rightPaddingMonthlyArray(monthly, 24 - monthly.length)
+
+      this.computeConsumptionTrendRatio(daily, 7)
+      this.computeConsumptionTrendRatio(monthly, 12)
+
+      return html`
+        <ha-card id="card">
+          ${this.addEventListener('click', event => { this._showDetails(this.config.entity); })}
+          ${this.renderTitle(this.config)}
+          <div class="card">
+            <div class="main-info">
+              ${this.config.showIcon
+                ? html`
+                  <div class="icon-block">
+                    <span class="gazpar-icon bigger" style="background: none, url(/local/community/lovelace-gazpar-card/${GazparIcon}) no-repeat; background-size: contain;"></span>
+                  </div>`
+                : html `` 
+              }
+              <div class="cout-block">
+                <span class="cout">${daily != null && daily.length > 0 ? this.toFloat(daily[0].energy_kwh):"N/A"}</span><span class="cout-unit">${attributes.unit_of_measurement}</span><br/>
+                <span class="conso">${daily != null && daily.length > 0 ? this.toFloat(daily[0].volume_m3):"N/A"}</span><span class="conso-unit">m³</span> - 
+                <span class="conso">${daily != null && daily.length > 0 ? daily[0].time_period:"N/A"}</span>
+              </div>
+              ${this.config.showCost 
+                ? html `
+                <div class="cout-block">
+                  <span class="cout" title="Coût journalier">${daily != null && daily.length > 0 ? this.toFloat(daily[0].energy_kwh * this.config.pricePerKWh, 2):"N/A"}</span><span class="cout-unit"> €</span>
+                </div>`
+                : html ``
+                }
+            </div>
+            
+            ${this.renderDailyHistory(daily, attributes.unit_of_measurement, this.config)}
+            ${this.renderMonthlyHistoryTable(monthly, attributes.unit_of_measurement, this.config)}
+
+            ${this.renderMonthlyEnergyHistoryChart(monthly, attributes.unit_of_measurement, this.config)}
+            ${this.renderMonthlyCostHistoryChart(monthly, attributes.unit_of_measurement, this.config)}
+
+            ${this.renderYearlyEnergyHistoryChart(yearly, attributes.unit_of_measurement, this.config)}
+            ${this.renderYearlyCostHistoryChart(yearly, attributes.unit_of_measurement, this.config)}
+
+            ${this.renderError(attributes.errorMessages)}
+            ${this.renderVersion()}
+          </div>
+        </ha-card>`
+    }
+  }
+
+  //----------------------------------
+  sortDescDailyData(dailyData)
+  {
+    return dailyData.sort((x, y) => GazparCard.parseDate(y.time_period) - GazparCard.parseDate(x.time_period))
+  }
+
+  //----------------------------------
+  sortDescMonthlyData(monthlyData)
+  {
+    return monthlyData.sort((x, y) => GazparCard.parseMonthPeriod(y.time_period) - GazparCard.parseMonthPeriod(x.time_period))
+  }
+
+  //----------------------------------
+  rightPaddingDailyArray(data, size) {
+
+    var time_period = GazparCard.parseDate(data[data.length-1].time_period)
+
+    for (var i = 0; i < size; ++i)
+    {
+      time_period = this.addDays(time_period, -1)
+      data.push({ time_period: GazparCard.formatDate(time_period), volume_m3: null, energy_kwh: null })
+    }
+
+    return data
+  }
+
+  //----------------------------------
+  rightPaddingMonthlyArray(data, size) {
+
+    var time_period = GazparCard.parseMonthPeriod(data[data.length-1].time_period)
+
+    for (var i = 0; i < size; ++i)
+    {
+      time_period = this.addMonths(time_period, -1)
+      data.push({ time_period: GazparCard.formatMonth(time_period), volume_m3: null, energy_kwh: null })
+    }
+
+    return data
+  }
+
+  //----------------------------------
+  computeConsumptionTrendRatio(data, shift)
+  {
+    if (data != null)
+    {
+      for (var i = 0; i < data.length-shift; ++i)
+      {
+        var currentPeriodEnergy = data[i].energy_kwh
+        var previousPeriodEnergy = data[i+shift].energy_kwh
+
+        if (currentPeriodEnergy != null && currentPeriodEnergy >= 0 && previousPeriodEnergy != null && previousPeriodEnergy > 0)
+        {
+          var ratio = 100 * (currentPeriodEnergy - previousPeriodEnergy) / previousPeriodEnergy
+
+          data[i].ratio = ratio
+        }
+        else if (currentPeriodEnergy != null && currentPeriodEnergy == 0 && previousPeriodEnergy != null && previousPeriodEnergy == 0)
+        {
+          data[i].ratio = 0
+        }
+        else if (currentPeriodEnergy != null && currentPeriodEnergy > 0 && previousPeriodEnergy != null && previousPeriodEnergy == 0)
+        {
+          data[i].ratio = 1
+        }
+        else
+        {
+          data[i].ratio = null
+        }
+      }
+    }
+  }
+
+  //----------------------------------
+  _showDetails(myEntity) {
+    const event = new Event('hass-more-info', {
+      bubbles: true,
+      cancelable: false,
+      composed: true
+    });
+    event.detail = {
+      entityId: myEntity
+    };
+    this.dispatchEvent(event);
+    return event;
+  }
+
+  //----------------------------------
+  renderTitle(config) {
+    if (this.config.showTitle === true) {
+      return html
+        `
+          <div class="card">
+          <div class="main-title">
+          <span>${this.config.title}</span>
+          </div>
+          </div>` 
+       }
+  }
+
+  //----------------------------------
+  renderError(errorMsg) {
+    if (this.config.showError === true) {
+       if (errorMsg.length > 0){
+          return html
+            `
+              <hr size="1" color="grey"/>
+              <div class="error-msg" style="color: red">
+                <ha-icon id="icon" icon="mdi:alert-outline"></ha-icon>
+                ${errorMsg.join("<br>")}
+              </div>
+            `
+       }
+    }
+  }
+
+  //----------------------------------
+  renderVersion() {
+    if (this.config.showVersion === true) {
+      return html
+        `
+          <hr size="1" color="grey"/>
+          <div class="small-value" style="color: grey; text-align: right;">
+            Gazpar Card Version ${VERSION}
+          </div>
+        `
+    }
+  }
+
+  //----------------------------------
+  static parseDate(dateStr) {
+
+    var parts = dateStr.split("/")
+    var res = new Date(parseInt(parts[2], 10), parseInt(parts[1], 10) - 1, parseInt(parts[0], 10))
+
+    return res;
+  }
+
+  //----------------------------------
+  static parseMonthPeriod(monthPeriodStr) {
+
+    var parts = monthPeriodStr.split(" ")
+
+    var res = new Date(parseInt(parts[1], 10), monthNumberByName[parts[0]] - 1, 1)
+
+    return res;
+  }
+
+  //----------------------------------
+  static formatDate(date) {
+
+    return date.getDate() + "/" + (date.getMonth()+1) + "/" + date.getFullYear();
+  }
+
+  //----------------------------------
+  static formatMonth(date)
+  {
+    return monthNameByNumber[date.getMonth() + 1] + " " + date.getFullYear();
+  }
+
+  //----------------------------------
+  addDays(date, days) {
+
+    var res = new Date(date);
+    res.setDate(res.getDate() + days);
+
+    return res;
+  }
+
+  //----------------------------------
+  addMonths(date, months) {
+
+    var res = new Date(date);
+    res.setMonth(res.getMonth() + months);
+
+    return res;
+  }
+
+  //----------------------------------
+  renderDailyHistory(data, unit_of_measurement, config) {
+
+    if (config.showDailyHistory && data != null && data.length > 0) {
+      // Keep the last 7 days.
+      var now = new Date()
+      var filteredDates = data.slice().reverse().filter(item => GazparCard.parseDate(item.time_period) >= this.addDays(now, -8))
+
+      // Fill with last days of unavailable data.
+      var missingDate = this.addDays(GazparCard.parseDate(filteredDates[filteredDates.length - 1].time_period), 1)
+      while (filteredDates.length < 7)
+      {
+        filteredDates.push({time_period: GazparCard.formatDate(missingDate), volume_m3: null, energy_kwh: null })
+
+        missingDate = this.addDays(missingDate, 1)
+      }
+
+      return html
+      `
+        <hr size="1" color="grey"/>
+        <div class="week-history">
+          ${this.renderHistoryHeader(config, "normal-value")}
+          ${filteredDates.slice(filteredDates.length - 7, filteredDates.length).map(item => this.renderDailyDataColumnHistory(item, unit_of_measurement, config))}
+        </div>
+      `
+    }
+  }
+
+  //----------------------------------
+  renderMonthlyHistoryTable(data, unit_of_measurement, config) {
+
+    if (config.showMonthlyHistory && data != null && data.length > 0) {
+      return html
+      `
+        <hr size="1" color="grey"/>
+        <div class="week-history">
+          ${this.renderHistoryHeader(config, "small-value")}
+          ${data.slice(0, 12).reverse().map(item => this.renderMonthlyDataColumnHistory(item, unit_of_measurement, config))}
+        </div>
+      `
+    }
+  }
+
+  //----------------------------------
+  renderMonthlyEnergyHistoryChart() {
+
+    if (this.config.showMonthlyEnergyHistoryChart)
+    {
+      return html
+      `
+        <hr size="1" color="grey"/>
+        <div class="chart-container">
+          <canvas id="monthlyEnergyHistoryChart"></canvas>
+        </div>
+      `
+    } else {
+      return html
+      `
+      `
+    }
+  }
+
+  //----------------------------------
+  renderMonthlyCostHistoryChart() {
+
+    if (this.config.showMonthlyCostHistoryChart)
+    {
+      return html
+      `
+        <hr size="1" color="grey"/>
+        <div class="chart-container">
+          <canvas id="monthlyCostHistoryChart"></canvas>
+        </div>
+      `
+    } else {
+      return html
+      `
+      `
+    }
+  }
+
+  //----------------------------------
+  renderYearlyEnergyHistoryChart() {
+
+    if (this.config.showYearlyEnergyHistoryChart)
+    {
+      return html
+      `
+        <hr size="1" color="grey"/>
+        <div class="chart-container">
+          <canvas id="yearlyEnergyHistoryChart"></canvas>
+        </div>
+      `
+    } else {
+      return html
+      `
+      `
+    }
+  }
+
+  //----------------------------------
+  renderYearlyCostHistoryChart() {
+
+    if (this.config.showYearlyCostHistoryChart)
+    {
+      return html
+      `
+        <hr size="1" color="grey"/>
+        <div class="chart-container">
+          <canvas id="yearlyCostHistoryChart"></canvas>
+        </div>
+      `
+    } else {
+      return html
+      `
+      `
+    }
+  }
+
+  //----------------------------------
+  renderDailyDataColumnHistory(item, unit_of_measurement, config) {
+
+      var date = GazparCard.parseDate(item.time_period)
+      
+      return html `
+      <div class="day">
+        <span class="dayname" title="${date.toLocaleDateString('fr-FR')}">${date.toLocaleDateString('fr-FR', {weekday: 'short'})}</span>
+        ${config.showEnergyHistory ? this.renderDataValue(item.energy_kwh,  0, "normal-value") : ""}
+        ${config.showVolumeHistory ? this.renderDataValue(item.volume_m3, 0, "normal-value") : ""}
+        ${config.showCostHistory ? this.renderDataValue(item.energy_kwh != null ? item.energy_kwh * this.config.pricePerKWh:null, 2, "normal-value") : ""}
+        ${config.showTrendRatioHistory ? this.renderRatioValue(item.ratio, "normal-value") : ""}
+      </div>
+      `
+  }
+
+  //----------------------------------
+  renderMonthlyDataColumnHistory(item, unit_of_measurement, config) {
+
+    var date = GazparCard.parseMonthPeriod(item.time_period)
+    
+    return html `
+    <div class="day">
+      <span class="dayname" title="${date.toLocaleDateString('fr-FR', {month: 'long', year: 'numeric'})}">${date.toLocaleDateString('fr-FR', {month: 'narrow'})}</span>
+      ${config.showEnergyHistory ? this.renderDataValue(item.energy_kwh, 0, "small-value") : ""}
+      ${config.showVolumeHistory ? this.renderDataValue(item.volume_m3, 0, "small-value") : ""}
+      ${config.showCostHistory ? this.renderDataValue(item.energy_kwh != null ? item.energy_kwh * this.config.pricePerKWh:null, 0, "small-value") : ""}
+      ${config.showTrendRatioHistory ? this.renderRatioValue(item.ratio, "small-value") : ""}
+    </div>
+    `
+  }
+
+  //----------------------------------
+  renderDataValue(value, decimals, cssname)
+  {
+    if (value != null && value >= 0) {
+      return html `
+        <br><span class="${cssname}">${this.toFloat(value, decimals)}</span>
+      `
+    } else {
+      return html `
+        ${this.renderNoData(cssname)}
+      `
+    }
+  }
+
+  //----------------------------------
+  renderRatioValue(value, cssname)
+  {
+    if (value != null)
+    {
+      return html `
+      <br>
+      <span class="ha-icon">
+        <ha-icon icon="mdi:arrow-right" style="color: ${value > 0 ? "red":"green"}; display: inline-block; transform: rotate(${value < 0?'45': (value == 0? "0" : "-45")}deg)">
+      </ha-icon>
+      </span>
+      <div class="${cssname}">
+        <nobr>${(value > 0) ? '+': ''}${Math.round(value)}<span class="unit">%</span></nobr>
+      </div>`
+    } else {
+      return html `
+        ${this.renderNoData(cssname)}
+      `
+    }
+  }
+
+  //----------------------------------
+  renderRowHeader(show, header, cssname) {
+
+    if (show) {
+       return html
+       `<span class="${cssname}">${header}</span><br>
+       `
+      }
+    else{
+       return html
+       `
+       `
+    }
+  }
+
+  //----------------------------------
+  renderHistoryHeader(config, cssname) {
+    if (this.config.showHistoryHeader) {
+       return html
+       `
+        <div class="day">
+          ${this.renderRowHeader(true, "", cssname)}
+          ${this.renderRowHeader(this.config.showEnergyHistory, "kWh", cssname)}
+          ${this.renderRowHeader(this.config.showVolumeHistory, "m³", cssname)}
+          ${this.renderRowHeader(this.config.showCostHistory, "€", cssname)}
+          ${this.renderRowHeader(this.config.showTrendRatioHistory, "%", cssname)}
+        </div>
+        `
+    }
+  }
+
+  //----------------------------------
+  renderNoData(cssname){
+    return html
+    `
+      <br><span class="${cssname}" title="Donnée indisponible"><ha-icon id="icon" icon="mdi:alert-outline" style="color:orange"></ha-icon></span>
+    `
+  }
+
+  //----------------------------------
+  setConfig(config) {
+    if (!config.entity) {
+      throw new Error('You need to define an entity');
+    }
+
+    if (config.pricePerKWh && isNaN(config.pricePerKWh)) {
+      throw new Error('pricePerKWh should be a number')
+    }
+    
+    const defaultConfig = {
+
+      title: "GrDF data",
+      entity: "sensor.gazpar",
+      pricePerKWh: 0.0,
+
+      showTitle: true,
+      showIcon: true,
+      showCost: true,
+
+      showDailyHistory: true,
+      showMonthlyHistory: true,
+      showHistoryHeader: true,
+      showEnergyHistory: true,
+      showVolumeHistory: true,
+      showCostHistory: true,
+      showTrendRatioHistory: true,
+      
+      showMonthlyEnergyHistoryChart: true,
+      showMonthlyCostHistoryChart: true,
+
+      showYearlyEnergyHistoryChart: true,
+      showYearlyCostHistoryChart: true,
+
+      showError: true,
+      showVersion: true
+    }
+
+    this.config = {
+      ...defaultConfig,
+      ...config
+    };
+  }
+
+  //----------------------------------
+  shouldUpdate(changedProps) {
+    return hasConfigOrEntityChanged(this, changedProps);
+  }
+
+  //----------------------------------
+  getCardSize() {
+    return 3;
+  }
+ 
+  //----------------------------------
+  toFloat(value, decimals = 1) {
+    return Number.parseFloat(value).toFixed(decimals);
+  }
+  
+  //----------------------------------
+  static get styles() {
+    return css`
+      .card {
+        margin: auto;
+        padding: 1.5em 1em 1em 1em;
+        position: relative;
+        cursor: pointer;
+      }
+
+      .main-title {
+        margin: auto;
+        text-align: center;
+        font-weight: 200;
+        font-size: 2em;
+        justify-content: space-between;
+      }
+      .main-info {
+        display: flex;
+        overflow: hidden;
+        align-items: center;
+        justify-content: space-between;
+        height: 75px;
+      }
+    
+      .ha-icon {
+        margin-right: 5px;
+        color: var(--paper-item-icon-color);
+      }
+      
+      .cout-block {
+      }
+  
+      .cout {
+        font-weight: 300;
+        font-size: 3.5em;
+      }
+    
+      .cout-unit {
+        font-weight: 300;
+        font-size: 1.2em;
+        display: inline-block;
+      }
+    
+      .conso-hp, .conso-hc, .conso {
+        font-weight: 200;
+        font-size: 1em;
+      }
+    
+      .conso-unit-hc, .conso-unit-hp, .conso-unit {
+        font-weight: 100;
+        font-size: 1em;
+      }
+      
+      .more-unit {
+        font-style: italic;
+        font-size: 0.8em;
+      }
+    
+      .variations {
+        display: flex;
+        justify-content: space-between;
+        overflow: hidden;
+      }
+
+      .variations-linky {
+        display: inline-block;
+        font-weight: 300;
+        margin: 1em;
+        overflow: hidden;
+      }
+    
+      .unit {
+        font-size: .8em;
+      }
+    
+      .week-history {
+        display: flex;
+        overflow: hidden;
+      }
+    
+      .day {
+        flex: auto;
+        text-align: center;
+        border-right: .1em solid var(--divider-color);
+        line-height: 2;
+        box-sizing: border-box;
+      }
+    
+      .dayname {
+        font-weight: bold;
+        text-transform: capitalize;
+      }
+  
+      .week-history .day:last-child {
+        border-right: none;
+      }
+    
+      .cons-val {
+        //font-weight: bold;
+      }
+
+      .normal-value {
+        font-size: 1em;
+      }
+
+      .small-value {
+        font-size: 0.8em;
+      }
+      
+      .previous-month {
+        font-size: 0.8em;
+        font-style: italic;
+        margin-left: 5px;
+      }
+      .current-month {
+        font-size: 0.8em;
+        font-style: italic;
+        margin-left: 5px;
+      }
+      .icon-block {
+      }
+      .gazpar-icon.bigger {
+        width: 6em;
+        height: 5em;
+        display: inline-block;
+      }
+      .error {
+        font-size: 0.8em;
+        font-style: bold;
+        margin-left: 5px;
+      }
+      .tooltip .tooltiptext {
+        visibility: hidden;
+        background: var( --ha-card-background, var(--card-background-color, white) );
+        box-shadow: 2px 2px 6px -4px #999;
+        cursor: default;
+        font-size: 14px;    
+        opacity: 1;
+        pointer-events: none;
+        position: absolute;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        z-index: 12;
+        transition: 0.15s ease all;
+        padding: 5px;
+        border: 1px solid #cecece;
+        border-radius: 3px;
+      }
+      .tooltip .tooltiptext::after {
+        content: "";
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        margin-left: -5px;
+        border-width: 5px;
+        border-style: solid;
+        border-color: #555 transparent transparent transparent;
+      }
+      .tooltip:hover .tooltiptext {
+        visibility: visible;
+        opacity: 1;
+      }
+      `;
+  }
+}
+
+customElements.define('gazpar-card', GazparCard);

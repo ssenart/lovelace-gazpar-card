@@ -1,3 +1,5 @@
+import { LitElement, html, css } from 'lit';
+
 const fireEvent = (node, type, detail, options) => {
   options = options || {};
   detail = detail === null || detail === undefined ? {} : detail;
@@ -18,11 +20,9 @@ if (
   customElements.define("ha-switch", customElements.get("paper-toggle-button"));
 }
 
-const LitElement = customElements.get("hui-masonry-view") ? Object.getPrototypeOf(customElements.get("hui-masonry-view")) : Object.getPrototypeOf(customElements.get("hui-view"));
-const html = LitElement.prototype.html;
-const css = LitElement.prototype.css;
-
-const HELPERS = window.loadCardHelpers();
+//const LitElement = customElements.get("hui-masonry-view") ? Object.getPrototypeOf(customElements.get("hui-masonry-view")) : Object.getPrototypeOf(customElements.get("hui-view"));
+//const html = LitElement.prototype.html;
+//const css = LitElement.prototype.css;
 
 export class GazparCardEditor extends LitElement {
   setConfig(config) {
@@ -110,6 +110,9 @@ export class GazparCardEditor extends LitElement {
   }
 
   firstUpdated() {
+
+    const HELPERS = window.loadCardHelpers();
+
     HELPERS.then(help => {
       if (help.importMoreInfoControl) {
         help.importMoreInfoControl("fan");

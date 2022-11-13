@@ -1,39 +1,55 @@
 {
-    "name": "lovelace-gazpar-card",
-    "version": "1.3.6",
-    "description": "GrDF Gazpar meter card for Home Assistant Lovelace UI",
-    "keywords": [
-      "home-assistant",
-      "homeassistant",
-      "hass",
-      "automation",
-      "lovelace",
-      "custom-cards",
-      "Gazpar",
-      "GrDF",
-      "Gas",
-      "Meter",
-      "Consumption-data"
-    ],
-    "module": "dist/gazpar-card.js",
-    "repository": "git@github.com:ssenart/lovelace-gazpar-card.git",
-    "author": "Senart Stephane",
-    "license": "MIT",
-    "dependencies": {
-      "lit": "^2.0.2",
-      "chart.js": "^3.9.1"
-    },
-    "devDependencies": {
-      "eslint": "^5.16.0",
-      "acorn": "^8.4.1",
-      "rollup": "^2.33.1",
-      "rollup-plugin-node-resolve": "^5.2.0",
-      "rollup-plugin-serve": "^1.1.0"
-    },
-    "scripts": {
-      "start": "rollup -c rollup.config.dev.js --watch",
-      "build": "npm run lint && npm run rollup",
-      "lint": "eslint src/* --ext .js",
-      "rollup": "rollup -c"
+  "name": "lovelace-gazpar-card",
+  "version": "1.3.7-beta",
+  "compatibleIntegrationVersion": "1.3.0",
+  "description": "GrDF Gazpar meter lovelace card for Home Assistant.",
+  "main": "index.js",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "build-dev": "webpack --mode=development",
+    "build-prd": "webpack --mode=production"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ssenart/lovelace-gazpar-card.git"
+  },
+  "keywords": [
+    "home-assistant",
+    "homeassistant",
+    "hass",
+    "automation",
+    "lovelace",
+    "custom-cards",
+    "Gazpar",
+    "GrDF",
+    "Gas",
+    "Meter",
+    "Consumption-data"
+  ],
+  "author": "Senart Stephane",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ssenart/lovelace-gazpar-card/issues"
+  },
+  "homepage": "https://github.com/ssenart/lovelace-gazpar-card#readme",
+  "dependencies": {
+    "chart.js": "^3.9.1",
+    "lit": "^2.4.1"
+  },
+  "devDependencies": {
+    "jest": "^29.3.1",
+    "jest-environment-jsdom": "^29.3.1",
+    "webpack": "^5.75.0",
+    "webpack-cli": "^4.10.0"
+  },
+  "jest": {
+    "testEnvironment": "jsdom",
+    "transform": {},
+    "moduleNameMapper": {
+      "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/tests/fileMock.js"
     }
   }
+}
+
