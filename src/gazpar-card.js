@@ -407,7 +407,7 @@ export class GazparCard extends LitElement {
               ${this.config.showIcon
                 ? html`
                   <div class="icon-block">
-                    <span class="gazpar-icon bigger" style="background: none, url(/local/community/lovelace-gazpar-card/${GazparIcon}) no-repeat; background-size: contain;"></span>
+                    <span class="gazpar-icon bigger" style="background: none, url(${GazparIcon}) no-repeat; background-size: contain;"></span>  
                   </div>`
                 : html `` 
               }

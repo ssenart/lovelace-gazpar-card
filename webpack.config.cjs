@@ -13,7 +13,7 @@ module.exports = {
     rules: [
      {
        test: /\.(png|svg|jpg|jpeg|gif)$/i,
-       type: 'asset/resource',
+       type: 'asset/inline',
      },
     ],
   },  
@@ -25,5 +25,9 @@ module.exports = {
       VERSION: JSON.stringify(require("./package.json").version),
       COMPATIBLE_INTEGRATION_VERSION: JSON.stringify(require("./package.json").compatibleIntegrationVersion),
     })
-  ]
+  ],
+  performance: {
+    maxAssetSize: 400000,
+    maxEntrypointSize: 400000,
+  },
 };
