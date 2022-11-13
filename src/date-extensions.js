@@ -1,4 +1,5 @@
 // See : https://www.digital-web.com/articles/javascript_date_object_with_user_methods/
+// and : https://gist.github.com/shergin/602556
 
 //----------------------------------
 Date.MonthsByLocale = new Map([
