@@ -9,10 +9,20 @@ Date.MonthsByLocale = new Map([
 ]);
 
 //----------------------------------
+Date.now = function() {
+
+  var res = new Date();
+
+  res.setHours(0, 0, 0, 0);
+
+  return res;
+}
+
+//----------------------------------
 Date.parseDate = function(str) {
 
-  var parts = str.split("/")
-  var res = new Date(parseInt(parts[2], 10), parseInt(parts[1], 10) - 1, parseInt(parts[0], 10))
+  var parts = str.split("/");
+  var res = new Date(parseInt(parts[2], 10), parseInt(parts[1], 10) - 1, parseInt(parts[0], 10));
 
   return res;
 }
@@ -26,9 +36,9 @@ Date.prototype.formatDate = function() {
 //----------------------------------
 Date.parseMonthPeriod = function(monthPeriodStr, locale = "fr") {
 
-  var parts = monthPeriodStr.split(" ")
+  var parts = monthPeriodStr.split(" ");
 
-  var res = new Date(parseInt(parts[1], 10), Date.MonthsByLocale.get(locale).indexOf(parts[0]), 1)
+  var res = new Date(parseInt(parts[1], 10), Date.MonthsByLocale.get(locale).indexOf(parts[0]), 1);
 
   return res;
 }

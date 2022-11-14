@@ -1,18 +1,30 @@
 {
-    "type": "custom:gazpar-card",
+    "asOfDate": "06/11/2022",
+
+    "title": "GrDF data",
     "entity": "sensor.gazpar",
-    "title": "Données GrDF",
     "pricePerKWh": 0.06072,
+
     "showTitle": true,
+
+    "showMainBar" : true,
+    "showIcon": true,
+    "showCost": true,
+
+    "showDailyHistory": true,
+    "showMonthlyHistory": true,
+    "showHistoryHeader": true,
+    "showEnergyHistory": true,
+    "showVolumeHistory": true,
+    "showCostHistory": true,
+    "showTrendRatioHistory": true,
+    
+    "showMonthlyEnergyHistoryChart": true,
+    "showMonthlyCostHistoryChart": true,
+
     "showYearlyEnergyHistoryChart": true,
     "showYearlyCostHistoryChart": true,
-    "showHistoryHeader": true,
-    "showIcon": true,
-    "showMonthlyEnergyHistoryChart": true,
-    "showDailyHistory": true,
-    "showMonthlyCostHistoryChart": true,
-    "showTrendRatioHistory": true,
+
     "showError": true,
-    "showVersion": true,
-    "showCostHistory": true
+    "showVersion": true
 }

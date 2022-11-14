@@ -56,6 +56,10 @@ export class GazparCardEditor extends LitElement {
   get _showTitle() {
     return this._config.showTitle !== false;
   }
+
+  get _showMainBar() {
+    return this._config.showMainBar !== false;
+  }
    
   get _showError() {
     return this._config.showError !== false;
@@ -165,6 +169,7 @@ export class GazparCardEditor extends LitElement {
           <!-- Switches -->
           <ul class="switches">
             ${this.renderSwitchOption("Show title", this._showTitle, "showTitle")}
+            ${this.renderSwitchOption("Show main bar", this._showMainBar, "showMainBar")}
             ${this.renderSwitchOption("Show icon", this._showIcon, "showIcon")}
             ${this.renderSwitchOption("Show cost", this._showCost, "showCost")}          
 
