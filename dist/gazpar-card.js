@@ -142,7 +142,6 @@
         </ha-card> 
       `}sortDescDailyData(t){return t.sort(((t,e)=>Date.parseDate(e.time_period)-Date.parseDate(t.time_period)))}sortDescMonthlyData(t){return t.sort(((t,e)=>Date.parseMonthPeriod(e.time_period)-Date.parseMonthPeriod(t.time_period)))}rightPaddingDailyArray(t,e){for(var i=Date.parseDate(t[t.length-1].time_period),s=0;s<e;++s)i=i.addDays(-1),t.push({time_period:i.formatDate(),volume_m3:null,energy_kwh:null});return t}rightPaddingMonthlyArray(t,e){for(var i=Date.parseMonthPeriod(t[t.length-1].time_period),s=0;s<e;++s)i=i.addMonths(-1),t.push({time_period:i.formatMonthPeriod(),volume_m3:null,energy_kwh:null});return t}computeConsumptionTrendRatio(t,e){if(null!=t)for(var i=0;i<t.length-e;++i){var s=t[i].energy_kwh,n=t[i+e].energy_kwh;if(null!=s&&s>=0&&null!=n&&n>0){var o=100*(s-n)/n;t[i].ratio=o}else t[i].ratio=null!=s&&0==s&&null!=n&&0==n?0:null!=s&&s>0&&null!=n&&0==n?1:null}}_showDetails(t){const e=new Event("hass-more-info",{bubbles:!0,cancelable:!1,composed:!0});return e.detail={entityId:t},this.dispatchEvent(e),e}renderMainBar(e,i){if(!0===this.config.showMainBar)return t.dy`
         <div class="card">
-          <hr size="1" color="grey"/>
           <div class="main-info">
             ${this.config.showIcon?t.dy`
                 <div class="icon-block">
@@ -158,65 +157,65 @@
                 <span class="cout" title="Daily cost">${null!=e&&e.length>0?this.toFloat(e[0].energy_kwh*this.config.pricePerKWh,2):"N/A"}</span><span class="cout-unit"> €</span>
               </div>`:t.dy``}
           </div>
+          <hr size="1" color="grey"/>
         </div>
         `}renderTitle(e){if(!0===this.config.showTitle)return t.dy`
           <div class="card">
           <div class="main-title">
           <span>${this.config.title}</span>
           </div>
-          </div>`}renderError(e){if(!0===this.config.showError&&e.length>0)return t.dy` <div class="card">
-              <hr size="1" color="grey"/>
+          <hr size="1" color="grey"/>
+          </div>`}renderError(e){if(!0===this.config.showError&&e.length>0)return t.dy` <div class="card">            
               <div class="error-msg" style="color: red">
                 <ha-icon id="icon" icon="mdi:alert-outline"></ha-icon>
                 ${e.join("<br>")}
               </div>
               </div>
-            `}renderVersion(){if(!0===this.config.showVersion)return t.dy` <div class="card">
-          <hr size="1" color="grey"/>
+            `}renderVersion(){if(!0===this.config.showVersion)return t.dy` <div class="card">        
           <div class="small-value" style="color: grey; text-align: right;">
             Gazpar Card Version ${"1.3.7-beta"}
           </div>
           </div>
-        `}renderDailyHistory(e,i,s){if(s.showDailyHistory&&null!=e&&e.length>0){var n=s.asOfDate?Date.parseDate(s.asOfDate):Date.now(),o=e.slice().reverse().filter((t=>Date.parseDate(t.time_period)>=n.addDays(-7)));if(o.length>0)for(var r=Date.parseDate(o[o.length-1].time_period).addDays(1);o.length<7;)o.push({time_period:r.formatDate(),volume_m3:null,energy_kwh:null}),r=r.addDays(1);return t.dy` <div class="card">
-        <hr size="1" color="grey"/>
+        `}renderDailyHistory(e,i,s){if(s.showDailyHistory&&null!=e&&e.length>0){var n=s.asOfDate?Date.parseDate(s.asOfDate):Date.now(),o=e.slice().reverse().filter((t=>Date.parseDate(t.time_period)>=n.addDays(-7)));if(o.length>0)for(var r=Date.parseDate(o[o.length-1].time_period).addDays(1);o.length<7;)o.push({time_period:r.formatDate(),volume_m3:null,energy_kwh:null}),r=r.addDays(1);return t.dy` <div class="card">        
         <div class="week-history">
           ${this.renderHistoryHeader(s,"normal-value")}
           ${o.slice(o.length-7,o.length).map((t=>this.renderDailyDataColumnHistory(t,i,s)))}
         </div>
-        </div>
-      `}}renderMonthlyHistoryTable(e,i,s){if(s.showMonthlyHistory&&null!=e&&e.length>0)return t.dy` <div class="card">
         <hr size="1" color="grey"/>
+        </div>
+      `}}renderMonthlyHistoryTable(e,i,s){if(s.showMonthlyHistory&&null!=e&&e.length>0)return t.dy` <div class="card">        
         <div class="week-history">
           ${this.renderHistoryHeader(s,"small-value")}
           ${e.slice(0,12).reverse().map((t=>this.renderMonthlyDataColumnHistory(t,i,s)))}
         </div>
-        </div>
-      `}renderMonthlyEnergyHistoryChart(){return this.config.showMonthlyEnergyHistoryChart?t.dy` <div class="card">
         <hr size="1" color="grey"/>
+        </div>
+      `}renderMonthlyEnergyHistoryChart(){return this.config.showMonthlyEnergyHistoryChart?t.dy` <div class="card">        
         <div class="chart-container">
           <canvas id="monthlyEnergyHistoryChart"></canvas>
         </div>
+        <hr size="1" color="grey"/>
         </div>
       `:t.dy`
       `}renderMonthlyCostHistoryChart(){return this.config.showMonthlyCostHistoryChart?t.dy` <div class="card">
-        <hr size="1" color="grey"/>
         <div class="chart-container">
           <canvas id="monthlyCostHistoryChart"></canvas>
         </div>
+        <hr size="1" color="grey"/>
         </div>
       `:t.dy`
-      `}renderYearlyEnergyHistoryChart(){return this.config.showYearlyEnergyHistoryChart?t.dy` <div class="card">
-        <hr size="1" color="grey"/>
+      `}renderYearlyEnergyHistoryChart(){return this.config.showYearlyEnergyHistoryChart?t.dy` <div class="card">        
         <div class="chart-container">
           <canvas id="yearlyEnergyHistoryChart"></canvas>
         </div>
+        <hr size="1" color="grey"/>
         </div>
       `:t.dy`
-      `}renderYearlyCostHistoryChart(){return this.config.showYearlyCostHistoryChart?t.dy` <div class="card">
-        <hr size="1" color="grey"/>
+      `}renderYearlyCostHistoryChart(){return this.config.showYearlyCostHistoryChart?t.dy` <div class="card">        
         <div class="chart-container">
           <canvas id="yearlyCostHistoryChart"></canvas>
         </div>
+        <hr size="1" color="grey"/>
         </div>
       `:t.dy`
       `}renderDailyDataColumnHistory(e,i,s){var n=Date.parseDate(e.time_period);return t.dy`

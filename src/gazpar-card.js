@@ -478,7 +478,6 @@ export class GazparCard extends LitElement {
       return html
         `
         <div class="card">
-          <hr size="1" color="grey"/>
           <div class="main-info">
             ${this.config.showIcon
               ? html`
@@ -500,6 +499,7 @@ export class GazparCard extends LitElement {
               : html ``
               }
           </div>
+          <hr size="1" color="grey"/>
         </div>
         ` 
        }
@@ -514,6 +514,7 @@ export class GazparCard extends LitElement {
           <div class="main-title">
           <span>${this.config.title}</span>
           </div>
+          <hr size="1" color="grey"/>
           </div>` 
        }
   }
@@ -523,8 +524,7 @@ export class GazparCard extends LitElement {
     if (this.config.showError === true) {
        if (errorMsg.length > 0){
           return html
-            ` <div class="card">
-              <hr size="1" color="grey"/>
+            ` <div class="card">            
               <div class="error-msg" style="color: red">
                 <ha-icon id="icon" icon="mdi:alert-outline"></ha-icon>
                 ${errorMsg.join("<br>")}
@@ -539,8 +539,7 @@ export class GazparCard extends LitElement {
   renderVersion() {
     if (this.config.showVersion === true) {
       return html
-        ` <div class="card">
-          <hr size="1" color="grey"/>
+        ` <div class="card">        
           <div class="small-value" style="color: grey; text-align: right;">
             Gazpar Card Version ${VERSION}
           </div>
@@ -569,12 +568,12 @@ export class GazparCard extends LitElement {
       }
 
       return html
-      ` <div class="card">
-        <hr size="1" color="grey"/>
+      ` <div class="card">        
         <div class="week-history">
           ${this.renderHistoryHeader(config, "normal-value")}
           ${filteredDates.slice(filteredDates.length - 7, filteredDates.length).map(item => this.renderDailyDataColumnHistory(item, unit_of_measurement, config))}
         </div>
+        <hr size="1" color="grey"/>
         </div>
       `
     }
@@ -585,12 +584,12 @@ export class GazparCard extends LitElement {
 
     if (config.showMonthlyHistory && data != null && data.length > 0) {
       return html
-      ` <div class="card">
-        <hr size="1" color="grey"/>
+      ` <div class="card">        
         <div class="week-history">
           ${this.renderHistoryHeader(config, "small-value")}
           ${data.slice(0, 12).reverse().map(item => this.renderMonthlyDataColumnHistory(item, unit_of_measurement, config))}
         </div>
+        <hr size="1" color="grey"/>
         </div>
       `
     }
@@ -602,11 +601,11 @@ export class GazparCard extends LitElement {
     if (this.config.showMonthlyEnergyHistoryChart)
     {
       return html
-      ` <div class="card">
-        <hr size="1" color="grey"/>
+      ` <div class="card">        
         <div class="chart-container">
           <canvas id="monthlyEnergyHistoryChart"></canvas>
         </div>
+        <hr size="1" color="grey"/>
         </div>
       `
     } else {
@@ -623,10 +622,10 @@ export class GazparCard extends LitElement {
     {
       return html
       ` <div class="card">
-        <hr size="1" color="grey"/>
         <div class="chart-container">
           <canvas id="monthlyCostHistoryChart"></canvas>
         </div>
+        <hr size="1" color="grey"/>
         </div>
       `
     } else {
@@ -642,11 +641,11 @@ export class GazparCard extends LitElement {
     if (this.config.showYearlyEnergyHistoryChart)
     {
       return html
-      ` <div class="card">
-        <hr size="1" color="grey"/>
+      ` <div class="card">        
         <div class="chart-container">
           <canvas id="yearlyEnergyHistoryChart"></canvas>
         </div>
+        <hr size="1" color="grey"/>
         </div>
       `
     } else {
@@ -662,11 +661,11 @@ export class GazparCard extends LitElement {
     if (this.config.showYearlyCostHistoryChart)
     {
       return html
-      ` <div class="card">
-        <hr size="1" color="grey"/>
+      ` <div class="card">        
         <div class="chart-container">
           <canvas id="yearlyCostHistoryChart"></canvas>
         </div>
+        <hr size="1" color="grey"/>
         </div>
       `
     } else {
