@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.7] - 2022-11-14
+
+### Added
+[#18](https://github.com/ssenart/lovelace-gazpar-card/issues/18): [Feature] Add a new config showMainBar to display (or not) the info bar with the latest consumption.
+
 ## [1.3.6] - 2022-11-09
 
 ### Fixed
