@@ -262,7 +262,7 @@
     `}setConfig(t){if(!t.entity)throw new Error("You need to define an entity");if(t.pricePerKWh&&isNaN(t.pricePerKWh))throw new Error("pricePerKWh should be a number");this.config={title:"GrDF data",entity:"sensor.gazpar",pricePerKWh:0,showTitle:!0,showMainBar:!0,showIcon:!0,showCost:!0,showDailyHistory:!0,showMonthlyHistory:!0,showHistoryHeader:!0,showEnergyHistory:!0,showVolumeHistory:!0,showCostHistory:!0,showTrendRatioHistory:!0,showMonthlyEnergyHistoryChart:!0,showMonthlyCostHistoryChart:!0,showYearlyEnergyHistoryChart:!0,showYearlyCostHistoryChart:!0,showError:!0,showVersion:!0,...t}}shouldUpdate(t){return function(t,e){if(e.has("config"))return!0;const i=e.get("hass");return!i||i.states[t.config.entity]!==t.hass.states[t.config.entity]}(this,t)}getCardSize(){return 3}toFloat(t,e=1){return Number.parseFloat(t).toFixed(e)}static get styles(){return t.iv`
       .card {
         margin: auto;
-        padding: 0.5em 0.5em 0.5em 0.5em;
+        padding: 1.5em 1em 1em 1em;
         position: relative;
         cursor: pointer;
       }
@@ -279,7 +279,7 @@
         overflow: hidden;
         align-items: center;
         justify-content: space-between;
-        /* height: 75px;*/
+        height: 75px;
       }
     
       .ha-icon {
