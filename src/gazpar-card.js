@@ -846,7 +846,7 @@ export class GazparCard extends LitElement {
     return css`
       .card {
         margin: auto;
-        padding: 0.5em 0.5em 0.5em 0.5em;
+        padding: 1.5em 1em 1em 1em;
         position: relative;
         cursor: pointer;
       }
@@ -863,7 +863,7 @@ export class GazparCard extends LitElement {
         overflow: hidden;
         align-items: center;
         justify-content: space-between;
-        /* height: 75px;*/
+        height: 75px;
       }
     
       .ha-icon {
