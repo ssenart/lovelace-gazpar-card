@@ -2,8 +2,12 @@ import 'chart.js/dist/chart.min.js'
 
 import { LitElement, html, css } from 'lit';
 
+// const LitElement = customElements.get("hui-masonry-view") ? Object.getPrototypeOf(customElements.get("hui-masonry-view")) : Object.getPrototypeOf(customElements.get("hui-view"));
+// const html = LitElement.prototype.html;
+// const css = LitElement.prototype.css;
+
 import GazparIcon from '../images/gazpar-icon.png'
-import '../src/date-extensions.js';
+import './date-extensions.js';
 
 //------------------------------------------------------
 window.customCards = window.customCards || [];
@@ -552,9 +556,9 @@ export class GazparCard extends LitElement {
 
     if (config.showDailyHistory && data != null && data.length > 0) {
       // Keep the last 7 days.
-      var now = config.asOfDate ? Date.parseDate(config.asOfDate)  : Date.now();
+      var today = config.asOfDate ? Date.parseDate(config.asOfDate)  : Date.today();
      
-      var filteredDates = data.slice().reverse().filter(item => Date.parseDate(item.time_period) >= now.addDays(-7))
+      var filteredDates = data.slice().reverse().filter(item => Date.parseDate(item.time_period) >= today.addDays(-7))
 
       if (filteredDates.length > 0) {
         // Fill with last days of unavailable data.
@@ -846,7 +850,7 @@ export class GazparCard extends LitElement {
     return css`
       .card {
         margin: auto;
-        padding: 1.5em 1em 1em 1em;
+        padding: 0.5em 0.5em 0.5em 0.5em;
         position: relative;
         cursor: pointer;
       }
@@ -858,12 +862,13 @@ export class GazparCard extends LitElement {
         font-size: 2em;
         justify-content: space-between;
       }
+
       .main-info {
         display: flex;
         overflow: hidden;
         align-items: center;
         justify-content: space-between;
-        height: 75px;
+        /* height: 75px; */
       }
     
       .ha-icon {

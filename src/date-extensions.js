@@ -9,7 +9,7 @@ Date.MonthsByLocale = new Map([
 ]);
 
 //----------------------------------
-Date.now = function() {
+Date.today = function() {
 
   var res = new Date();
 
