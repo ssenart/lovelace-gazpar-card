@@ -128,7 +128,6 @@
 
           ${this.renderError(o.errorMessages)}
           ${this.renderVersion()}
-          </div>
         </ha-card>`}return t.dy`
         <ha-card>
           <div class="card">
