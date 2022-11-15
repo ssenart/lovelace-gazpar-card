@@ -381,7 +381,6 @@ export class GazparCard extends LitElement {
 
           ${this.renderError(attributes.errorMessages)}
           ${this.renderVersion()}
-          </div>
         </ha-card>`
     }
   }
