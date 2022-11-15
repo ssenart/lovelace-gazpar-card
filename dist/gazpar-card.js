@@ -110,7 +110,7 @@
             </div>
           </ha-card> 
         `;var i=Array.from(o.daily),s=(Array.from(o.weekly),Array.from(o.monthly)),n=Array.from(o.yearly);return i=this.sortDescDailyData(i),s=this.sortDescMonthlyData(s),i=this.rightPaddingDailyArray(i,14-i.length),s=this.rightPaddingMonthlyArray(s,24-s.length),this.computeConsumptionTrendRatio(i,7),this.computeConsumptionTrendRatio(s,12),t.dy`
-        <ha-card id="card">
+        <ha-card>
           ${this.addEventListener("click",(t=>{this._showDetails(this.config.entity)}))}
 
           ${this.renderTitle(this.config)}

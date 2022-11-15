@@ -363,7 +363,7 @@ export class GazparCard extends LitElement {
       this.computeConsumptionTrendRatio(monthly, 12)
 
       return html`
-        <ha-card id="card">
+        <ha-card>
           ${this.addEventListener('click', event => { this._showDetails(this.config.entity); })}
 
           ${this.renderTitle(this.config)}
