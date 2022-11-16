@@ -360,8 +360,8 @@ export class GazparCard extends LitElement {
       monthly = this.sortDescMonthlyData(monthly)
 
       // Add "empty" to have a full array (of 14 days or 24 months).
-      daily = this.rightPaddingDailyArray(daily, 14 - daily.length)
-      monthly = this.rightPaddingMonthlyArray(monthly, 24 - monthly.length)
+      daily = GazparCard.rightPaddingDailyArray(daily, 14 - daily.length)
+      monthly = GazparCard.rightPaddingMonthlyArray(monthly, 24 - monthly.length)
 
       this.computeConsumptionTrendRatio(daily, 7)
       this.computeConsumptionTrendRatio(monthly, 12)
@@ -402,31 +402,39 @@ export class GazparCard extends LitElement {
   }
 
   //----------------------------------
-  rightPaddingDailyArray(data, size) {
+  static rightPaddingDailyArray(data, size) {
 
-    var time_period = Date.parseDate(data[data.length-1].time_period)
+    var time_period = Date.today();
+    if (data.length > 0)
+    {
+      time_period = Date.parseDate(data[data.length-1].time_period);
+    }
 
     for (var i = 0; i < size; ++i)
     {
-      time_period = time_period.addDays(-1)
-      data.push({ time_period: time_period.formatDate(), volume_m3: null, energy_kwh: null })
+      time_period = time_period.addDays(-1);
+      data.push({ time_period: time_period.formatDate(), volume_m3: null, energy_kwh: null });
     }
 
-    return data
+    return data;
   }
 
   //----------------------------------
-  rightPaddingMonthlyArray(data, size) {
+  static rightPaddingMonthlyArray(data, size) {
 
-    var time_period = Date.parseMonthPeriod(data[data.length-1].time_period)
+    var time_period = new Date(Date.today().setDate(1));
+    if (data.length > 0)
+    {
+      time_period = Date.parseMonthPeriod(data[data.length-1].time_period);
+    }
 
     for (var i = 0; i < size; ++i)
     {
-      time_period = time_period.addMonths(-1)
-      data.push({ time_period: time_period.formatMonthPeriod(), volume_m3: null, energy_kwh: null })
+      time_period = time_period.addMonths(-1);
+      data.push({ time_period: time_period.formatMonthPeriod(), volume_m3: null, energy_kwh: null });
     }
 
-    return data
+    return data;
   }
 
   //----------------------------------
