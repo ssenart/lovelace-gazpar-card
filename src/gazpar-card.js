@@ -72,7 +72,7 @@ export class GazparCard extends LitElement {
         monthly = this.sortDescMonthlyData(monthly)
 
         // Add "empty" to have a full array (of 24 months).
-        monthly = this.rightPaddingMonthlyArray(monthly, 24 - monthly.length)
+        monthly = GazparCard.rightPaddingMonthlyArray(monthly, 24 - monthly.length)
         
         this.updateMonthlyEnergyChart(monthly, this.config)
         this.updateMonthlyCostChart(monthly, this.config)
