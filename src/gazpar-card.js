@@ -310,9 +310,9 @@ export class GazparCard extends LitElement {
     if (!stateObj) {
       return html`
         <ha-card>
-          <div class="card">
+          <div class="section">
             <div id="states">
-              <div class="name">
+              <div>
                 <ha-icon id="icon" icon="mdi:flash" data-state="unavailable" data-domain="connection" style="color: var(--state-icon-unavailable-color)"></ha-icon>
                 <span style="margin-right:2em">Gazpar: unavailable data for ${this.config.entity}</span>
               </div>
@@ -328,9 +328,9 @@ export class GazparCard extends LitElement {
       {
         return html`
           <ha-card>
-            <div class="card">
+            <div class="section">
               <div id="states">
-                <div class="name">
+                <div>
                   ${this.renderError([`The minimum required version of Gazpar Integration is ${COMPATIBLE_INTEGRATION_VERSION}. Your current Gazpar Integration version is ${attributes.version}. Please update your Gazpar Integration version at least to version ${COMPATIBLE_INTEGRATION_VERSION}.`])}
                 </div>
               </div>
@@ -488,24 +488,24 @@ export class GazparCard extends LitElement {
     if (this.config.showMainBar === true) {
       return html
         `
-        <div class="card">
-          <div class="main-info">
+        <div class="section">
+          <div class="main-bar">
             ${this.config.showIcon
               ? html`
-                <div class="icon-block">
+                <div>
                   <span class="gazpar-icon bigger" style="background: none, url(${GazparIcon}) no-repeat; background-size: contain;"></span>  
                 </div>`
               : html `` 
             }
-            <div class="cout-block">
-              <span class="cout">${daily != null && daily.length > 0 ? this.toFloat(daily[0].energy_kwh):"N/A"}</span><span class="cout-unit">${unit_of_measurement}</span><br/>
-              <span class="conso">${daily != null && daily.length > 0 ? this.toFloat(daily[0].volume_m3):"N/A"}</span><span class="conso-unit">m³</span> - 
-              <span class="conso">${daily != null && daily.length > 0 ? daily[0].time_period:"N/A"}</span>
+            <div>
+              <span class="energy">${daily != null && daily.length > 0 ? this.toFloat(daily[0].energy_kwh):"N/A"}</span><span class="energy-unit">${unit_of_measurement}</span><br/>
+              <span class="volume">${daily != null && daily.length > 0 ? this.toFloat(daily[0].volume_m3):"N/A"}</span><span class="volume-unit">m³</span> - 
+              <span class="date">${daily != null && daily.length > 0 ? daily[0].time_period:"N/A"}</span>
             </div>
             ${this.config.showCost 
               ? html `
-              <div class="cout-block">
-                <span class="cout" title="Daily cost">${daily != null && daily.length > 0 ? this.toFloat(daily[0].energy_kwh * this.config.pricePerKWh, 2):"N/A"}</span><span class="cout-unit"> €</span>
+              <div>
+                <span class="cost" title="Daily cost">${daily != null && daily.length > 0 ? this.toFloat(daily[0].energy_kwh * this.config.pricePerKWh, 2):"N/A"}</span><span class="cost-unit"> €</span>
               </div>`
               : html ``
               }
@@ -521,8 +521,8 @@ export class GazparCard extends LitElement {
     if (this.config.showTitle === true) {
       return html
         `
-          <div class="card">
-          <div class="main-title">
+          <div class="section">
+          <div class="title">
           <span>${this.config.title}</span>
           </div>
           <hr size="1" color="grey"/>
@@ -535,8 +535,8 @@ export class GazparCard extends LitElement {
     if (this.config.showError === true) {
        if (errorMsg.length > 0){
           return html
-            ` <div class="card">            
-              <div class="error-msg" style="color: red">
+            ` <div class="section">            
+              <div style="color: red">
                 <ha-icon id="icon" icon="mdi:alert-outline"></ha-icon>
                 ${errorMsg.join("<br>")}
               </div>
@@ -550,7 +550,7 @@ export class GazparCard extends LitElement {
   renderVersion() {
     if (this.config.showVersion === true) {
       return html
-        ` <div class="card">        
+        ` <div class="section">        
           <div class="small-value" style="color: grey; text-align: right;">
             Gazpar Card Version ${VERSION}
           </div>
@@ -579,8 +579,8 @@ export class GazparCard extends LitElement {
       }
 
       return html
-      ` <div class="card">        
-        <div class="week-history">
+      ` <div class="section">        
+        <div class="history-table">
           ${this.renderHistoryHeader(config, "normal-value")}
           ${filteredDates.slice(filteredDates.length - 7, filteredDates.length).map(item => this.renderDailyDataColumnHistory(item, unit_of_measurement, config))}
         </div>
@@ -595,8 +595,8 @@ export class GazparCard extends LitElement {
 
     if (config.showMonthlyHistory && data != null && data.length > 0) {
       return html
-      ` <div class="card">        
-        <div class="week-history">
+      ` <div class="section">        
+        <div class="history-table">
           ${this.renderHistoryHeader(config, "small-value")}
           ${data.slice(0, 12).reverse().map(item => this.renderMonthlyDataColumnHistory(item, unit_of_measurement, config))}
         </div>
@@ -612,11 +612,9 @@ export class GazparCard extends LitElement {
     if (this.config.showMonthlyEnergyHistoryChart)
     {
       return html
-      ` <div class="card">        
-        <div class="chart-container">
+      ` <div class="section">        
           <canvas id="monthlyEnergyHistoryChart"></canvas>
-        </div>
-        <hr size="1" color="grey"/>
+          <hr size="1" color="grey"/>
         </div>
       `
     } else {
@@ -632,11 +630,9 @@ export class GazparCard extends LitElement {
     if (this.config.showMonthlyCostHistoryChart)
     {
       return html
-      ` <div class="card">
-        <div class="chart-container">
+      ` <div class="section">
           <canvas id="monthlyCostHistoryChart"></canvas>
-        </div>
-        <hr size="1" color="grey"/>
+          <hr size="1" color="grey"/>
         </div>
       `
     } else {
@@ -652,11 +648,9 @@ export class GazparCard extends LitElement {
     if (this.config.showYearlyEnergyHistoryChart)
     {
       return html
-      ` <div class="card">        
-        <div class="chart-container">
+      ` <div class="section">        
           <canvas id="yearlyEnergyHistoryChart"></canvas>
-        </div>
-        <hr size="1" color="grey"/>
+          <hr size="1" color="grey"/>
         </div>
       `
     } else {
@@ -672,11 +666,9 @@ export class GazparCard extends LitElement {
     if (this.config.showYearlyCostHistoryChart)
     {
       return html
-      ` <div class="card">        
-        <div class="chart-container">
+      ` <div class="section">        
           <canvas id="yearlyCostHistoryChart"></canvas>
-        </div>
-        <hr size="1" color="grey"/>
+          <hr size="1" color="grey"/>
         </div>
       `
     } else {
@@ -692,8 +684,8 @@ export class GazparCard extends LitElement {
       var date = Date.parseDate(item.time_period)
       
       return html `
-      <div class="day">
-        <span class="dayname" title="${date.toLocaleDateString('fr-FR')}">${date.toLocaleDateString('fr-FR', {weekday: 'short'})}</span>
+      <div class="history-column">
+        <span class="history-header" title="${date.toLocaleDateString('fr-FR')}">${date.toLocaleDateString('fr-FR', {weekday: 'short'})}</span>
         ${config.showEnergyHistory ? this.renderDataValue(item.energy_kwh,  0, "normal-value") : ""}
         ${config.showVolumeHistory ? this.renderDataValue(item.volume_m3, 0, "normal-value") : ""}
         ${config.showCostHistory ? this.renderDataValue(item.energy_kwh != null ? item.energy_kwh * this.config.pricePerKWh:null, 2, "normal-value") : ""}
@@ -708,8 +700,8 @@ export class GazparCard extends LitElement {
     var date = Date.parseMonthPeriod(item.time_period)
     
     return html `
-    <div class="day">
-      <span class="dayname" title="${date.toLocaleDateString('fr-FR', {month: 'long', year: 'numeric'})}">${date.toLocaleDateString('fr-FR', {month: 'narrow'})}</span>
+    <div class="history-column">
+      <span class="history-header" title="${date.toLocaleDateString('fr-FR', {month: 'long', year: 'numeric'})}">${date.toLocaleDateString('fr-FR', {month: 'narrow'})}</span>
       ${config.showEnergyHistory ? this.renderDataValue(item.energy_kwh, 0, "small-value") : ""}
       ${config.showVolumeHistory ? this.renderDataValue(item.volume_m3, 0, "small-value") : ""}
       ${config.showCostHistory ? this.renderDataValue(item.energy_kwh != null ? item.energy_kwh * this.config.pricePerKWh:null, 0, "small-value") : ""}
@@ -740,11 +732,10 @@ export class GazparCard extends LitElement {
       return html `
       <br>
       <span class="ha-icon">
-        <ha-icon icon="mdi:arrow-right" style="color: ${value > 0 ? "red":"green"}; display: inline-block; transform: rotate(${value < 0?'45': (value == 0? "0" : "-45")}deg)">
-      </ha-icon>
+        <ha-icon icon="mdi:arrow-right" style="color: ${value > 0 ? "red":"green"}; display: inline-block; transform: rotate(${value < 0?'45': (value == 0? "0" : "-45")}deg)"></ha-icon>
       </span>
       <div class="${cssname}">
-        <nobr>${(value > 0) ? '+': ''}${Math.round(value)}<span class="unit">%</span></nobr>
+        <nobr>${(value > 0) ? '+': ''}${Math.round(value)}<span class="ratio-unit">%</span></nobr>
       </div>`
     } else {
       return html `
@@ -773,7 +764,7 @@ export class GazparCard extends LitElement {
     if (this.config.showHistoryHeader) {
        return html
        `
-        <div class="day">
+        <div class="history-column">
           ${this.renderRowHeader(true, "", cssname)}
           ${this.renderRowHeader(this.config.showEnergyHistory, "kWh", cssname)}
           ${this.renderRowHeader(this.config.showVolumeHistory, "m³", cssname)}
@@ -856,14 +847,14 @@ export class GazparCard extends LitElement {
   //----------------------------------
   static get styles() {
     return css`
-      .card {
+      .section {
         margin: auto;
         padding: 0.5em 0.5em 0.5em 0.5em;
         position: relative;
         cursor: pointer;
       }
 
-      .main-title {
+      .title {
         margin: auto;
         text-align: center;
         font-weight: 200;
@@ -871,12 +862,11 @@ export class GazparCard extends LitElement {
         justify-content: space-between;
       }
 
-      .main-info {
+      .main-bar {
         display: flex;
         overflow: hidden;
         align-items: center;
         justify-content: space-between;
-        /* height: 75px; */
       }
     
       .ha-icon {
@@ -884,58 +874,48 @@ export class GazparCard extends LitElement {
         color: var(--paper-item-icon-color);
       }
       
-      .cout-block {
-      }
-  
-      .cout {
+      .energy {
         font-weight: 300;
         font-size: 3.5em;
       }
     
-      .cout-unit {
+      .energy-unit {
+        font-weight: 300;
+        font-size: 1.2em;
+        display: inline-block;
+      }
+
+      .cost {
+        font-weight: 300;
+        font-size: 3.5em;
+      }
+    
+      .cost-unit {
         font-weight: 300;
         font-size: 1.2em;
         display: inline-block;
       }
     
-      .conso-hp, .conso-hc, .conso {
+      .volume {
         font-weight: 200;
         font-size: 1em;
       }
     
-      .conso-unit-hc, .conso-unit-hp, .conso-unit {
+      .volume-unit {
         font-weight: 100;
         font-size: 1em;
       }
-      
-      .more-unit {
-        font-style: italic;
-        font-size: 0.8em;
-      }
-    
-      .variations {
-        display: flex;
-        justify-content: space-between;
-        overflow: hidden;
-      }
-
-      .variations-linky {
-        display: inline-block;
-        font-weight: 300;
-        margin: 1em;
-        overflow: hidden;
-      }
-    
-      .unit {
+        
+      .ratio-unit {
         font-size: .8em;
       }
     
-      .week-history {
+      .history-table {
         display: flex;
         overflow: hidden;
       }
     
-      .day {
+      .history-column {
         flex: auto;
         text-align: center;
         border-right: .1em solid var(--divider-color);
@@ -943,7 +923,7 @@ export class GazparCard extends LitElement {
         box-sizing: border-box;
       }
     
-      .dayname {
+      .history-header {
         font-weight: bold;
         text-transform: capitalize;
       }
@@ -952,10 +932,6 @@ export class GazparCard extends LitElement {
         border-right: none;
       }
     
-      .cons-val {
-        /* font-weight: bold; */
-      }
-
       .normal-value {
         font-size: 1em;
       }
@@ -964,59 +940,10 @@ export class GazparCard extends LitElement {
         font-size: 0.8em;
       }
       
-      .previous-month {
-        font-size: 0.8em;
-        font-style: italic;
-        margin-left: 5px;
-      }
-      .current-month {
-        font-size: 0.8em;
-        font-style: italic;
-        margin-left: 5px;
-      }
-      .icon-block {
-      }
       .gazpar-icon.bigger {
         width: 6em;
         height: 5em;
         display: inline-block;
-      }
-      .error {
-        font-size: 0.8em;
-        font-style: bold;
-        margin-left: 5px;
-      }
-      .tooltip .tooltiptext {
-        visibility: hidden;
-        background: var( --ha-card-background, var(--card-background-color, white) );
-        box-shadow: 2px 2px 6px -4px #999;
-        cursor: default;
-        font-size: 14px;    
-        opacity: 1;
-        pointer-events: none;
-        position: absolute;
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
-        z-index: 12;
-        transition: 0.15s ease all;
-        padding: 5px;
-        border: 1px solid #cecece;
-        border-radius: 3px;
-      }
-      .tooltip .tooltiptext::after {
-        content: "";
-        position: absolute;
-        top: 100%;
-        left: 50%;
-        margin-left: -5px;
-        border-width: 5px;
-        border-style: solid;
-        border-color: #555 transparent transparent transparent;
-      }
-      .tooltip:hover .tooltiptext {
-        visibility: visible;
-        opacity: 1;
       }
       `;
   }
