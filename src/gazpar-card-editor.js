@@ -188,7 +188,9 @@ export class GazparCardEditor extends LitElement {
             ${this.renderSwitchOption("Show main bar", this._showMainBar, "showMainBar")}
             ${this.renderSwitchOption("Show icon", this._showIcon, "showIcon")}
             ${this.renderSwitchOption("Show cost", this._showCost, "showCost")}          
-
+          </ul>
+          <hr size="1" color="gray"/>
+          <ul class="switches">      
             ${this.renderSwitchOption("Show daily history", this._showDailyHistory, "showDailyHistory")}
             ${this.renderSwitchOption("Show monthly history", this._showMonthlyHistory, "showMonthlyHistory")}
             ${this.renderSwitchOption("Show history header", this._showHistoryHeader, "showHistoryHeader")}
@@ -196,9 +198,9 @@ export class GazparCardEditor extends LitElement {
             ${this.renderSwitchOption("Show volume history", this._showVolumeHistory, "showVolumeHistory")}
             ${this.renderSwitchOption("Show cost history", this._showCostHistory, "showCostHistory")}
             ${this.renderSwitchOption("Show trend ratio history", this._showTrendRatioHistory, "showTrendRatioHistory")}
-
-            <hr size="1" color="grey"/>
-
+          </ul>
+          <hr size="1" color="gray"/>
+          <ul class="switches">
             ${this.renderSwitchOption("Show daily energy chart", this._showDailyEnergyHistoryChart, "showDailyEnergyHistoryChart")}
             ${this.renderSwitchOption("Show daily cost chart", this._showDailyCostHistoryChart, "showDailyCostHistoryChart")}
 
@@ -210,7 +212,9 @@ export class GazparCardEditor extends LitElement {
             
             ${this.renderSwitchOption("Show yearly energy chart", this._showYearlyEnergyHistoryChart, "showYearlyEnergyHistoryChart")}
             ${this.renderSwitchOption("Show yearly cost chart", this._showYearlyCostHistoryChart, "showYearlyCostHistoryChart")}
-
+          </ul>
+          <hr size="1" color="grey"/>
+          <ul class="switches">
             ${this.renderSwitchOption("Show error", this._showError, "showError")}
             ${this.renderSwitchOption("Show version", this._showVersion, "showVersion")}
           </ul>

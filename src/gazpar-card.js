@@ -73,9 +73,12 @@ export class GazparCard extends LitElement {
 
         // Sort data descending by time_period.
         daily = this.sortDescDailyData(daily)
+        weekly = this.sortDescWeeklyData(weekly)
         monthly = this.sortDescMonthlyData(monthly)
 
-        // Add "empty" to have a full array (of 24 months).
+        // Add "empty" to have a full array.
+        daily = GazparCard.rightPaddingDailyArray(daily, 14 - daily.length)
+        weekly = GazparCard.rightPaddingWeeklyArray(weekly, 24 - weekly.length)
         monthly = GazparCard.rightPaddingMonthlyArray(monthly, 24 - monthly.length)
         
         this.updateDailyEnergyChart(daily, this.config)
@@ -102,10 +105,10 @@ export class GazparCard extends LitElement {
       card.frequency = Frequency.Daily;
       card.dataSet = dataSet;
       card.periodName = 'week';
-      card.previousPeriodColor = 'lightgray';
+      card.previousPeriodColor = 'gray';
       card.currentPeriodColor = 'orange';
       card.unit = 'kWh';
-      card.labelGetter = x => x.time_period;
+      card.labelGetter = x => GazparCard.formatDay(x.time_period);
       card.valueGetter = x => x.energy_kwh;      
     }
   }
@@ -119,10 +122,10 @@ export class GazparCard extends LitElement {
       card.frequency = Frequency.Daily;
       card.dataSet = dataSet;
       card.periodName = 'week';
-      card.previousPeriodColor = 'lightgray';
+      card.previousPeriodColor = 'gray';
       card.currentPeriodColor = 'DarkTurquoise';
       card.unit = '€';
-      card.labelGetter = x => x.time_period;
+      card.labelGetter = x => GazparCard.formatDay(x.time_period);
       card.valueGetter = x => Number.parseFloat(x.energy_kwh * this.config.pricePerKWh).toFixed(1); 
     }
   }
@@ -136,10 +139,10 @@ export class GazparCard extends LitElement {
       card.frequency = Frequency.Weekly;
       card.dataSet = dataSet;
       card.periodName = 'quarter';
-      card.previousPeriodColor = 'lightgray';
+      card.previousPeriodColor = 'gray';
       card.currentPeriodColor = 'orange';
       card.unit = 'kWh';
-      card.labelGetter = x => x.time_period;
+      card.labelGetter = x => GazparCard.formatWeek(x.time_period);
       card.valueGetter = x => x.energy_kwh;      
     }
   }
@@ -153,10 +156,10 @@ export class GazparCard extends LitElement {
       card.frequency = Frequency.Weekly;
       card.dataSet = dataSet;
       card.periodName = 'quarter';
-      card.previousPeriodColor = 'lightgray';
+      card.previousPeriodColor = 'gray';
       card.currentPeriodColor = 'DarkTurquoise';
       card.unit = '€';
-      card.labelGetter = x => x.time_period;
+      card.labelGetter = x => GazparCard.formatWeek(x.time_period);
       card.valueGetter = x => Number.parseFloat(x.energy_kwh * this.config.pricePerKWh).toFixed(1); 
     }
   }
@@ -170,10 +173,10 @@ export class GazparCard extends LitElement {
       card.frequency = Frequency.Monthly;
       card.dataSet = dataSet;
       card.periodName = 'year';
-      card.previousPeriodColor = 'lightgray';
+      card.previousPeriodColor = 'gray';
       card.currentPeriodColor = 'orange';
       card.unit = 'kWh';
-      card.labelGetter = x => x.time_period;
+      card.labelGetter = x => GazparCard.formatMonth(x.time_period);
       card.valueGetter = x => x.energy_kwh;      
     }
   }
@@ -187,10 +190,10 @@ export class GazparCard extends LitElement {
       card.frequency = Frequency.Monthly;
       card.dataSet = dataSet;
       card.periodName = 'year';
-      card.previousPeriodColor = 'lightgray';
+      card.previousPeriodColor = 'gray';
       card.currentPeriodColor = 'DarkTurquoise';
       card.unit = '€';
-      card.labelGetter = x => x.time_period;
+      card.labelGetter = x => GazparCard.formatMonth(x.time_period);
       card.valueGetter = x => Number.parseFloat(x.energy_kwh * this.config.pricePerKWh).toFixed(1); 
     }
   }
@@ -204,10 +207,10 @@ export class GazparCard extends LitElement {
       card.frequency = Frequency.Yearly;
       card.dataSet = dataSet;
       card.periodName = '3 years';
-      card.previousPeriodColor = 'lightgray';
+      card.previousPeriodColor = 'gray';
       card.currentPeriodColor = 'orange';
       card.unit = 'kWh';
-      card.labelGetter = x => x.time_period;
+      card.labelGetter = x => GazparCard.formatYear(x.time_period);
       card.valueGetter = x => x.energy_kwh;     
     }
   }
@@ -221,10 +224,10 @@ export class GazparCard extends LitElement {
       card.frequency = Frequency.Yearly;
       card.dataSet = dataSet;
       card.periodName = '3 years';
-      card.previousPeriodColor = 'lightgray';
+      card.previousPeriodColor = 'gray';
       card.currentPeriodColor = 'DarkTurquoise';
       card.unit = '€';
-      card.labelGetter = x => x.time_period;
+      card.labelGetter = x => GazparCard.formatYear(x.time_period);
       card.valueGetter = x => Number.parseFloat(x.energy_kwh * this.config.pricePerKWh).toFixed(1); 
     }
   }
@@ -291,10 +294,12 @@ export class GazparCard extends LitElement {
 
       // Sort data descending by time_period.
       daily = this.sortDescDailyData(daily)
+      weekly = this.sortDescWeeklyData(weekly)
       monthly = this.sortDescMonthlyData(monthly)
 
       // Add "empty" to have a full array (of 14 days or 24 months).
       daily = GazparCard.rightPaddingDailyArray(daily, 14 - daily.length)
+      weekly = GazparCard.rightPaddingWeeklyArray(weekly, 24 - weekly.length)
       monthly = GazparCard.rightPaddingMonthlyArray(monthly, 24 - monthly.length)
 
       this.computeConsumptionTrendRatio(daily, 7)
@@ -336,6 +341,12 @@ export class GazparCard extends LitElement {
   }
 
   //----------------------------------
+  sortDescWeeklyData(weeklyData)
+  {
+    return weeklyData.sort((x, y) => Date.parseWeekPeriod(y.time_period) - Date.parseWeekPeriod(x.time_period))
+  }
+
+  //----------------------------------
   sortDescMonthlyData(monthlyData)
   {
     return monthlyData.sort((x, y) => Date.parseMonthPeriod(y.time_period) - Date.parseMonthPeriod(x.time_period))
@@ -358,6 +369,24 @@ export class GazparCard extends LitElement {
 
     return data;
   }
+
+    //----------------------------------
+    static rightPaddingWeeklyArray(data, size) {
+
+      var time_period = Date.today();
+      if (data.length > 0)
+      {
+        time_period = Date.parseDate(data[data.length-1].time_period);
+      }
+  
+      for (var i = 0; i < size; ++i)
+      {
+        time_period = time_period.addDays(-7);
+        data.push({ time_period: time_period.formatDate(), volume_m3: null, energy_kwh: null });
+      }
+  
+      return data;
+    }
 
   //----------------------------------
   static rightPaddingMonthlyArray(data, size) {
@@ -450,7 +479,7 @@ export class GazparCard extends LitElement {
               : html ``
               }
           </div>
-          <hr size="1" color="grey"/>
+          <hr size="1" color="gray"/>
         </div>
         ` 
        }
@@ -465,7 +494,7 @@ export class GazparCard extends LitElement {
           <div class="title">
           <span>${this.config.title}</span>
           </div>
-          <hr size="1" color="grey"/>
+          <hr size="1" color="gray"/>
           </div>` 
        }
   }
@@ -491,7 +520,7 @@ export class GazparCard extends LitElement {
     if (this.config.showVersion === true) {
       return html
         ` <div class="section">        
-          <div class="small-value" style="color: grey; text-align: right;">
+          <div class="small-value" style="color: gray; text-align: right;">
             Gazpar Card Version ${VERSION}
           </div>
           </div>
@@ -524,7 +553,7 @@ export class GazparCard extends LitElement {
           ${this.renderHistoryHeader(config, "normal-value")}
           ${filteredDates.slice(filteredDates.length - 7, filteredDates.length).map(item => this.renderDailyDataColumnHistory(item, unit_of_measurement, config))}
         </div>
-        <hr size="1" color="grey"/>
+        <hr size="1" color="gray"/>
         </div>
       `
     }
@@ -540,7 +569,7 @@ export class GazparCard extends LitElement {
           ${this.renderHistoryHeader(config, "small-value")}
           ${data.slice(0, 12).reverse().map(item => this.renderMonthlyDataColumnHistory(item, unit_of_measurement, config))}
         </div>
-        <hr size="1" color="grey"/>
+        <hr size="1" color="gray"/>
         </div>
       `
     }
@@ -554,7 +583,7 @@ export class GazparCard extends LitElement {
       return html
       `
         <bar-chart id="dailyEnergyChart"></bar-chart>
-        <hr size="1" color="grey"/>
+        <hr size="1" color="gray"/>
       `
     } else {
       return html
@@ -571,7 +600,7 @@ export class GazparCard extends LitElement {
       return html
       ` 
         <bar-chart id="dailyCostChart"></bar-chart>
-        <hr size="1" color="grey"/>
+        <hr size="1" color="gray"/>
       `
     } else {
       return html
@@ -588,7 +617,7 @@ export class GazparCard extends LitElement {
       return html
       `
         <bar-chart id="weeklyEnergyChart"></bar-chart>
-        <hr size="1" color="grey"/>
+        <hr size="1" color="gray"/>
       `
     } else {
       return html
@@ -605,7 +634,7 @@ export class GazparCard extends LitElement {
       return html
       ` 
         <bar-chart id="weeklyCostChart"></bar-chart>
-        <hr size="1" color="grey"/>
+        <hr size="1" color="gray"/>
       `
     } else {
       return html
@@ -622,7 +651,7 @@ export class GazparCard extends LitElement {
       return html
       `
         <bar-chart id="monthlyEnergyChart"></bar-chart>
-        <hr size="1" color="grey"/>
+        <hr size="1" color="gray"/>
       `
     } else {
       return html
@@ -639,7 +668,7 @@ export class GazparCard extends LitElement {
       return html
       ` 
         <bar-chart id="monthlyCostChart"></bar-chart>
-        <hr size="1" color="grey"/>
+        <hr size="1" color="gray"/>
       `
     } else {
       return html
@@ -656,7 +685,7 @@ export class GazparCard extends LitElement {
       return html
       ` 
         <bar-chart id="yearlyEnergyChart"></bar-chart>
-        <hr size="1" color="grey"/>
+        <hr size="1" color="gray"/>
       `
     } else {
       return html
@@ -673,7 +702,7 @@ export class GazparCard extends LitElement {
       return html
       ` 
         <bar-chart id="yearlyCostChart"></bar-chart>
-        <hr size="1" color="grey"/>
+        <hr size="1" color="gray"/>
       `
     } else {
       return html
@@ -785,6 +814,44 @@ export class GazparCard extends LitElement {
     `
       <br><span class="${cssname}" title="Donnée indisponible"><ha-icon id="icon" icon="mdi:alert-outline" style="color:orange"></ha-icon></span>
     `
+  }
+
+  //----------------------------------
+  static formatDay(time_period) {
+
+    var date = Date.parseDate(time_period);
+    var res = date.toLocaleDateString('fr-FR', {weekday: 'short'});
+
+    return res;
+  }
+
+  //----------------------------------
+  static formatWeek(time_period) {
+
+    var date = Date.parseWeekPeriod(time_period);
+    var startDate = new Date(date.getFullYear(), 0, 1);
+    var days = Math.floor((date - startDate) / (24 * 60 * 60 * 1000));
+    var weekNumber = Math.ceil(days / 7);
+    var res = `W${weekNumber}`
+
+    return res;
+  }
+
+  //----------------------------------
+  static formatMonth(time_period) {
+
+    var date = Date.parseMonthPeriod(time_period);
+    var res = date.toLocaleDateString('fr-FR', {month: 'narrow'});
+
+    return res;
+  }
+
+  //----------------------------------
+  static formatYear(time_period) {
+
+    var res = time_period;
+
+    return res;
   }
 
   //----------------------------------

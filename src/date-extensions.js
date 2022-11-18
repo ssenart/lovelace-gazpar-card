@@ -12,7 +12,6 @@ Date.MonthsByLocale = new Map([
 Date.today = function() {
 
   var res = new Date();
-
   res.setHours(0, 0, 0, 0);
 
   return res;
@@ -31,6 +30,26 @@ Date.parseDate = function(str) {
 Date.prototype.formatDate = function() {
 
   return this.getDate().toString().padStart(2, '0') + "/" + (this.getMonth()+1).toString().padStart(2, '0') + "/" + this.getFullYear().toString().padStart(2, '4');
+}
+
+//----------------------------------
+Date.parseWeekPeriod = function(monthPeriodStr, locale = "fr") {
+
+  var parts = monthPeriodStr.split(" ");
+
+  var res = Date.parseDate(parts[1]);
+
+  return res;
+}
+
+//----------------------------------
+Date.prototype.formatWeekPeriod = function() {
+
+  var endOfWeek = this.addDays(6);
+
+  var res = `Du ${this.formatDate()} au ${endOfWeek.formatDate()}`;
+
+  return res;
 }
 
 //----------------------------------

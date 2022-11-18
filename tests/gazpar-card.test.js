@@ -16,6 +16,20 @@ describe("Data preparation", () => {
       });
     });
 
+    test("rightPaddingWeeklyArray", () => {
+
+      var rightPaddingArray = GazparCard.rightPaddingWeeklyArray([], 24);
+
+      expect(rightPaddingArray.length).toBe(24);
+
+      expect(Date.parseDate(rightPaddingArray[0].time_period)).toStrictEqual(Date.today().addDays(-7));
+      expect(Date.parseDate(rightPaddingArray[23].time_period)).toStrictEqual(Date.today().addDays(-168));
+
+      rightPaddingArray.forEach((item) => {
+        expect(item.energy_kwh).toBe(null) && expect(item.volume_m3).toBe(null);
+      });
+    });
+
     test("rightPaddingMonthlyArray", () => {
 
       var rightPaddingArray = GazparCard.rightPaddingMonthlyArray([], 24);

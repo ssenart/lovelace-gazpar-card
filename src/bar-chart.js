@@ -70,15 +70,6 @@ export class BarChart extends LitElement {
 
         this.chart = new Chart(context, {
             type: 'bar',
-            options: {
-                plugins: {
-                    title: {
-                        display: true,
-                        text: this.frequency.toString(),
-                        position: 'bottom',
-                    }
-                }
-            },
             data: {
                 labels: [],
                 datasets: [

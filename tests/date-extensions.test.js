@@ -10,6 +10,14 @@ describe("date extensions", () => {
         expect((new Date(2022, 10, 9)).formatDate()).toEqual("09/11/2022");
     });
 
+    test("parseWeekPeriod", () => {
+        expect(Date.parseWeekPeriod("Du 21/11/2022 au 27/11/2022")).toEqual(new Date(2022, 10, 21));
+    });
+
+    test("formatWeekPeriod", () => {
+        expect((new Date(2022, 10, 21)).formatWeekPeriod()).toEqual("Du 21/11/2022 au 27/11/2022");
+    });
+
     test("parseMonthPeriod", () => {
         expect(Date.parseMonthPeriod("Novembre 2022")).toEqual(new Date(2022, 10, 1));
     });

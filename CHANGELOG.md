@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.3.7] - 2022-11-18
 
+### Fixed
+[#14](https://github.com/ssenart/lovelace-gazpar-card/issues/14): [Bug] No graph with Firefox.
+
 ### Added
 [#6](https://github.com/ssenart/lovelace-gazpar-card/issues/6):[Feature] Display daily and weekly data as history bar chart.
 
