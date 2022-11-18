@@ -19,6 +19,12 @@
     "showCostHistory": true,
     "showTrendRatioHistory": true,
     
+    "showDailyEnergyHistoryChart": true,
+    "showDailyCostHistoryChart": true,
+
+    "showWeeklyEnergyHistoryChart": true,
+    "showWeeklyCostHistoryChart": true,
+
     "showMonthlyEnergyHistoryChart": true,
     "showMonthlyCostHistoryChart": true,
 

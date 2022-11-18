@@ -97,6 +97,22 @@ export class GazparCardEditor extends LitElement {
     return this._config.showTrendRatioHistory !== false;
   }
 
+  get _showDailyEnergyHistoryChart() {
+    return this._config.showDailyEnergyHistoryChart !== false;
+  }
+
+  get _showDailyCostHistoryChart() {
+    return this._config.showDailyCostHistoryChart !== false;
+  }
+
+  get _showWeeklyEnergyHistoryChart() {
+    return this._config.showWeeklyEnergyHistoryChart !== false;
+  }
+
+  get _showWeeklyCostHistoryChart() {
+    return this._config.showWeeklyCostHistoryChart !== false;
+  }
+
   get _showMonthlyEnergyHistoryChart() {
     return this._config.showMonthlyEnergyHistoryChart !== false;
   }
@@ -181,11 +197,19 @@ export class GazparCardEditor extends LitElement {
             ${this.renderSwitchOption("Show cost history", this._showCostHistory, "showCostHistory")}
             ${this.renderSwitchOption("Show trend ratio history", this._showTrendRatioHistory, "showTrendRatioHistory")}
 
-            ${this.renderSwitchOption("Show monthly energy history chart", this._showMonthlyEnergyHistoryChart, "showMonthlyEnergyHistoryChart")}
-            ${this.renderSwitchOption("Show monthly cost history chart", this._showMonthlyCostHistoryChart, "showMonthlyCostHistoryChart")}
+            <hr size="1" color="grey"/>
+
+            ${this.renderSwitchOption("Show daily energy chart", this._showDailyEnergyHistoryChart, "showDailyEnergyHistoryChart")}
+            ${this.renderSwitchOption("Show daily cost chart", this._showDailyCostHistoryChart, "showDailyCostHistoryChart")}
+
+            ${this.renderSwitchOption("Show weekly energy chart", this._showWeeklyEnergyHistoryChart, "showWeeklyEnergyHistoryChart")}
+            ${this.renderSwitchOption("Show weekly cost chart", this._showWeeklyCostHistoryChart, "showWeeklyCostHistoryChart")}
+
+            ${this.renderSwitchOption("Show monthly energy chart", this._showMonthlyEnergyHistoryChart, "showMonthlyEnergyHistoryChart")}
+            ${this.renderSwitchOption("Show monthly cost chart", this._showMonthlyCostHistoryChart, "showMonthlyCostHistoryChart")}
             
-            ${this.renderSwitchOption("Show yearly energy history chart", this._showYearlyEnergyHistoryChart, "showYearlyEnergyHistoryChart")}
-            ${this.renderSwitchOption("Show yearly cost history chart", this._showYearlyCostHistoryChart, "showYearlyCostHistoryChart")}
+            ${this.renderSwitchOption("Show yearly energy chart", this._showYearlyEnergyHistoryChart, "showYearlyEnergyHistoryChart")}
+            ${this.renderSwitchOption("Show yearly cost chart", this._showYearlyCostHistoryChart, "showYearlyCostHistoryChart")}
 
             ${this.renderSwitchOption("Show error", this._showError, "showError")}
             ${this.renderSwitchOption("Show version", this._showVersion, "showVersion")}

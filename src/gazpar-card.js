@@ -8,6 +8,7 @@ import { LitElement, html, css } from 'lit';
 
 import GazparIcon from '../images/gazpar-icon.png'
 import './date-extensions.js';
+import { Frequency } from '../src/frequency.js';
 
 //------------------------------------------------------
 window.customCards = window.customCards || [];
@@ -65,15 +66,24 @@ export class GazparCard extends LitElement {
         const attributes = stateObj.attributes;
 
         // Shallow copy of monthly and yearly data.
+        var daily = Array.from(attributes.daily);
+        var weekly = Array.from(attributes.weekly);
         var monthly = Array.from(attributes.monthly);
         var yearly = Array.from(attributes.yearly);
 
         // Sort data descending by time_period.
+        daily = this.sortDescDailyData(daily)
         monthly = this.sortDescMonthlyData(monthly)
 
         // Add "empty" to have a full array (of 24 months).
         monthly = GazparCard.rightPaddingMonthlyArray(monthly, 24 - monthly.length)
         
+        this.updateDailyEnergyChart(daily, this.config)
+        this.updateDailyCostChart(daily, this.config)
+
+        this.updateWeeklyEnergyChart(weekly, this.config)
+        this.updateWeeklyCostChart(weekly, this.config)
+
         this.updateMonthlyEnergyChart(monthly, this.config)
         this.updateMonthlyCostChart(monthly, this.config)
 
@@ -84,215 +94,139 @@ export class GazparCard extends LitElement {
   }
 
   //----------------------------------
-  updateMonthlyEnergyChart(data) {
+  updateDailyEnergyChart(dataSet) {
+
+    if (this.config.showDailyEnergyHistoryChart) {
+      var card = this.renderRoot.getElementById('dailyEnergyChart');
+
+      card.frequency = Frequency.Daily;
+      card.dataSet = dataSet;
+      card.periodName = 'week';
+      card.previousPeriodColor = 'lightgray';
+      card.currentPeriodColor = 'orange';
+      card.unit = 'kWh';
+      card.labelGetter = x => x.time_period;
+      card.valueGetter = x => x.energy_kwh;      
+    }
+  }
+
+  //----------------------------------
+  updateDailyCostChart(dataSet) {
+
+    if (this.config.showDailyCostHistoryChart) {
+      var card = this.renderRoot.getElementById('dailyCostChart');
+
+      card.frequency = Frequency.Daily;
+      card.dataSet = dataSet;
+      card.periodName = 'week';
+      card.previousPeriodColor = 'lightgray';
+      card.currentPeriodColor = 'DarkTurquoise';
+      card.unit = '€';
+      card.labelGetter = x => x.time_period;
+      card.valueGetter = x => Number.parseFloat(x.energy_kwh * this.config.pricePerKWh).toFixed(1); 
+    }
+  }
+
+  //----------------------------------
+  updateWeeklyEnergyChart(dataSet) {
+
+    if (this.config.showWeeklyEnergyHistoryChart) {
+      var card = this.renderRoot.getElementById('weeklyEnergyChart');
+
+      card.frequency = Frequency.Weekly;
+      card.dataSet = dataSet;
+      card.periodName = 'quarter';
+      card.previousPeriodColor = 'lightgray';
+      card.currentPeriodColor = 'orange';
+      card.unit = 'kWh';
+      card.labelGetter = x => x.time_period;
+      card.valueGetter = x => x.energy_kwh;      
+    }
+  }
+
+  //----------------------------------
+  updateWeeklyCostChart(dataSet) {
+
+    if (this.config.showWeeklyCostHistoryChart) {
+      var card = this.renderRoot.getElementById('weeklyCostChart');
+
+      card.frequency = Frequency.Weekly;
+      card.dataSet = dataSet;
+      card.periodName = 'quarter';
+      card.previousPeriodColor = 'lightgray';
+      card.currentPeriodColor = 'DarkTurquoise';
+      card.unit = '€';
+      card.labelGetter = x => x.time_period;
+      card.valueGetter = x => Number.parseFloat(x.energy_kwh * this.config.pricePerKWh).toFixed(1); 
+    }
+  }
+
+  //----------------------------------
+  updateMonthlyEnergyChart(dataSet) {
 
     if (this.config.showMonthlyEnergyHistoryChart) {
+      var card = this.renderRoot.getElementById('monthlyEnergyChart');
 
-      const ctx = this.renderRoot.getElementById('monthlyEnergyHistoryChart').getContext('2d');
-
-      if (this.monthlyEnergyHistoryChart != null) {
-        this.monthlyEnergyHistoryChart.destroy();
-      }
-
-      this.monthlyEnergyHistoryChart = new Chart(ctx, {
-          type: 'bar',
-          data: {
-              labels: [],
-              datasets: [
-                {
-                  label: 'kWh (last year)',
-                  data: [],
-                  backgroundColor: [
-                    'grey',
-                  ],
-                },
-                {
-                  label: 'kWh (current year)',
-                  data: [],
-                  backgroundColor: [
-                      'orange',
-                  ],
-                }
-              ]
-          }
-      });
-
-      if (data != null && data.length > 0)
-      {
-        this.updateMonthlyChartLabels(this.monthlyEnergyHistoryChart, data)
-        this.updateMonthlyEnergyChartData(this.monthlyEnergyHistoryChart, data, 0)
-        this.updateMonthlyEnergyChartData(this.monthlyEnergyHistoryChart, data, 1)
-      }
-
-      this.monthlyEnergyHistoryChart.update()
+      card.frequency = Frequency.Monthly;
+      card.dataSet = dataSet;
+      card.periodName = 'year';
+      card.previousPeriodColor = 'lightgray';
+      card.currentPeriodColor = 'orange';
+      card.unit = 'kWh';
+      card.labelGetter = x => x.time_period;
+      card.valueGetter = x => x.energy_kwh;      
     }
   }
 
   //----------------------------------
-  updateMonthlyCostChart(data) {
+  updateMonthlyCostChart(dataSet) {
 
     if (this.config.showMonthlyCostHistoryChart) {
+      var card = this.renderRoot.getElementById('monthlyCostChart');
 
-      const ctx = this.renderRoot.getElementById('monthlyCostHistoryChart').getContext('2d');
-
-      if (this.monthlyCostHistoryChart != null) {
-        this.monthlyCostHistoryChart.destroy();
-      }
-
-      this.monthlyCostHistoryChart = new Chart(ctx, {
-          type: 'bar',
-          data: {
-              labels: [],
-              datasets: [
-                {
-                  label: '€ (last year)',
-                  data: [],
-                  backgroundColor: [
-                    'grey',
-                  ],              
-                },
-                {
-                  label: '€ (current year)',
-                  data: [],
-                  backgroundColor: [
-                      'DarkTurquoise',
-                  ],
-                }
-              ]
-          }
-      });
-
-      if (data != null && data.length > 0)
-      {
-        this.updateMonthlyChartLabels(this.monthlyCostHistoryChart, data)
-        this.updateMonthlyCostChartData(this.monthlyCostHistoryChart, data, 0)
-        this.updateMonthlyCostChartData(this.monthlyCostHistoryChart, data, 1)
-      }
-
-      this.monthlyCostHistoryChart.update()
+      card.frequency = Frequency.Monthly;
+      card.dataSet = dataSet;
+      card.periodName = 'year';
+      card.previousPeriodColor = 'lightgray';
+      card.currentPeriodColor = 'DarkTurquoise';
+      card.unit = '€';
+      card.labelGetter = x => x.time_period;
+      card.valueGetter = x => Number.parseFloat(x.energy_kwh * this.config.pricePerKWh).toFixed(1); 
     }
   }
 
   //----------------------------------
-  updateMonthlyChartLabels(chart, data)
-  {  
-    var lastYear = data.slice(0, 12).reverse()
-
-    var labels = []
-    for(var i in lastYear)
-    {
-      var date = Date.parseMonthPeriod(lastYear[i].time_period)
-
-      var label = date.toLocaleDateString('fr-FR', {month: 'short'})
-
-      labels.push(label)
-    }
-
-    chart.data.labels = labels
-  }
-
-  //----------------------------------
-  updateMonthlyEnergyChartData(chart, data, index)
-  {
-    chart.data.datasets[index].data = data.slice((1 - index) * 12, (2 - index) * 12).reverse().map(item => item.energy_kwh)
-  }
-
-  //----------------------------------
-  updateMonthlyCostChartData(chart, data, index)
-  {
-    chart.data.datasets[index].data = data.slice((1 - index) * 12, (2 - index) * 12).reverse().map(item => this.toFloat(item.energy_kwh * this.config.pricePerKWh, 0))
-  }
-
-  //----------------------------------
-  updateYearlyEnergyChart(data) {
+  updateYearlyEnergyChart(dataSet) {
 
     if (this.config.showYearlyEnergyHistoryChart) {
+      var card = this.renderRoot.getElementById('yearlyEnergyChart');
 
-      const ctx = this.renderRoot.getElementById('yearlyEnergyHistoryChart').getContext('2d');
-
-      if (this.yearlyEnergyHistoryChart != null) {
-        this.yearlyEnergyHistoryChart.destroy();
-      }
-
-      this.yearlyEnergyHistoryChart = new Chart(ctx, {
-          type: 'bar',
-          data: {
-              labels: [],
-              datasets: [
-                {
-                  label: 'kWh (per year)',
-                  data: [],
-                  backgroundColor: [
-                    'orange',
-                  ],
-                }
-              ]
-          }
-      });
-
-      if (data != null && data.length > 0)
-      {
-        this.updateYearlyChartLabels(this.yearlyEnergyHistoryChart, data)
-        this.updateYearlyEnergyChartData(this.yearlyEnergyHistoryChart, data)
-      }
-
-      this.yearlyEnergyHistoryChart.update()
+      card.frequency = Frequency.Yearly;
+      card.dataSet = dataSet;
+      card.periodName = '3 years';
+      card.previousPeriodColor = 'lightgray';
+      card.currentPeriodColor = 'orange';
+      card.unit = 'kWh';
+      card.labelGetter = x => x.time_period;
+      card.valueGetter = x => x.energy_kwh;     
     }
   }
 
   //----------------------------------
-  updateYearlyCostChart(data) {
+  updateYearlyCostChart(dataSet) {
 
     if (this.config.showYearlyCostHistoryChart) {
+      var card = this.renderRoot.getElementById('yearlyCostChart');
 
-      const ctx = this.renderRoot.getElementById('yearlyCostHistoryChart').getContext('2d');
-
-      if (this.yearlyCostHistoryChart != null) {
-        this.yearlyCostHistoryChart.destroy();
-      }
-
-      this.yearlyCostHistoryChart = new Chart(ctx, {
-          type: 'bar',
-          data: {
-              labels: [],
-              datasets: [
-                {
-                  label: '€ (per year)',
-                  data: [],
-                  backgroundColor: [
-                    'DarkTurquoise',
-                  ],
-                }
-              ]
-          }
-      });
-
-      if (data != null && data.length > 0)
-      {
-        this.updateYearlyChartLabels(this.yearlyCostHistoryChart, data)
-        this.updateYearlyCostChartData(this.yearlyCostHistoryChart, data)
-      }
-
-      this.yearlyCostHistoryChart.update()
+      card.frequency = Frequency.Yearly;
+      card.dataSet = dataSet;
+      card.periodName = '3 years';
+      card.previousPeriodColor = 'lightgray';
+      card.currentPeriodColor = 'DarkTurquoise';
+      card.unit = '€';
+      card.labelGetter = x => x.time_period;
+      card.valueGetter = x => Number.parseFloat(x.energy_kwh * this.config.pricePerKWh).toFixed(1); 
     }
-  }
-
-  //----------------------------------
-  updateYearlyChartLabels(chart, data)
-  {  
-    chart.data.labels = data.slice(0, 10).reverse().map(item => item.time_period)
-  }
-
-  //----------------------------------
-  updateYearlyEnergyChartData(chart, data)
-  {
-    chart.data.datasets[0].data = data.slice(0,10).reverse().map(item => item.energy_kwh)
-  }
-
-  //----------------------------------
-  updateYearlyCostChartData(chart, data)
-  {
-    chart.data.datasets[0].data = data.slice(0,10).reverse().map(item => this.toFloat(item.energy_kwh * this.config.pricePerKWh, 0))
   }
 
   //----------------------------------
@@ -377,11 +311,17 @@ export class GazparCard extends LitElement {
           ${this.renderDailyHistory(daily, attributes.unit_of_measurement, this.config)}
           ${this.renderMonthlyHistoryTable(monthly, attributes.unit_of_measurement, this.config)}
 
-          ${this.renderMonthlyEnergyHistoryChart(monthly, attributes.unit_of_measurement, this.config)}
-          ${this.renderMonthlyCostHistoryChart(monthly, attributes.unit_of_measurement, this.config)}
+          ${this.renderDailyEnergyHistoryChart()}
+          ${this.renderDailyCostHistoryChart()}
 
-          ${this.renderYearlyEnergyHistoryChart(yearly, attributes.unit_of_measurement, this.config)}
-          ${this.renderYearlyCostHistoryChart(yearly, attributes.unit_of_measurement, this.config)}
+          ${this.renderWeeklyEnergyHistoryChart()}
+          ${this.renderWeeklyCostHistoryChart()}
+
+          ${this.renderMonthlyEnergyHistoryChart()}
+          ${this.renderMonthlyCostHistoryChart()}
+
+          ${this.renderYearlyEnergyHistoryChart()}
+          ${this.renderYearlyCostHistoryChart()}
 
           ${this.renderError(attributes.errorMessages)}
           ${this.renderVersion()}
@@ -607,15 +547,82 @@ export class GazparCard extends LitElement {
   }
 
   //----------------------------------
+  renderDailyEnergyHistoryChart() {
+
+    if (this.config.showDailyEnergyHistoryChart)
+    {
+      return html
+      `
+        <bar-chart id="dailyEnergyChart"></bar-chart>
+        <hr size="1" color="grey"/>
+      `
+    } else {
+      return html
+      `
+      `
+    }
+  }
+
+  //----------------------------------
+  renderDailyCostHistoryChart() {
+
+    if (this.config.showDailyCostHistoryChart)
+    {
+      return html
+      ` 
+        <bar-chart id="dailyCostChart"></bar-chart>
+        <hr size="1" color="grey"/>
+      `
+    } else {
+      return html
+      `
+      `
+    }
+  }
+
+  //----------------------------------
+  renderWeeklyEnergyHistoryChart() {
+
+    if (this.config.showWeeklyEnergyHistoryChart)
+    {
+      return html
+      `
+        <bar-chart id="weeklyEnergyChart"></bar-chart>
+        <hr size="1" color="grey"/>
+      `
+    } else {
+      return html
+      `
+      `
+    }
+  }
+
+  //----------------------------------
+  renderWeeklyCostHistoryChart() {
+
+    if (this.config.showWeeklyCostHistoryChart)
+    {
+      return html
+      ` 
+        <bar-chart id="weeklyCostChart"></bar-chart>
+        <hr size="1" color="grey"/>
+      `
+    } else {
+      return html
+      `
+      `
+    }
+  }
+
+  //----------------------------------
   renderMonthlyEnergyHistoryChart() {
 
     if (this.config.showMonthlyEnergyHistoryChart)
     {
       return html
-      ` <div class="section">        
-          <canvas id="monthlyEnergyHistoryChart"></canvas>
-          <hr size="1" color="grey"/>
-        </div>
+      `
+        <bar-chart id="monthlyEnergyChart"></bar-chart>
+        <hr size="1" color="grey"/>
       `
     } else {
       return html
@@ -630,10 +637,9 @@ export class GazparCard extends LitElement {
     if (this.config.showMonthlyCostHistoryChart)
     {
       return html
-      ` <div class="section">
-          <canvas id="monthlyCostHistoryChart"></canvas>
-          <hr size="1" color="grey"/>
-        </div>
+      ` 
+        <bar-chart id="monthlyCostChart"></bar-chart>
+        <hr size="1" color="grey"/>
       `
     } else {
       return html
@@ -648,10 +654,9 @@ export class GazparCard extends LitElement {
     if (this.config.showYearlyEnergyHistoryChart)
     {
       return html
-      ` <div class="section">        
-          <canvas id="yearlyEnergyHistoryChart"></canvas>
-          <hr size="1" color="grey"/>
-        </div>
+      ` 
+        <bar-chart id="yearlyEnergyChart"></bar-chart>
+        <hr size="1" color="grey"/>
       `
     } else {
       return html
@@ -666,10 +671,9 @@ export class GazparCard extends LitElement {
     if (this.config.showYearlyCostHistoryChart)
     {
       return html
-      ` <div class="section">        
-          <canvas id="yearlyCostHistoryChart"></canvas>
-          <hr size="1" color="grey"/>
-        </div>
+      ` 
+        <bar-chart id="yearlyCostChart"></bar-chart>
+        <hr size="1" color="grey"/>
       `
     } else {
       return html
@@ -813,6 +817,12 @@ export class GazparCard extends LitElement {
       showCostHistory: true,
       showTrendRatioHistory: true,
       
+      showDailyEnergyHistoryChart: true,
+      showDailyCostHistoryChart: true,
+
+      showWeeklyEnergyHistoryChart: true,
+      showWeeklyCostHistoryChart: true,
+
       showMonthlyEnergyHistoryChart: true,
       showMonthlyCostHistoryChart: true,
 

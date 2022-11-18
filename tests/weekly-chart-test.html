@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script type="module" src="gazpar-card.js"></script>
+    <script type="module">
+        import { Frequency } from '../src/frequency.js';
+
+        //import attributes from '../tests/attributes.json' assert { type: 'json' };
+        const response = await fetch('../tests/attributes.json')
+        const attributes = await response.json()
+        console.log(attributes);
+        
+        var card = document.getElementById(10);
+        card.frequency = Frequency.Weekly;
+        card.dataSet = attributes.weekly;
+        card.periodName = 'month';
+        card.previousPeriodColor = 'lightgray';
+        card.currentPeriodColor = 'gray';
+        card.unit = 'kWh';
+        card.labelGetter = x => x.time_period;
+        card.valueGetter = x => x.energy_kwh;
+    </script>
+    <style>
+      body {
+        font-family: 'Open Sans', sans-serif;
+        font-size: 1.5em;
+        padding-left: 0.5em;
+      }
+    </style>
+  </head>
+  <body>
+    <bar-chart id="10"></bar-chart>
+  </body>
+</html>

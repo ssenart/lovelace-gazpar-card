@@ -27,7 +27,29 @@ module.exports = {
       COMPATIBLE_INTEGRATION_VERSION: JSON.stringify(require("./package.json").compatibleIntegrationVersion),
     }),
     new HtmlWebpackPlugin({
+      filename: 'index.html',
       template: 'src/index.html',
+      inject: false
+    }),
+    new HtmlWebpackPlugin({
+      filename: 'daily-chart-test.html',
+      template: 'tests/daily-chart-test.html',
+      inject: false
+    }),
+    new HtmlWebpackPlugin({
+      filename: 'weekly-chart-test.html',
+      template: 'tests/weekly-chart-test.html',
+      inject: false
+    }),
+    new HtmlWebpackPlugin({
+      filename: 'monthly-chart-test.html',
+      template: 'tests/monthly-chart-test.html',
+      inject: false
+    })
+    ,
+    new HtmlWebpackPlugin({
+      filename: 'yearly-chart-test.html',
+      template: 'tests/yearly-chart-test.html',
       inject: false
     })
   ],

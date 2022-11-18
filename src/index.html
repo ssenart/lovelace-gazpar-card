@@ -3,9 +3,14 @@
   <head>
     <script type="module" src="gazpar-card.js"></script>
     <script type="module">
-        import attributes from '../tests/attributes.json' assert { type: 'json' };
-        import config from '../tests/config.json' assert { type: 'json' };
+        //import attributes from '../tests/attributes.json' assert { type: 'json' };
+        const response1 = await fetch('../tests/attributes.json')
+        const attributes = await response1.json()
         console.log(attributes);
+
+        //import config from '../tests/config.json' assert { type: 'json' };
+        const response2 = await fetch('../tests/config.json')
+        const config = await response2.json()        
         console.log(config);
         
         var card = document.getElementById(10);
