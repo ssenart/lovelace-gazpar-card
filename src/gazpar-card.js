@@ -108,7 +108,7 @@ export class GazparCard extends LitElement {
       card.previousPeriodColor = 'gray';
       card.currentPeriodColor = 'orange';
       card.unit = 'kWh';
-      card.labelGetter = x => GazparCard.formatDay(x.time_period);
+      card.labelGetter = x => GazparCard.formatDayOfWeek(x.time_period);
       card.valueGetter = x => x.energy_kwh;      
     }
   }
@@ -125,7 +125,7 @@ export class GazparCard extends LitElement {
       card.previousPeriodColor = 'gray';
       card.currentPeriodColor = 'DarkTurquoise';
       card.unit = '€';
-      card.labelGetter = x => GazparCard.formatDay(x.time_period);
+      card.labelGetter = x => GazparCard.formatDayOfWeek(x.time_period);
       card.valueGetter = x => Number.parseFloat(x.energy_kwh * this.config.pricePerKWh).toFixed(1); 
     }
   }
@@ -467,14 +467,14 @@ export class GazparCard extends LitElement {
               : html `` 
             }
             <div>
-              <span class="energy">${daily != null && daily.length > 0 ? this.toFloat(daily[0].energy_kwh):"N/A"}</span><span class="energy-unit">${unit_of_measurement}</span><br/>
-              <span class="volume">${daily != null && daily.length > 0 ? this.toFloat(daily[0].volume_m3):"N/A"}</span><span class="volume-unit">m³</span> - 
-              <span class="date">${daily != null && daily.length > 0 ? daily[0].time_period:"N/A"}</span>
+              <span class="energy">${daily != null && daily.length > 0 ? GazparCard.formatNumber(daily[0].energy_kwh, 1):"N/A"}</span><span class="energy-unit">${unit_of_measurement}</span><br/>
+              <span class="volume">${daily != null && daily.length > 0 ? GazparCard.formatNumber(daily[0].volume_m3, 1):"N/A"}</span><span class="volume-unit">m³</span> - 
+              <span class="date">${daily != null && daily.length > 0 ? Date.parseDate(daily[0].time_period).toLocaleDateString():"N/A"}</span>
             </div>
             ${this.config.showCost 
               ? html `
               <div>
-                <span class="cost" title="Daily cost">${daily != null && daily.length > 0 ? this.toFloat(daily[0].energy_kwh * this.config.pricePerKWh, 2):"N/A"}</span><span class="cost-unit"> €</span>
+                <span class="cost" title="Daily cost">${daily != null && daily.length > 0 ? GazparCard.formatNumber(daily[0].energy_kwh * this.config.pricePerKWh, 2):"N/A"}</span><span class="cost-unit"> €</span>
               </div>`
               : html ``
               }
@@ -718,7 +718,7 @@ export class GazparCard extends LitElement {
       
       return html `
       <div class="history-column">
-        <span class="history-header" title="${date.toLocaleDateString('fr-FR')}">${date.toLocaleDateString('fr-FR', {weekday: 'short'})}</span>
+        <span class="history-header" title="${date.toLocaleDateString()}">${date.toLocaleDateString(undefined, {weekday: 'short'})}</span>
         ${config.showEnergyHistory ? this.renderDataValue(item.energy_kwh,  0, "normal-value") : ""}
         ${config.showVolumeHistory ? this.renderDataValue(item.volume_m3, 0, "normal-value") : ""}
         ${config.showCostHistory ? this.renderDataValue(item.energy_kwh != null ? item.energy_kwh * this.config.pricePerKWh:null, 2, "normal-value") : ""}
@@ -734,7 +734,7 @@ export class GazparCard extends LitElement {
     
     return html `
     <div class="history-column">
-      <span class="history-header" title="${date.toLocaleDateString('fr-FR', {month: 'long', year: 'numeric'})}">${date.toLocaleDateString('fr-FR', {month: 'narrow'})}</span>
+      <span class="history-header" title="${date.toLocaleDateString(undefined, {month: 'long', year: 'numeric'})}">${date.toLocaleDateString(undefined, {month: 'narrow'})}</span>
       ${config.showEnergyHistory ? this.renderDataValue(item.energy_kwh, 0, "small-value") : ""}
       ${config.showVolumeHistory ? this.renderDataValue(item.volume_m3, 0, "small-value") : ""}
       ${config.showCostHistory ? this.renderDataValue(item.energy_kwh != null ? item.energy_kwh * this.config.pricePerKWh:null, 0, "small-value") : ""}
@@ -748,7 +748,7 @@ export class GazparCard extends LitElement {
   {
     if (value != null && value >= 0) {
       return html `
-        <br><span class="${cssname}">${this.toFloat(value, decimals)}</span>
+        <br><span class="${cssname}">${GazparCard.formatNumber(value, decimals)}</span>
       `
     } else {
       return html `
@@ -817,10 +817,10 @@ export class GazparCard extends LitElement {
   }
 
   //----------------------------------
-  static formatDay(time_period) {
+  static formatDayOfWeek(time_period) {
 
     var date = Date.parseDate(time_period);
-    var res = date.toLocaleDateString('fr-FR', {weekday: 'short'});
+    var res = date.toLocaleDateString(undefined, {weekday: 'short'});
 
     return res;
   }
@@ -829,10 +829,8 @@ export class GazparCard extends LitElement {
   static formatWeek(time_period) {
 
     var date = Date.parseWeekPeriod(time_period);
-    var startDate = new Date(date.getFullYear(), 0, 1);
-    var days = Math.floor((date - startDate) / (24 * 60 * 60 * 1000));
-    var weekNumber = Math.ceil(days / 7);
-    var res = `W${weekNumber}`
+
+    var res = date.getWeek();
 
     return res;
   }
@@ -841,7 +839,7 @@ export class GazparCard extends LitElement {
   static formatMonth(time_period) {
 
     var date = Date.parseMonthPeriod(time_period);
-    var res = date.toLocaleDateString('fr-FR', {month: 'narrow'});
+    var res = date.toLocaleDateString(undefined, {month: 'narrow'});
 
     return res;
   }
@@ -850,6 +848,14 @@ export class GazparCard extends LitElement {
   static formatYear(time_period) {
 
     var res = time_period;
+
+    return res;
+  }
+
+  //----------------------------------
+  static formatNumber(number, fractionDigits = 0) {
+
+    var res = number.toLocaleString(undefined, {minimumFractionDigits: fractionDigits, maximumFractionDigits: fractionDigits});
 
     return res;
   }
@@ -916,11 +922,6 @@ export class GazparCard extends LitElement {
     return 3;
   }
  
-  //----------------------------------
-  toFloat(value, decimals = 1) {
-    return Number.parseFloat(value).toFixed(decimals);
-  }
-  
   //----------------------------------
   static get styles() {
     return css`

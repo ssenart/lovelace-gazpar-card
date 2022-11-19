@@ -1,6 +1,6 @@
 {
   "name": "lovelace-gazpar-card",
-  "version": "1.3.7",
+  "version": "1.3.8-beta",
   "compatibleIntegrationVersion": "1.3.0",
   "description": "GrDF Gazpar meter lovelace card for Home Assistant.",
   "main": "index.js",
