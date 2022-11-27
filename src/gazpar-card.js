@@ -945,6 +945,7 @@ export class GazparCard extends LitElement {
         overflow: hidden;
         align-items: center;
         justify-content: space-between;
+        height: 5em;
       }
     
       .ha-icon {

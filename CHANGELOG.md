@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.3.8-beta] - 2022-11-19
 
 ### Fixed
+[#19](https://github.com/ssenart/lovelace-gazpar-card/issues/19): [Bug] Cropped information.
+
 [#7](https://github.com/ssenart/lovelace-gazpar-card/issues/7): [Feature] Use regional settings of the browser to display dates and numbers.
 
 ### Added
