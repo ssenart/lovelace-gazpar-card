@@ -119,7 +119,6 @@ export class BarChart extends LitElement {
                     label: 'Temperature',
                     borderColor: 'red',
                     backgroundColor: 'red',
-                    borderWidth: 10,
                     data: [],
                     order: 1,
                     yAxisID: 'temperature',
