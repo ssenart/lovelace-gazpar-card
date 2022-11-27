@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 [#7](https://github.com/ssenart/lovelace-gazpar-card/issues/7): [Feature] Use regional settings of the browser to display dates and numbers.
 
+### Added
+[#20](https://github.com/ssenart/lovelace-gazpar-card/issues/20): [Feature] Add temperature line chart on daily chart.
+
 ## [1.3.7] - 2022-11-18
 
 ### Fixed

@@ -69,37 +69,89 @@ export class BarChart extends LitElement {
         }
 
         this.chart = new Chart(context, {
-            type: 'bar',
+            
             data: {
                 labels: [],
                 datasets: [
                     {
-                    label: `${this.unit} (last ${this.periodName})`,
-                    data: [],
-                    backgroundColor: [
-                        this.previousPeriodColor,
-                    ],
+                        type: 'bar',
+                        label: `${this.unit} (last ${this.periodName})`,
+                        data: [],
+                        backgroundColor: [
+                            this.previousPeriodColor,
+                        ],
+                        order: 2,
+                        yAxisID: 'y',
+                        
                     },
                     {
-                    label: `${this.unit} (current ${this.periodName})`,
-                    data: [],
-                    backgroundColor: [
-                        this.currentPeriodColor,
-                    ],
-                    }
-                ]
+                        type: 'bar',
+                        label: `${this.unit} (current ${this.periodName})`,
+                        data: [],
+                        backgroundColor: [
+                            this.currentPeriodColor,
+                        ],
+                        order: 3,
+                        yAxisID: 'y',
+                    },
+                ],
+            },
+            options: {
+                scales: {
+                    y: {
+                      beginAtZero: true,
+                      type: 'linear',
+                      position: 'left',
+                      grid: { display: false },
+                      title: {
+                        display: true,
+                        text:this.unit
+                      }
+                    },
+                }
             }
         });
+
+        if (this.frequency.toString() == Frequency.Daily.toString()) {
+            this.chart.data.datasets.push(
+                {
+                    type: 'line',
+                    label: 'Temperature',
+                    borderColor: 'red',
+                    backgroundColor: 'red',
+                    borderWidth: 10,
+                    data: [],
+                    order: 1,
+                    yAxisID: 'temperature',
+                },
+            );
+            this.chart.options.scales.temperature = {
+                beginAtZero: true,
+                type: 'linear',
+                position: 'right',
+                grid: { display: false },
+                title: {
+                  display: true,
+                  text:'Temperature (°C)'
+                }
+            };
+        }
 
         if (this.dataSet != null && this.dataSet.length > 0)
         {
             this.updateChartLabels();
             if (this.frequency.toString() != Frequency.Yearly.toString()) {
-                this.updateChartData(0);
+                this.updateBarChartData(0);
+                if (this.frequency.toString() == Frequency.Daily.toString()) {
+                    this.updateLineChartData(2);
+                }
             }
-            this.updateChartData(1);
+            this.updateBarChartData(1);
+            if (this.frequency.toString() == Frequency.Daily.toString()) {
+                this.updateLineChartData(2);
+            }
             if (this.frequency.toString() == Frequency.Yearly.toString()) {
-                this.chart.data.datasets.shift();
+                this.chart.data.datasets.shift();                
             }            
         }
 
@@ -113,9 +165,15 @@ export class BarChart extends LitElement {
     }
 
     //----------------------------------
-    updateChartData(index)
+    updateBarChartData(index)
     {
         this.chart.data.datasets[index].data = this.dataSet.slice((1 - index) * periodLengthByFrequency.get(this.frequency.toString()), (2 - index) * periodLengthByFrequency.get(this.frequency.toString())).reverse().map(this.valueGetter);
+    }
+
+    //----------------------------------
+    updateLineChartData(index)
+    {
+        this.chart.data.datasets[index].data = this.dataSet.slice(0, periodLengthByFrequency.get(this.frequency.toString())).reverse().map(x => x.temperature_degC);
     }
 }
 
