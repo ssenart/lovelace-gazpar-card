@@ -109,7 +109,7 @@ export class GazparCard extends LitElement {
       card.currentPeriodColor = 'orange';
       card.unit = 'kWh';
       card.labelGetter = x => GazparCard.formatDayOfWeek(x.time_period);
-      card.valueGetter = x => x.energy_kwh;      
+      card.valueGetter = x => x.energy_kwh;
     }
   }
 

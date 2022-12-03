@@ -1,5 +1,9 @@
 import { LitElement, html, css } from 'lit';
 
+// const LitElement = customElements.get("hui-masonry-view") ? Object.getPrototypeOf(customElements.get("hui-masonry-view")) : Object.getPrototypeOf(customElements.get("hui-view"));
+// const html = LitElement.prototype.html;
+// const css = LitElement.prototype.css;
+
 import 'chart.js/dist/chart.min.js'
 
 import './date-extensions.js';
@@ -18,20 +22,24 @@ const periodLengthByFrequency = new Map([
 export class BarChart extends LitElement {
 
     //----------------------------------
-    static properties = {
-        frequency: {},
-        dataSet: {},
-        periodName: {},
-        previousPeriodColor: {},
-        currentPeriodColor: {},
-        unit: {},
-        valueGetter: {},
+    static get properties() { 
+        return { 
+            frequency: { type: Object },
+            dataSet: { type: Array },
+            periodName: { type: String },
+            previousPeriodColor: { type: String },
+            currentPeriodColor: { type: String },
+            unit: { type: String },
+            labelGetter: {},
+            valueGetter: {},
+        }
     };
 
     //----------------------------------
     constructor() {
         super();
         this.frequency = Frequency.Monthly;
+        this.dataSet = []
         this.periodName = 'year';
         this.previousPeriodColor = 'lightgray';
         this.currentPeriodColor = 'gray';
@@ -42,8 +50,11 @@ export class BarChart extends LitElement {
 
     //----------------------------------
     render() {
+
+        console.log(`${this.frequency.toString()}.render()`)
+
         return html
-        ` <div class="chart">        
+        ` <div class="chart">    
             <canvas id="barChart"></canvas>
           </div>
         `
@@ -61,79 +72,93 @@ export class BarChart extends LitElement {
     }
 
     //----------------------------------
-    updated() {
+    shouldUpdate(changedProperties) {
+        console.log(`${this.frequency.toString()}.shouldUpdate(${JSON.stringify(changedProperties)})`)
+
+        return true;
+    }
+
+    //----------------------------------
+    firstUpdated() {
+        console.log(`${this.frequency.toString()}.firstUpdated()`)
+    }
+
+    //----------------------------------
+    updated(changedProperties) {
+
+        console.log(`${this.frequency.toString()}.updated(${JSON.stringify(changedProperties)})`)
+
         const context = this.renderRoot.getElementById('barChart').getContext('2d');
 
-        if (this.chart != null) {
-            this.chart.destroy();
-        }
-
-        this.chart = new Chart(context, {
-            
-            data: {
-                labels: [],
-                datasets: [
-                    {
-                        type: 'bar',
-                        label: `${this.unit} (last ${this.periodName})`,
-                        data: [],
-                        backgroundColor: [
-                            this.previousPeriodColor,
-                        ],
-                        order: 2,
-                        yAxisID: 'y',
-                        
-                    },
-                    {
-                        type: 'bar',
-                        label: `${this.unit} (current ${this.periodName})`,
-                        data: [],
-                        backgroundColor: [
-                            this.currentPeriodColor,
-                        ],
-                        order: 3,
-                        yAxisID: 'y',
-                    },
-                ],
-            },
-            options: {
-                scales: {
-                    y: {
-                      beginAtZero: true,
-                      type: 'linear',
-                      position: 'left',
-                      grid: { display: false },
-                      title: {
-                        display: true,
-                        text:this.unit
-                      }
-                    },
-                }
-            }
-        });
-
-        if (this.frequency.toString() == Frequency.Daily.toString()) {
-            this.chart.data.datasets.push(
-                {
-                    type: 'line',
-                    label: 'Temperature',
-                    borderColor: 'red',
-                    backgroundColor: 'red',
-                    data: [],
-                    order: 1,
-                    yAxisID: 'temperature',
+        if (this.chart == null)
+        {
+            this.chart = new Chart(context, {
+                
+                data: {
+                    labels: [],
+                    datasets: [
+                        {
+                            type: 'bar',
+                            label: `${this.unit} (last ${this.periodName})`,
+                            data: [],
+                            backgroundColor: [
+                                this.previousPeriodColor,
+                            ],
+                            order: 2,
+                            yAxisID: 'y',
+                            
+                        },
+                        {
+                            type: 'bar',
+                            label: `${this.unit} (current ${this.periodName})`,
+                            data: [],
+                            backgroundColor: [
+                                this.currentPeriodColor,
+                            ],
+                            order: 3,
+                            yAxisID: 'y',
+                        },
+                    ],
                 },
-            );
-            this.chart.options.scales.temperature = {
-                beginAtZero: true,
-                type: 'linear',
-                position: 'right',
-                grid: { display: false },
-                title: {
-                  display: true,
-                  text:'Temperature (°C)'
+                options: {
+                    scales: {
+                        y: {
+                        beginAtZero: true,
+                        type: 'linear',
+                        position: 'left',
+                        grid: { display: false },
+                        title: {
+                            display: true,
+                            text:this.unit
+                        }
+                        },
+                    }
                 }
-            };
+            });
+
+            if (this.frequency.toString() == Frequency.Daily.toString()) {
+                this.chart.data.datasets.push(
+                    {
+                        type: 'line',
+                        label: 'Temperature',
+                        borderColor: 'red',
+                        backgroundColor: 'red',
+                        data: [],
+                        order: 1,
+                        yAxisID: 'temperature',
+                    },
+                );
+                this.chart.options.scales.temperature = {
+                    beginAtZero: true,
+                    type: 'linear',
+                    position: 'right',
+                    grid: { display: false },
+                    title: {
+                      display: true,
+                      text:'Temperature (°C)'
+                    }
+                };
+            }
         }
 
         if (this.dataSet != null && this.dataSet.length > 0)
@@ -155,6 +180,12 @@ export class BarChart extends LitElement {
         }
 
         this.chart.update();
+
+        window.addEventListener('resize', () => {
+            if (this.chart) {
+                this.chart.resize();
+            }
+        });
     }
 
     //----------------------------------
