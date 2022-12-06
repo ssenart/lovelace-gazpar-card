@@ -190,7 +190,7 @@
               </div>
             `}renderVersion(){if(!0===this.config.showVersion)return t.dy` <div class="section">        
           <div class="small-value" style="color: gray; text-align: right;">
-            Gazpar Card Version ${"1.3.8"}
+            Gazpar Card Version ${"1.3.9-alpha.1"}
           </div>
           </div>
         `}renderDailyHistory(e,i,s){if(s.showDailyHistory&&null!=e&&e.length>0){var n=s.asOfDate?Date.parseDate(s.asOfDate):Date.today(),o=e.slice().reverse().filter((t=>Date.parseDate(t.time_period)>=n.addDays(-7)));if(o.length>0)for(var r=Date.parseDate(o[o.length-1].time_period).addDays(1);o.length<7;)o.push({time_period:r.formatDate(),volume_m3:null,energy_kwh:null}),r=r.addDays(1);return t.dy` <div class="section">        
