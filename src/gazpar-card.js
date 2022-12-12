@@ -138,7 +138,7 @@ export class GazparCard extends LitElement {
 
       card.frequency = Frequency.Weekly;
       card.dataSet = dataSet;
-      card.periodName = 'quarter';
+      card.periodName = 'year';
       card.previousPeriodColor = 'gray';
       card.currentPeriodColor = 'orange';
       card.unit = 'kWh';
@@ -155,7 +155,7 @@ export class GazparCard extends LitElement {
 
       card.frequency = Frequency.Weekly;
       card.dataSet = dataSet;
-      card.periodName = 'quarter';
+      card.periodName = 'year';
       card.previousPeriodColor = 'gray';
       card.currentPeriodColor = 'DarkTurquoise';
       card.unit = '€';
