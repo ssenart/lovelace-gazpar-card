@@ -299,7 +299,7 @@ export class GazparCard extends LitElement {
 
       // Add "empty" to have a full array (of 14 days or 24 months).
       daily = GazparCard.rightPaddingDailyArray(daily, 14 - daily.length)
-      weekly = GazparCard.rightPaddingWeeklyArray(weekly, 24 - weekly.length)
+      weekly = GazparCard.rightPaddingWeeklyArray(weekly, 20 - weekly.length)
       monthly = GazparCard.rightPaddingMonthlyArray(monthly, 24 - monthly.length)
 
       this.computeConsumptionTrendRatio(daily, 7)

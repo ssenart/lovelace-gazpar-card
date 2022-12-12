@@ -121,7 +121,7 @@
               </div>
             </div>
           </ha-card> 
-        `;var i=Array.from(o.daily),s=Array.from(o.weekly),n=Array.from(o.monthly);return Array.from(o.yearly),i=this.sortDescDailyData(i),s=this.sortDescWeeklyData(s),n=this.sortDescMonthlyData(n),i=a.rightPaddingDailyArray(i,14-i.length),s=a.rightPaddingWeeklyArray(s,24-s.length),n=a.rightPaddingMonthlyArray(n,24-n.length),this.computeConsumptionTrendRatio(i,7),this.computeConsumptionTrendRatio(n,12),t.dy`
+        `;var i=Array.from(o.daily),s=Array.from(o.weekly),n=Array.from(o.monthly);return Array.from(o.yearly),i=this.sortDescDailyData(i),s=this.sortDescWeeklyData(s),n=this.sortDescMonthlyData(n),i=a.rightPaddingDailyArray(i,14-i.length),s=a.rightPaddingWeeklyArray(s,20-s.length),n=a.rightPaddingMonthlyArray(n,24-n.length),this.computeConsumptionTrendRatio(i,7),this.computeConsumptionTrendRatio(n,12),t.dy`
         <ha-card>
           ${this.addEventListener("click",(t=>{this._showDetails(this.config.entity)}))}
 
@@ -380,7 +380,7 @@
         height: 5em;
         display: inline-block;
       }
-      `}}customElements.define("gazpar-card",a),i(225);const h=new Map([[r.Daily.toString(),7],[r.Weekly.toString(),12],[r.Monthly.toString(),12],[r.Yearly.toString(),5]]);class l extends t.oi{static get properties(){return{frequency:{type:Object},dataSet:{type:Array},periodName:{type:String},previousPeriodColor:{type:String},currentPeriodColor:{type:String},unit:{type:String},labelGetter:{},valueGetter:{}}}constructor(){super(),this.frequency=r.Monthly,this.dataSet=[],this.periodName="year",this.previousPeriodColor="lightgray",this.currentPeriodColor="gray",this.unit="kWh",this.labelGetter=t=>t.time_period,this.valueGetter=t=>t.energy_kwh}render(){return console.log(`${this.frequency.toString()}.render()`),t.dy` <div class="chart">    
+      `}}customElements.define("gazpar-card",a),i(225);const h=new Map([[r.Daily.toString(),7],[r.Weekly.toString(),10],[r.Monthly.toString(),12],[r.Yearly.toString(),5]]);class l extends t.oi{static get properties(){return{frequency:{type:Object},dataSet:{type:Array},periodName:{type:String},previousPeriodColor:{type:String},currentPeriodColor:{type:String},unit:{type:String},labelGetter:{},valueGetter:{}}}constructor(){super(),this.frequency=r.Monthly,this.dataSet=[],this.periodName="year",this.previousPeriodColor="lightgray",this.currentPeriodColor="gray",this.unit="kWh",this.labelGetter=t=>t.time_period,this.valueGetter=t=>t.energy_kwh}render(){return console.log(`${this.frequency.toString()}.render()`),t.dy` <div class="chart">    
             <canvas id="barChart"></canvas>
           </div>
         `}static get styles(){return t.iv`

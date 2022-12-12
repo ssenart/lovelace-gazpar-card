@@ -13,7 +13,7 @@ import { Frequency } from './frequency.js';
 //------------------------------------------------------------
 const periodLengthByFrequency = new Map([
     [Frequency.Daily.toString(), 7],
-    [Frequency.Weekly.toString(), 12],
+    [Frequency.Weekly.toString(), 10],
     [Frequency.Monthly.toString(), 12],
     [Frequency.Yearly.toString(), 5],
 ]);
