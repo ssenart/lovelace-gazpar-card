@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#24](https://github.com/ssenart/lovelace-gazpar-card/issues/24): [Feature] Weekly readings should be compared with the same week one year before.
 
 ### Fixed
+
+[#22](https://github.com/ssenart/lovelace-gazpar-card/issues/22): [Bug] Error message too long.
+
 [#19](https://github.com/ssenart/lovelace-gazpar-card/issues/19): [Bug] Cropped information.
 
 ## [1.3.8] - 2022-12-03
