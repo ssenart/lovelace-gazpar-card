@@ -50,11 +50,12 @@ Alternatively, you can configure your card manually with the following code:
 type: custom:gazpar-card
 
 entity: sensor.gazpar
-title: 'Données GrDF'
+title: Données GrDF
 pricePerKWh: '0.06072'
 
-showTitle: true
 showIcon: true
+showTitle: true
+showMainBar: true
 showCost: true
 
 showDailyHistory: true
@@ -62,16 +63,23 @@ showMonthlyHistory: true
 showHistoryHeader: true
 showEnergyHistory: true
 showVolumeHistory: true
-showCostHistory: true
 showTrendRatioHistory: true
+showCostHistory: true
 
-showMonthlyCostHistoryChart: true
-showMonthlyEnergyHistoryChart: true
+showDailyCostHistoryChart: false
+showDailyEnergyHistoryChart: false
 
-showYearlyEnergyHistoryChart: true
-showYearlyCostHistoryChart: true
+showWeeklyEnergyHistoryChart: false
+showWeeklyCostHistoryChart: false
+
+showMonthlyEnergyHistoryChart: false
+showMonthlyCostHistoryChart: false
+
+showYearlyEnergyHistoryChart: false
+showYearlyCostHistoryChart: false
 
 showError: true
+showVersion: true
 ``` 
 
 
