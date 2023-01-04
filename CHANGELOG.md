@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.3.10] - 2023-01-04
 
-## Changed
+### Changed
 [#30](https://github.com/ssenart/lovelace-gazpar-card/issues/30): [Change] Gazpar icon has been resized.
 
 ### Fixed
