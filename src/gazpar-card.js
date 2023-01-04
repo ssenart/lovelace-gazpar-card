@@ -428,7 +428,7 @@ export class GazparCard extends LitElement {
         }
         else if (currentPeriodEnergy != null && currentPeriodEnergy > 0 && previousPeriodEnergy != null && previousPeriodEnergy == 0)
         {
-          data[i].ratio = 1
+          data[i].ratio = 100
         }
         else
         {
