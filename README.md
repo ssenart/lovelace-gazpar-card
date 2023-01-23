@@ -1,5 +1,7 @@
 # Home Assistant Lovelace Gazpar Card
 
+## $\text{\color{red}{!!! This card is broken since CAPTCHA is mandatory on GrDF site !!!}}$
+
 GrDF Gazpar meter lovelace card for Home Assistant.
 
 This card has been inspired from the great [Linky Card](https://github.com/saniho/content-card-linky).
