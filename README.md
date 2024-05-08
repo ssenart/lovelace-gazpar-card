@@ -1,6 +1,6 @@
 # Home Assistant Lovelace Gazpar Card
 
-## $\text{\color{red}{!!! This card is broken since CAPTCHA is mandatory on GrDF site !!!}}$
+## $\text{\color{green}{!!! This library is working again. CAPTCHA has been removed !!!}}$
 
 GrDF Gazpar meter lovelace card for Home Assistant.
 
