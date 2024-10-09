@@ -261,7 +261,7 @@ export class GazparCard extends LitElement {
 
       const attributes = stateObj.attributes;
 
-      if (attributes.version == null || compareVersions(attributes.version, COMPATIBLE_INTEGRATION_VERSION) < 0)
+      if (attributes.version == null || GazparCard.compareVersions(attributes.version, COMPATIBLE_INTEGRATION_VERSION) < 0)
       {
         return html`
           <ha-card>
