@@ -261,7 +261,7 @@ export class GazparCard extends LitElement {
 
       const attributes = stateObj.attributes;
 
-      if (attributes.version == null || attributes.version < COMPATIBLE_INTEGRATION_VERSION)
+      if (attributes.version == null || compareVersions(attributes.version, COMPATIBLE_INTEGRATION_VERSION) < 0)
       {
         return html`
           <ha-card>
@@ -858,6 +858,31 @@ export class GazparCard extends LitElement {
     var res = number.toLocaleString(undefined, {minimumFractionDigits: fractionDigits, maximumFractionDigits: fractionDigits});
 
     return res;
+  }
+
+  //----------------------------------
+  // Compare two version number having the format x or x.y or x.y.z or x.y.z.a
+  // but not necessarily the same length.
+  static compareVersions(version1, version2) {
+
+    const v1parts = version1.split('.');
+    const v2parts = version2.split('.');
+
+    const length = Math.max(v1parts.length, v2parts.length);
+
+    for (let i = 0; i < length; i++) {
+        const v1part = parseInt(v1parts[i] || '0', 10);
+        const v2part = parseInt(v2parts[i] || '0', 10);
+
+        if (v1part > v2part) {
+            return 1;
+        }
+        if (v1part < v2part) {
+            return -1;
+        }
+    }
+
+    return 0;
   }
 
   //----------------------------------

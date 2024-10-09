@@ -44,4 +44,15 @@ describe("Data preparation", () => {
       });
     });
 
+    test("compareVersions", () => {
+
+      expect(GazparCard.compareVersions("1.0.0", "1.0.0")).toBe(0);
+      expect(GazparCard.compareVersions("1.0.0", "1.0.1")).toBe(-1);
+      expect(GazparCard.compareVersions("1.0.1", "1.0.0")).toBe(1);
+      expect(GazparCard.compareVersions("1.0.0", "1.1.0")).toBe(-1);
+      expect(GazparCard.compareVersions("1.1.0", "1.0.0")).toBe(1);
+      expect(GazparCard.compareVersions("1.0.0", "2.0.0")).toBe(-1);
+      expect(GazparCard.compareVersions("2.0.0", "1.0.0")).toBe(1);
+      expect(GazparCard.compareVersions("1.3.4", "1.3.10")).toBe(-1);
+    });
 });
