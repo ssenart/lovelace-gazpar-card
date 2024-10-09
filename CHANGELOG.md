@@ -4,13 +4,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.3.10] - 2023-01-04
+## [1.3.10] - 2024-10-09
+
+### Fixed
+[#35](https://github.com/ssenart/lovelace-gazpar-card/issues/35): [Bug] home-assistant-gazpar integration version check is wrong.
+[#29](https://github.com/ssenart/lovelace-gazpar-card/issues/29): [Bug] Showing 1% increase ratio instead of 100% expected.
 
 ### Changed
 [#30](https://github.com/ssenart/lovelace-gazpar-card/issues/30): [Change] Gazpar icon has been resized.
-
-### Fixed
-[#29](https://github.com/ssenart/lovelace-gazpar-card/issues/29): [Bug] Showing 1% increase ratio instead of 100% expected.
 
 ## [1.3.9] - 2022-12-16
 
