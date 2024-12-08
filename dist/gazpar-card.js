@@ -202,7 +202,7 @@
           <span>${this.config.title}</span>
           </div>
           <hr size="1" color="gray"/>
-          </div>`}renderError(e){if(!0===this.config.showError&&e.length>0)return t.dy` <div class="section">            
+          </div>`}renderError(e){if(!0===this.config.showError&&null!=e&&e.length>0)return t.dy` <div class="section">            
               <div style="color: red">
                 <ha-icon id="icon" icon="mdi:alert-outline"></ha-icon>
                 ${e.join("<br>")}
@@ -210,7 +210,7 @@
               </div>
             `}renderVersion(e){if(!0===this.config.showVersion){var i=null!=e.source?e.source.name+" v"+e.source.version:"home-assistant-gazpar v"+e.version;return t.dy` <div class="section">        
           <div class="small-value" style="color: gray; text-align: right;">
-            Gazpar Card v${"1.3.11-alpha.2"} - ${i}
+            Gazpar Card v${"1.3.11-alpha.3"} - ${i}
           </div>
           </div>
         `}}renderDailyHistory(e,i,s){if(s.showDailyHistory&&null!=e&&e.length>0){var n=s.asOfDate?Date.parseDate(s.asOfDate):Date.today(),o=e.slice().reverse().filter((t=>Date.parseDate(t.time_period)>=n.addDays(-7)));if(o.length>0)for(var r=Date.parseDate(o[o.length-1].time_period).addDays(1);o.length<7;)o.push({time_period:r.formatDate(),volume_m3:null,energy_kwh:null}),r=r.addDays(1);return t.dy` <div class="section">        

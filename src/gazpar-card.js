@@ -546,7 +546,7 @@ export class GazparCard extends LitElement {
   //----------------------------------
   renderError(errorMsg) {
     if (this.config.showError === true) {
-       if (errorMsg.length > 0){
+       if (errorMsg != null && errorMsg.length > 0){
           return html
             ` <div class="section">            
               <div style="color: red">
