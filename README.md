@@ -1,6 +1,8 @@
 # Home Assistant Lovelace Gazpar Card
 
-## $\text{\color{green}{!!! This library is working again. CAPTCHA has been removed !!!}}$
+## $\text{\color{green}{!!! This component is now compatible with [Gazpar2MQTT](https://github.com/ssenart/gazpar2mqtt) integration !!!}}$
+
+## $\text{\color{green}{!!! This component is working again. CAPTCHA has been removed !!!}}$
 
 GrDF Gazpar meter lovelace card for Home Assistant.
 
@@ -10,7 +12,10 @@ I reuse the same layout.
 
 ![Gazpar Card](images/gazpar-card.png)
 
-It requires the HA integration [Gazpar](https://github.com/ssenart/home-assistant-gazpar) at least from version 1.3.0.
+It requires:
+
+- Either the HA integration [Gazpar](https://github.com/ssenart/home-assistant-gazpar) at least from version 1.3.0.
+- Or the MQTT integration [MQTT](https://github.com/ssenart/gazpar2mqtt) at least from version 0.1.0.
 
 Trend ratio (% in the table) must be interpreted differently depending on the frequency:
 
