@@ -1,6 +1,6 @@
 # Home Assistant Lovelace Gazpar Card
 
-## $\text{\color{green}{!!! This component is now compatible with Gazpar2MQTT integration (see below) !!!}}$
+## $\text{\color{green}{!!! This component is now compatible with Gazpar2MQTT integration !!!}}$
 
 GrDF Gazpar meter lovelace card for Home Assistant.
 
