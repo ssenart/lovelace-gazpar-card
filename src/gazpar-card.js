@@ -15,9 +15,9 @@ window.customCards = window.customCards || [];
 window.customCards.push({
   type: "gazpar-card",
   name: "Gazpar card",
-  description: "Gazpar lovelace card for Home Assistant. It works with integration home-assistant-gazpar.",
+  description: "Gazpar lovelace card for Home Assistant. It works with integration home-assistant-gazpar or Gazpar2MQTT.",
   preview: true,
-  documentationURL: "https://github.com/ssenart/home-assistant-gazpar-card",
+  documentationURL: "https://github.com/ssenart/lovelace-gazpar-card",
 });
 
 //------------------------------------------------------
@@ -261,6 +261,8 @@ export class GazparCard extends LitElement {
 
       const attributes = stateObj.attributes;
 
+      var sourceName;
+      var sourceVersion;
       if (attributes.source == null)
       {
         // For backward compatibility with previous version of Gazpar Integration.
@@ -302,7 +304,8 @@ export class GazparCard extends LitElement {
             </div>
           </ha-card> 
           `
-      } else if (sourceName == "gazpar2mqtt" && (sourceVersion == null || GazparCard.compareVersions(sourceVersion, COMPATIBLE_GAZPAR2MQTT_VERSION) < 0))
+      }
+      else if (sourceName == "gazpar2mqtt" && (sourceVersion == null || GazparCard.compareVersions(sourceVersion, COMPATIBLE_GAZPAR2MQTT_VERSION) < 0))
       {
         return html`
           <ha-card>
