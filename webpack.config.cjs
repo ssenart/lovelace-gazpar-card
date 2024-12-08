@@ -25,6 +25,7 @@ module.exports = {
     new webpack.DefinePlugin({
       VERSION: JSON.stringify(require("./package.json").version),
       COMPATIBLE_INTEGRATION_VERSION: JSON.stringify(require("./package.json").compatibleIntegrationVersion),
+      COMPATIBLE_GAZPAR2MQTT_VERSION: JSON.stringify(require("./package.json").compatibleGAZPAR2MQTTVersion),
     }),
     new HtmlWebpackPlugin({
       filename: 'index.html',

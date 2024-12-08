@@ -261,19 +261,60 @@ export class GazparCard extends LitElement {
 
       const attributes = stateObj.attributes;
 
-      if (attributes.version == null || GazparCard.compareVersions(attributes.version, COMPATIBLE_INTEGRATION_VERSION) < 0)
+      if (attributes.source == null)
+      {
+        // For backward compatibility with previous version of Gazpar Integration.
+        sourceName = "home-assistant-gazpar"
+        sourceVersion = attributes.version
+      }
+      else
+      {
+        // New version of Gazpar Integration and Gazpar2MQTT.
+        sourceName = attributes.source.name
+        sourceVersion = attributes.source.version
+      }
+
+      if (sourceName != "home-assistant-gazpar" && sourceName != "gazpar2mqtt")
       {
         return html`
           <ha-card>
             <div class="section">
               <div id="states">
                 <div>
-                  ${this.renderError([`The minimum required version of Gazpar Integration is ${COMPATIBLE_INTEGRATION_VERSION}. Your current Gazpar Integration version is ${attributes.version}. Please update your Gazpar Integration version at least to version ${COMPATIBLE_INTEGRATION_VERSION}.`])}
+                  ${this.renderError([`The source name '${sourceName}'node  is not supported. Please use Gazpar Integration (name='home-assistant-gazpar')or Gazpar2MQTT (name='gazpar2mqtt').`])}
                 </div>
               </div>
             </div>
           </ha-card> 
-        `
+          `
+      }
+
+      if (sourceName == "home-assistant-gazpar" && (sourceVersion == null || GazparCard.compareVersions(sourceVersion, COMPATIBLE_INTEGRATION_VERSION) < 0))
+      {
+        return html`
+          <ha-card>
+            <div class="section">
+              <div id="states">
+                <div>
+                  ${this.renderError([`The minimum required version of Gazpar Integration is ${COMPATIBLE_INTEGRATION_VERSION}. Your current Gazpar Integration version is ${sourceVersion}. Please update your Gazpar Integration version at least to version ${COMPATIBLE_INTEGRATION_VERSION}.`])}
+                </div>
+              </div>
+            </div>
+          </ha-card> 
+          `
+      } else if (sourceName == "gazpar2mqtt" && (sourceVersion == null || GazparCard.compareVersions(sourceVersion, COMPATIBLE_GAZPAR2MQTT_VERSION) < 0))
+      {
+        return html`
+          <ha-card>
+            <div class="section">
+              <div id="states">
+                <div>
+                  ${this.renderError([`The minimum required version of Gazpar2MQTT is ${COMPATIBLE_GAZPAR2MQTT_VERSION}. Your current Gazpar2MQTT Integration version is ${sourceVersion}. Please update your Gazpar2MQTT version at least to version ${COMPATIBLE_GAZPAR2MQTT_VERSION}.`])}
+                </div>
+              </div>
+            </div>
+          </ha-card> 
+          `
       }
 
       // ****************************************************
