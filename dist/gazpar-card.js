@@ -131,12 +131,12 @@
               </div>
             </div>
           </ha-card> 
-          `;if("gazpar2mqtt"==i&&(null==s||a.compareVersions(s,void 0)<0))return t.dy`
+          `;if("gazpar2mqtt"==i&&(null==s||a.compareVersions(s,"0.1.0")<0))return t.dy`
           <ha-card>
             <div class="section">
               <div id="states">
                 <div>
-                  ${this.renderError([`The minimum required version of Gazpar2MQTT is undefined. Your current Gazpar2MQTT Integration version is ${s}. Please update your Gazpar2MQTT version at least to version undefined.`])}
+                  ${this.renderError([`The minimum required version of Gazpar2MQTT is 0.1.0. Your current Gazpar2MQTT Integration version is ${s}. Please update your Gazpar2MQTT version at least to version 0.1.0.`])}
                 </div>
               </div>
             </div>
@@ -165,7 +165,7 @@
           ${this.renderYearlyCostHistoryChart()}
 
           ${this.renderError(h.errorMessages)}
-          ${this.renderVersion()}
+          ${this.renderVersion(h)}
         </ha-card>`}return t.dy`
         <ha-card>
           <div class="section">
@@ -208,12 +208,12 @@
                 ${e.join("<br>")}
               </div>
               </div>
-            `}renderVersion(){if(!0===this.config.showVersion)return t.dy` <div class="section">        
+            `}renderVersion(e){if(!0===this.config.showVersion){var i=null!=e.source?e.source.name+" v"+e.source.version:"home-assistant-gazpar v"+e.version;return t.dy` <div class="section">        
           <div class="small-value" style="color: gray; text-align: right;">
-            Gazpar Card Version ${"1.3.11-alpha.1"}
+            Gazpar Card v${"1.3.11-alpha.2"} - ${i}
           </div>
           </div>
-        `}renderDailyHistory(e,i,s){if(s.showDailyHistory&&null!=e&&e.length>0){var n=s.asOfDate?Date.parseDate(s.asOfDate):Date.today(),o=e.slice().reverse().filter((t=>Date.parseDate(t.time_period)>=n.addDays(-7)));if(o.length>0)for(var r=Date.parseDate(o[o.length-1].time_period).addDays(1);o.length<7;)o.push({time_period:r.formatDate(),volume_m3:null,energy_kwh:null}),r=r.addDays(1);return t.dy` <div class="section">        
+        `}}renderDailyHistory(e,i,s){if(s.showDailyHistory&&null!=e&&e.length>0){var n=s.asOfDate?Date.parseDate(s.asOfDate):Date.today(),o=e.slice().reverse().filter((t=>Date.parseDate(t.time_period)>=n.addDays(-7)));if(o.length>0)for(var r=Date.parseDate(o[o.length-1].time_period).addDays(1);o.length<7;)o.push({time_period:r.formatDate(),volume_m3:null,energy_kwh:null}),r=r.addDays(1);return t.dy` <div class="section">        
         <div class="history-table">
           ${this.renderHistoryHeader(s,"normal-value")}
           ${o.slice(o.length-7,o.length).map((t=>this.renderDailyDataColumnHistory(t,i,s)))}

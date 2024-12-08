@@ -373,7 +373,7 @@ export class GazparCard extends LitElement {
           ${this.renderYearlyCostHistoryChart()}
 
           ${this.renderError(attributes.errorMessages)}
-          ${this.renderVersion()}
+          ${this.renderVersion(attributes)}
         </ha-card>`
     }
   }
@@ -560,12 +560,15 @@ export class GazparCard extends LitElement {
   }
 
   //----------------------------------
-  renderVersion() {
+  renderVersion(attributes) {
     if (this.config.showVersion === true) {
+
+      var sourceInfo = attributes.source != null ? attributes.source.name + " v" + attributes.source.version : "home-assistant-gazpar v" + attributes.version;
+
       return html
         ` <div class="section">        
           <div class="small-value" style="color: gray; text-align: right;">
-            Gazpar Card Version ${VERSION}
+            Gazpar Card v${VERSION} - ${sourceInfo}
           </div>
           </div>
         `
