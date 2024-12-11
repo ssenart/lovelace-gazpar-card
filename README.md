@@ -29,7 +29,7 @@ Follow the steps described below to add GrDF Gazpar integration with [HACS](http
 
 1. From [HACS](https://hacs.xyz/) (Home Assistant Community Store), open the upper left menu and select `Custom repositories` option to add the new repo.
 
-2. Add the address <https://github.com/ssenart/lovelace-gazpar-card> with the category `Lovelace Plugins`, and click `ADD`. The new corresponding repo appears in the repo list.
+2. Add the address <https://github.com/ssenart/lovelace-gazpar-card> with the category `Dashboard`, and click `ADD`. The new corresponding repo appears in the repo list.
 
 3. Select this repo (this integration description is displayed in a window) and click on `INSTALL THIS REPOSITORY` button on the lower right of this window.
 
